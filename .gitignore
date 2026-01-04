@@ -1,6 +1,4 @@
-modules/__pycache__/__init__.cpython-312.pyc
-modules/__pycache__/calculator.cpython-312.pyc
-modules/__pycache__/config.cpython-312.pyc
-modules/__pycache__/gui.cpython-312.pyc
-modules/__pycache__/math_wrapper.cpython-312.pyc
-modules/__pycache__/parser.cpython-312.pyc
+*.pyc
+config.json
+__pycache__
+.venv
