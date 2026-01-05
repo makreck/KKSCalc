@@ -1,4 +1,5 @@
 import sys
+import platform
 import math
 import re
 import pyperclip
@@ -304,8 +305,19 @@ class Gui():
     def text_to_photoimage(self, text: str, size: tuple):
         image     = Image.new("RGBA", size, "#00000000")
         draw      = ImageDraw.Draw(image)
-        font_path = "DejaVuSans-Bold.ttf"
-        font      = ImageFont.truetype(font_path, size[1] / 2.7)
+
+        os_name   = platform.system().strip().lower()
+        if "linux" in os_name:
+            font_path = "DejaVuSans-Bold.ttf"
+        elif "windows" in os_name:
+            font_path = "arialbd.ttf"
+        else:
+            font_path = None
+        try:
+            font  = ImageFont.truetype(font=font_path, size=size[1] / 2.7)
+        except:
+            font  = None
+
         size      = draw.textbbox(xy=size, text=text, font=font)
         width     = size[2] - size[0]
         height    = size[3] - size[1]
