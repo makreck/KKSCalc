@@ -1,14 +1,19 @@
 import math
 from modules.math_wrapper import MathWrapper
+from modules.times import Times
 
 class Parser:
     
     __default_varlist = { 
-              "pi": math.pi,
-              "e":  math.e,
-            }
+            "pi": math.pi,
+            "e":  math.e,
+        }
 
+    __exponental_specials    = "⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺"
+    __exponental_substitudes = "0123456789-+"
+    
     def __init__(self):
+        self.times = Times()
         self.clr_Variables()
     
     def get_Cmd(self) -> dict:
@@ -17,15 +22,41 @@ class Parser:
     def parse(self, formula: str) -> float:
         if not formula:
             return ( 0.0, "Error", False )
-        return self.__parse_partial(self.__filter_brackets(formula.replace("^", "**")))
+        formula = formula.replace("^", "**")
+        return self.__parse_partial(self.__filter_brackets(self.__substitude_specials(formula)))
 
+    def __substitude_specials(self, formula: str) -> str:
+        pos = -1
+        for i in range(len(formula)):
+            n = Parser.__exponental_specials.find(formula[i])
+            if n != -1:
+                if pos == -1: pos = i
+                formula = formula.replace(Parser.__exponental_specials[n], Parser.__exponental_substitudes[n])                
+        if pos > -1:
+            formula = formula[:pos] + "**" + formula[pos:]
+        return formula        
+
+    def __replaceDateTimeParts(self, formula: str) -> str:
+        while True:
+            i = formula.find("#")
+            if i > -1:
+                iso, iso_len = self.times.parseToISO(formula[i+1:])
+                if iso:
+                    factor = str(self.times.get_Factor(iso))
+                    formula = formula[:i] + factor + formula[i + 1 + iso_len:]
+            else:
+                break
+        return formula
+                    
     def __parse_partial(self, formula: str) -> float:
+        formula = self.__replaceDateTimeParts(formula)
         flag = True
         while flag:
             flag = False
             count  = 0
             start  = 0
-            for i in range(len(formula)):
+            length = len(formula)
+            for i in range(length):
                 c = formula[i]
                 if c == "[":
                     if count == 0:

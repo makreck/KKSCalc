@@ -119,23 +119,6 @@ class Calculator:
         self.cfg.set_WindowPos("MainWindow", self.gui.get_WindowPos())
         self.cfg.set_ScreenContent(self.gui.get_ScreenContent())
         self.cfg.save()
-    
-    def parse(self, string: str) -> float:
-        result = (0.0, "OK", False)
-        elements = string.strip().lower().replace(",", ".").split("=")
-        try:
-            formula = elements[-1]
-            if formula.startswith("."):
-                result = self.cmd(formula)
-            else:            
-                formula = formula.replace(" ", "")
-                result = self.parser.parse(formula)
-                if (len(elements) > 1) and result[2]:
-                    self.parser.set_Variable(elements[0], result[0])
-            self.gui.set_VariableContent(self.parser.get_VariableContent())
-        except Exception as e:
-            result = ( 0.0, f"Error: {e}", False )
-        return result
 
     def cmd(self, command: str):
         command = command.strip().replace(" ", ",").split(",")
@@ -197,3 +180,22 @@ class Calculator:
                 print(f"GUI callback error: {id}")
         
         return None
+    
+    def parse(self, string: str) -> float:
+        result = (0.0, "OK", False)
+        elements = string.strip().lower().replace(",", ".").split("=")
+        try:
+            formula = elements[-1]
+            if formula.startswith("."):
+                result = self.cmd(formula)
+            else:            
+                formula = formula.replace(" ", "")
+                result = self.parser.parse(formula)
+                if (len(elements) > 1) and result[2]:
+                    self.parser.set_Variable(elements[0], result[0])
+            self.gui.set_VariableContent(self.parser.get_VariableContent())
+        except Exception as e:
+            result = ( 0.0, f"Error: {e}", False )
+        return result
+
+
