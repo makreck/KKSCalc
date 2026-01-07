@@ -41,7 +41,7 @@ class Gui():
         { "cascade": "File", "text": "_sep_",  "id": None },
         { "cascade": "File", "text": "Exit",   "id": Item.Menu_Exit,   },
     ]
-     
+
     tbdef = [
         { "id": Item.TB_Trashcan,   "text": "Clear", "path": "trashcan.png",       "image": None },
         { "id": Item.TB_Sep },
