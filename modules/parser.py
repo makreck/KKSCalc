@@ -1,7 +1,7 @@
 import math
 from modules.math_wrapper import MathWrapper
 from modules.times import Times
-
+from modules.roman_numbers import RomanNumber
 class Parser:
     
     __default_varlist = { 
@@ -14,6 +14,7 @@ class Parser:
     
     def __init__(self):
         self.times = Times()
+        self.ro = RomanNumber()
         self.clr_Variables()
     
     def get_Cmd(self) -> dict:
@@ -36,20 +37,25 @@ class Parser:
             formula = formula[:pos] + "**" + formula[pos:]
         return formula        
 
-    def __replaceDateTimeParts(self, formula: str) -> str:
+    def __replaceSpecialParts(self, formula: str) -> str:
         while True:
             i = formula.find("#")
             if i > -1:
-                iso, iso_len = self.times.parseToISO(formula[i+1:])
-                if iso:
-                    factor = str(self.times.get_Factor(iso))
-                    formula = formula[:i] + factor + formula[i + 1 + iso_len:]
+                ro_digit = formula[i+1]
+                if self.ro.is_roman_digit(ro_digit):
+                    ro_num, ro_len = self.ro.parseRomanNumberString(formula[i+1:])
+                    formula = formula[:i] + str(ro_num) + formula[i + 1 + ro_len:]
+                else:
+                    iso, iso_len = self.times.parseToISO(formula[i+1:])
+                    if iso:
+                        factor = str(self.times.get_Factor(iso))
+                        formula = formula[:i] + factor + formula[i + 1 + iso_len:]
             else:
                 break
         return formula
                     
     def __parse_partial(self, formula: str) -> float:
-        formula = self.__replaceDateTimeParts(formula)
+        formula = self.__replaceSpecialParts(formula)
         flag = True
         while flag:
             flag = False

@@ -21,9 +21,12 @@ class RomanNumber:
                     }
 
     def is_roman_digit(self, digit: str) -> bool:
-        return digit in RomanNumber.__roman_digits
+        return digit.upper() in RomanNumber.__roman_digits
         
     def roman2decimal(self, roman_number: str) -> float:
+        return self.parseRomanNumberString(roman_number)[0]
+    
+    def parseRomanNumberString(self, roman_number: str) -> tuple:
         roman_number = roman_number.strip().upper()
         sum = 0
         i = 0
@@ -39,8 +42,8 @@ class RomanNumber:
                 sum += RomanNumber.__roman_digits[c]        
                 i += 1
             else:
-                raise ValueError(f"Error, invalid digit \"{c}\".")
-        return sum
+                break
+        return (sum, i,)
 
     def decimal2roman(self, value: float) -> str:
         integer = int(round(float(value)))
