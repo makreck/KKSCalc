@@ -29,7 +29,7 @@ class Config:
     def save(self):
         try:
             with open(self.path, "w") as file_stream:
-                json.dump(self.configData, file_stream)
+                json.dump(self.configData, file_stream, sort_keys=True, indent=4)
         except Exception as e:
             pass
         return self
