@@ -1,5 +1,4 @@
 from modules.calculator import Calculator
-from modules.roman_numbers import RomanNumber
 
 if __name__ == "__main__":
     Calculator().run()
@@ -11,3 +10,4 @@ if __name__ == "__main__":
 #  pip install pyinstaller
 #  pyinstaller --hidden-import=PIL._tkinter_finder --onefile --add-data "modules/images/*.png:images" main.py
     
+

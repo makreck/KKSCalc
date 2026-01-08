@@ -2,6 +2,8 @@ import math
 from modules.math_wrapper import MathWrapper
 from modules.times import Times
 from modules.roman_numbers import RomanNumber
+from modules.thermocouple import Thermocouple
+
 class Parser:
     
     __default_varlist = { 
@@ -15,6 +17,7 @@ class Parser:
     def __init__(self):
         self.times = Times()
         self.ro = RomanNumber()
+        self.tc = Thermocouple()
         self.clr_Variables()
     
     def get_Cmd(self) -> dict:
