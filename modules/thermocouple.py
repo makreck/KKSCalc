@@ -271,80 +271,80 @@ class Thermocouple:
         match thermoCoupleType:
             case "Type_B":
                 if (mV >= 0.291) and (mV <= 2.431):
-                    Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_B1)
+                    Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_B1)
                 else:
                     if (mV >= 2.431) and (mV <= 13.820):
-                        Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_B2)
+                        Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_B2)
 
             case "Type_E":
                 if (mV >= -8.825) and (mV <= 0.0):
-                    Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_E1)
+                    Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_E1)
                 else:
                     if (mV >= 0.0) and (mV <= 76.373):
-                        Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_E2)
+                        Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_E2)
 
             case "Type_J":
                 if (mV >= -8.095) and (mV <= 0.0):
-                    Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_J1)
+                    Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_J1)
                 else:
                     if (mV >= 0.0) and (mV <= 42.919):
-                        Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_J2)
+                        Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_J2)
                     else:
                         if (mV >= 42.919) and (mV <= 69.553):
-                            Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_J3)
+                            Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_J3)
 
             case "Type_K":
                 if (mV >= -5.891) and (mV < 0.0):
-                    Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_K1)
+                    Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_K1)
                 else:
                     if (mV >= 0.0) and (mV < 20.644):
-                        Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_K2)
+                        Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_K2)
                     else:
                         if (mV >= 20.644) and (mV <= 54.886):
-                            Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_K3)
+                            Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_K3)
 
             case "Type_N":
                 if (mV >= -3.990) and (mV < 0.0):
-                    Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_N1)
+                    Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_N1)
                 else:
                     if (mV >= 0.0) and (mV < 20.613):
-                        Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_N2)
+                        Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_N2)
                     else:
                         if (mV >= 20.613) and (mV <= 47.513):
-                            Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_N3)
+                            Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_N3)
 
             case "Type_R":
                 if (mV >= -0.226) and (mV < 1.923):
-                    Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_R1)
+                    Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_R1)
                 else:
                     if (mV >= 1.923) and (mV < 13.228):
-                        Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_R2)
+                        Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_R2)
                     else:
                         if (mV >= 11.361) and (mV < 19.739):
-                            Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_R3)
+                            Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_R3)
                         else:
                             if (mV >= 19.739) and (mV <= 21.103):
-                                Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_R4)
+                                Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_R4)
 
             case "Type_S":
                 if (mV >= -0.235) and (mV < 1.874):
-                    Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_S1)
+                    Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_S1)
                 else:
                     if (mV >= 1.874) and (mV < 11.950):
-                        Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_S2)
+                        Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_S2)
                     else:
                         if (mV >= 10.332) and (mV < 17.536):
-                            Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_S3)
+                            Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_S3)
                         else:
                             if (mV >= 17.536) and (mV <= 18.693):
-                                Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_S4)
+                                Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_S4)
 
             case "Type_T":
                 if (mV >= -5.603) and (mV < 0.0):
-                    Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_T1)
+                    Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_T1)
                 else:
                     if (mV >= 0.0) and (mV <= 20.872):
-                        Celsius = Thermocouple.polynomial(mV, pn_mV2C_Type_T2)
+                        Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_T2)
             case _:
                 pass
 
@@ -358,67 +358,67 @@ class Thermocouple:
         match thermoCoupleType:
             case "Type_B":
                 if (Celsius >= 0.0) and (Celsius < 630.615):
-                    mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_B1)
+                    mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_B1)
                 else:
                     if (Celsius >= 630.615) and (Celsius <= 1820.0):
-                        mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_B2)
+                        mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_B2)
 
             case "Type_E":
                 if (Celsius >= -270.0) and (Celsius < 0.0):
-                    mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_E1)
+                    mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_E1)
                 else:
                     if (Celsius >= 0.0) and (Celsius <= 1000.0):
-                        mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_E2)
+                        mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_E2)
 
             case "Type_J":
                 if (Celsius >= -210.0) and (Celsius < 760.0):
-                    mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_J1)
+                    mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_J1)
                 else:
                     if (Celsius >= 760.0) and (Celsius < 1200.0):
-                        mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_J2)
+                        mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_J2)
 
             case "Type_K":
                 if (Celsius >= -270.0) and (Celsius <= 0.0):
-                    mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_K1)
+                    mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_K1)
                 else:
                     if (Celsius >= 0.0) and (Celsius <= 1372.0):
                         T2 = Celsius - 126.9686
                         T2 = (0.1185976 * math.exp(-0.0001183432 * (T2 * T2)))
-                        mV = T2 + Thermocouple.polynomial(Celsius, pn_C2mV_Type_K2)
+                        mV = T2 + self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_K2)
 
             case "Type_N":
                 if (Celsius >= -270.0) and (Celsius <= 0.0):
-                    mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_N1)
+                    mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_N1)
                 else:
                     if (Celsius >= 0.0) and (Celsius <= 1372.0):
-                        mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_N2)
+                        mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_N2)
 
             case "Type_R":
                 if (Celsius >= -50.0) and (Celsius < 1064.18):
-                    mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_R1)
+                    mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_R1)
                 else:
                     if (Celsius >= 1064.18) and (Celsius < 1664.5):
-                        mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_R2)
+                        mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_R2)
                     else:
                         if (Celsius >= 1664.5) and (Celsius <= 1768.1):
-                            mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_R3)
+                            mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_R3)
 
             case "Type_S":
                 if (Celsius >= -50.0) and (Celsius < 1064.18):
-                    mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_S1)
+                    mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_S1)
                 else:
                     if (Celsius >= 1064.18) and (Celsius < 1664.5):
-                        mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_S2)
+                        mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_S2)
                     else:
                         if (Celsius >= 1664.5) and (Celsius <= 1768.1):
-                            mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_S3)
+                            mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_S3)
 
             case "Type_T":
                 if (Celsius >= -270.0) and (Celsius < 0.0):
-                    mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_T1)
+                    mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_T1)
                 else:
                     if (Celsius >= 0.0) and (Celsius <= 400.0):
-                        mV = Thermocouple.polynomial(Celsius, pn_C2mV_Type_T2)
+                        mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_T2)
 
             case _:
                 pass
