@@ -5,7 +5,6 @@ from modules.math_wrapper import MathWrapper
 from modules.times import Times
 from modules.roman_numbers import RomanNumber
 from modules.thermocouple import Thermocouple
-# from modules import Parser
 
 class Calculator:
 
