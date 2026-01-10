@@ -1,12 +1,11 @@
 import sys
 import json
-from modules.parser import Parser
 from modules.math_wrapper import MathWrapper
 from pathlib import Path
 
 class Config:
     __default_main_window = { "x": 64, "y": 64, "width": 640, "height": 480, }
-     
+
     def __init__(self):
         self.init()
         self.path = self.get_AppPath("/config.json")
