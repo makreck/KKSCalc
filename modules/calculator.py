@@ -106,7 +106,7 @@ class Calculator:
     def parse(self, formula: str) -> float:
         if not formula:
             return ( 0.0, "Error", False )
-        if formula.startswith("."):
+        if formula.strip().startswith("."):
             result = self.cmd(formula)
             formula = str(result[0])
             if result[1] != "OK" or result[2] != 1 or self.ro.is_roman_number_string(formula):
@@ -206,12 +206,9 @@ class Calculator:
         return string
 
     def __filter_varname(self, name: str) -> str:
-        if not name:
-            return None
-        
+        if not name: return None
         name = name.strip().replace("_", "").replace(",", ".").lower()
-        if name[0].isnumeric():
-            return 
+        if name[0].isnumeric(): return 
         _name = ""
         cmp = ""
         flag = False
@@ -337,7 +334,7 @@ class Calculator:
         return MathWrapper.get_AngleMode()
 
     def cmd(self, command: str):
-        command = command.strip().replace(" ", ",").split(",")
+        command = list(filter(None, command.strip().replace(" ", ",").split(",")))
         cmdFunction = Calculator.__funclist.get(command[0], None)
         if cmdFunction != None:
             func = getattr(self, cmdFunction[0])
