@@ -21,6 +21,8 @@ class Calculator:
         ".round": ( "func_round", "Round results for business use" ),
         ".reuse": ( "func_reuse", "Re-use result for next calculation" ),
         ".rom":   ( "func_roman", "Convert given number into roman digits" ),
+        ".tcmvc": ( "func_tcmvc", "Convert thermocouple voltage in mV into °Celsius" ),
+        ".tccmv": ( "func_tccmv", "Convert °Celsius into thermocouple voltage in mV" ),
         ".help":  ( "func_help",  "Show common or specific help" ),
         ".exit":  ( "func_exit",  "Terminate application" ),
     }
@@ -136,6 +138,8 @@ class Calculator:
                     if iso:
                         factor = str(self.times.get_Factor(iso))
                         formula = formula[:i] + factor + formula[i + 1 + iso_len:]
+                    else:
+                        break
             else:
                 break
         return formula
@@ -160,7 +164,7 @@ class Calculator:
                         k = start
                         while (k >= 0) and (formula[k].isalnum()): k -= 1
                         inner = formula[k-1:i+1]
-                        result = self.get_initialized_variable(inner)
+                        result = self.get_InitializedVariable(inner)
                         if result[1]:
                             inner_value = result[0]
                             formula = formula.replace(inner, str(inner_value))
@@ -177,6 +181,10 @@ class Calculator:
 
     def __parse(self, formula: str) -> float:
         while True:
+            if self.is_VariableExisting(formula):
+                result = self.get_InitializedVariable(formula)
+                if result[1]:
+                    return (result[0], "OK", 1)
             try:
                 return ( eval(formula, self.get_VariableContent(), self.get_Cmd()), "OK", True )
             except NameError as ne:
@@ -250,7 +258,7 @@ class Calculator:
         if name:
             if name == "pi" or name == "e":
                 raise ValueError(f"Not allowed to change common constant \"{name}\".")
-            self.__varlist[name] = float(value)
+            self.__varlist[name] = value # *** float(value)
 
     def normalize_variable_name(self, name: str) -> str:
         length = len(name)
@@ -268,9 +276,9 @@ class Calculator:
                     return None
             index = int(float(var_index))
             name = f"{name[:length]}[{str(index)}]"
-        return name
+        return name.lower()
 
-    def get_initialized_variable(self, name: str) -> tuple:
+    def get_InitializedVariable(self, name: str) -> tuple:
         if not self.is_ValidVariable(name):
             return (0.0, False)
         name = self.normalize_variable_name(name)
@@ -280,7 +288,7 @@ class Calculator:
         value = self.__varlist.get(name)
         if value == None:
             return (0.0, False)
-        return (value, True)                    
+        return (value, True)
 
     def is_ValidVariable(self, name:str) -> bool:
         name = self.normalize_variable_name(name)
@@ -296,7 +304,7 @@ class Calculator:
 
     def is_VariableExisting(self, name: str) -> bool:
         if name == None: return False
-        value = self.__varlist.get(name)
+        value = self.__varlist.get(name.lower())
         return value != None
 
     def get_Variable(self, name: str):
@@ -346,7 +354,6 @@ class Calculator:
         return (0.0, "OK", 2 )
         
     def func_cls(self, parameters = None):
-        print("\033c") # *** clear terminal output
         self.gui.clear()
         return (0.0, "OK", 0 )
 
@@ -396,8 +403,24 @@ class Calculator:
         try:
             number = int(float(text))
         except:
-            number = text
+            if not self.ro.is_roman_number_string(text):
+                result = self.parse(text)
+                number = result[0] # *** int(float(result[0]))
+            else:
+                number = text
         return (self.parse_RomanNumber(number), "OK", 1 )
+
+    def func_tcmvc(self, parameters = None):
+        if len(parameters) != 3:
+            return (0.0, "Error, invalid parameters")
+        result = self.parse(parameters[2])
+        return ( self.tc.mV_to_Celsius(parameters[1], result[0]), "OK", 1 )
+
+    def func_tccmv(self, parameters = None):
+        if len(parameters) != 3:
+            return (0.0, "Error, invalid parameters")
+        result = self.parse(parameters[2])
+        return ( self.tc.Celsius_to_mV(parameters[1], result[0]), "OK", 1 )
 
     def guiCallback(self, id: Gui.Item, event = None):
         match id:

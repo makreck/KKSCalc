@@ -237,14 +237,14 @@ class Thermocouple:
     ]
 
     typeSpecTable = {
-        "Type_B": (    0.0, +1820.0 ),
-        "Type_E": ( -270.0, +1000.0 ),
-        "Type_J": ( -210.0, +1200.0 ),
-        "Type_K": ( -270.0, +1300.0 ),
-        "Type_N": ( -270.0, +1300.0 ),
-        "Type_R": (  -50.0, +1768.0 ),
-        "Type_S": (  -50.0, +1768.0 ),
-        "Type_T": ( -270.0,  +400.0 ),
+        "B": (    0.0, +1820.0 ),
+        "E": ( -270.0, +1000.0 ),
+        "J": ( -210.0, +1200.0 ),
+        "K": ( -270.0, +1300.0 ),
+        "N": ( -270.0, +1300.0 ),
+        "R": (  -50.0, +1768.0 ),
+        "S": (  -50.0, +1768.0 ),
+        "T": ( -270.0,  +400.0 ),
     }
 
     def __init__(self):
@@ -265,25 +265,27 @@ class Thermocouple:
 
     # Returns the thermo voltage in mV from a given temperature in °C
     # regarding the given Thermocouple type:
-    def mV_to_Celsius(thermoCoupleType,  mV):
+    def mV_to_Celsius(self, thermoCoupleType, mV) -> float:
+        if type(mV) == str:
+            mV = float(mV)
         Celsius = 0.0
-
-        match thermoCoupleType:
-            case "Type_B":
+        c = thermoCoupleType.upper()
+        match c:
+            case "B":
                 if (mV >= 0.291) and (mV <= 2.431):
                     Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_B1)
                 else:
                     if (mV >= 2.431) and (mV <= 13.820):
                         Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_B2)
 
-            case "Type_E":
+            case "E":
                 if (mV >= -8.825) and (mV <= 0.0):
                     Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_E1)
                 else:
                     if (mV >= 0.0) and (mV <= 76.373):
                         Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_E2)
 
-            case "Type_J":
+            case "J":
                 if (mV >= -8.095) and (mV <= 0.0):
                     Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_J1)
                 else:
@@ -293,7 +295,7 @@ class Thermocouple:
                         if (mV >= 42.919) and (mV <= 69.553):
                             Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_J3)
 
-            case "Type_K":
+            case "K":
                 if (mV >= -5.891) and (mV < 0.0):
                     Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_K1)
                 else:
@@ -303,7 +305,7 @@ class Thermocouple:
                         if (mV >= 20.644) and (mV <= 54.886):
                             Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_K3)
 
-            case "Type_N":
+            case "N":
                 if (mV >= -3.990) and (mV < 0.0):
                     Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_N1)
                 else:
@@ -313,7 +315,7 @@ class Thermocouple:
                         if (mV >= 20.613) and (mV <= 47.513):
                             Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_N3)
 
-            case "Type_R":
+            case "R":
                 if (mV >= -0.226) and (mV < 1.923):
                     Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_R1)
                 else:
@@ -326,7 +328,7 @@ class Thermocouple:
                             if (mV >= 19.739) and (mV <= 21.103):
                                 Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_R4)
 
-            case "Type_S":
+            case "S":
                 if (mV >= -0.235) and (mV < 1.874):
                     Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_S1)
                 else:
@@ -339,45 +341,47 @@ class Thermocouple:
                             if (mV >= 17.536) and (mV <= 18.693):
                                 Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_S4)
 
-            case "Type_T":
+            case "T":
                 if (mV >= -5.603) and (mV < 0.0):
                     Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_T1)
                 else:
                     if (mV >= 0.0) and (mV <= 20.872):
                         Celsius = self.polynomial(mV, Thermocouple.pn_mV2C_Type_T2)
             case _:
-                pass
+                raise ValueError(f"Invalid thermocouple type \"{c}\"")
 
         return Celsius
 
     # Returns temperature in °C from a given thermo voltage in mV
     # regarding the given Thermocouple type:
-    def Celsius_to_mV(thermoCoupleType,  Celsius):
+    def Celsius_to_mV(self, thermoCoupleType, Celsius) -> float:
+        if type(Celsius) == str:
+            Celsius = float(Celsius)
         mV = 0.0
-
-        match thermoCoupleType:
-            case "Type_B":
+        c = thermoCoupleType.upper()
+        match c:
+            case "B":
                 if (Celsius >= 0.0) and (Celsius < 630.615):
                     mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_B1)
                 else:
                     if (Celsius >= 630.615) and (Celsius <= 1820.0):
                         mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_B2)
 
-            case "Type_E":
+            case "E":
                 if (Celsius >= -270.0) and (Celsius < 0.0):
                     mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_E1)
                 else:
                     if (Celsius >= 0.0) and (Celsius <= 1000.0):
                         mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_E2)
 
-            case "Type_J":
+            case "J":
                 if (Celsius >= -210.0) and (Celsius < 760.0):
                     mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_J1)
                 else:
                     if (Celsius >= 760.0) and (Celsius < 1200.0):
                         mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_J2)
 
-            case "Type_K":
+            case "K":
                 if (Celsius >= -270.0) and (Celsius <= 0.0):
                     mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_K1)
                 else:
@@ -386,14 +390,14 @@ class Thermocouple:
                         T2 = (0.1185976 * math.exp(-0.0001183432 * (T2 * T2)))
                         mV = T2 + self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_K2)
 
-            case "Type_N":
+            case "N":
                 if (Celsius >= -270.0) and (Celsius <= 0.0):
                     mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_N1)
                 else:
                     if (Celsius >= 0.0) and (Celsius <= 1372.0):
                         mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_N2)
 
-            case "Type_R":
+            case "R":
                 if (Celsius >= -50.0) and (Celsius < 1064.18):
                     mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_R1)
                 else:
@@ -403,7 +407,7 @@ class Thermocouple:
                         if (Celsius >= 1664.5) and (Celsius <= 1768.1):
                             mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_R3)
 
-            case "Type_S":
+            case "S":
                 if (Celsius >= -50.0) and (Celsius < 1064.18):
                     mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_S1)
                 else:
@@ -413,7 +417,7 @@ class Thermocouple:
                         if (Celsius >= 1664.5) and (Celsius <= 1768.1):
                             mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_S3)
 
-            case "Type_T":
+            case "T":
                 if (Celsius >= -270.0) and (Celsius < 0.0):
                     mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_T1)
                 else:
@@ -421,6 +425,6 @@ class Thermocouple:
                         mV = self.polynomial(Celsius, Thermocouple.pn_C2mV_Type_T2)
 
             case _:
-                pass
+                raise ValueError(f"Invalid thermocouple type \"{c}\"")
 
         return (mV)
