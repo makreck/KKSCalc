@@ -149,6 +149,19 @@ class Parser:
 
         return name
         
+    def parse_RomanNumber(self, number) -> float:
+        if type(number) == str:
+            if self.ro.is_roman_number_string(number):
+                return self.ro.roman2decimal(number)
+            else:
+                try:
+                    number = float(number)
+                except:        
+                    raise ValueError("Not a roman number")
+        if type(number) == float or type(number) == int:
+            return self.ro.decimal2roman(number)
+        return (0.0)
+
     def set_Variable(self, name: str, value = 0.0):
         name = self.__filter_varname(name)
         if name:

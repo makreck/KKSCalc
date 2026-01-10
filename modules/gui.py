@@ -201,6 +201,7 @@ class Gui():
         self.editor = tk.Text(self.frame_right, borderwidth=0, font=self.editorFont)
         self.editor.tag_config("negative", foreground="red")
         self.editor.tag_config("positive", foreground="blue")
+        self.editor.tag_config("neutral",  foreground="gray")
         self.editor.pack(padx=4.0, pady=4.0, fill="both", expand=True)
         self.editor.bind("<Return>", self.handle_EditorEvent)
 
@@ -224,10 +225,13 @@ class Gui():
 
     def resultOutput(self, result: tuple, index, hasequ: bool):
         if hasequ and (result[2] == 1):
-            text = self.get_ResultString(result[0])
-            self.editor.insert(index, text, "positive" if result[0] >= 0 else "negative")
+            text, colorAttrib = self.get_ResultString(result[0])
+            self.result.config(text=text)
+            self.editor.insert(index, text, colorAttrib)
             self.editor.insert(index, "=")
             if self.reuse:
+                if text.startswith("\""):
+                    text = "#" + text.strip("\"")
                 end = self.editor.index("insert lineend")
                 self.editor.insert(end, "\n" + text)
                 return "break"
@@ -263,6 +267,8 @@ class Gui():
         self.statusline.config(text=status)
         
     def get_ResultString(self, value: float) -> str:
+        if type(value) == str:
+            return (f"\"{value}\"", "neutral" )
         self.resultValue = float(value)
         if self.round:
             value = round(value, 2)
@@ -275,10 +281,12 @@ class Gui():
                 result = f"{value:.2f}"
             else:
                 result = str(value)
-        return result        
+        colorAttrib = "positive" if value >= 0 else "negative"
+        return (result, colorAttrib)
     
     def set_Result(self, value: float):
-        self.result.config(text=self.get_ResultString(value))
+        text, colorAttrib = self.get_ResultString(value)
+        self.result.config(text=text)
 
     def get_Result(self) -> float:
         return self.resultValue

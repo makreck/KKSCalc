@@ -23,6 +23,12 @@ class RomanNumber:
     def is_roman_digit(self, digit: str) -> bool:
         return digit.upper() in RomanNumber.__roman_digits
         
+    def is_roman_number_string(self, string: str) -> bool:
+        for c in string:
+            if not self.is_roman_digit(c):
+                return False
+        return True
+        
     def roman2decimal(self, roman_number: str) -> float:
         return self.parseRomanNumberString(roman_number)[0]
     
@@ -46,7 +52,7 @@ class RomanNumber:
         return (sum, i,)
 
     def decimal2roman(self, value: float) -> str:
-        integer = int(round(float(value)))
+        integer = int(round(float(value), 0))
         roman_number = ""
         for key in RomanNumber.__roman_digits.keys():
             value = RomanNumber.__roman_digits[key]

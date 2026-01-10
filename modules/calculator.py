@@ -5,12 +5,28 @@ from modules.config import Config
 from modules.math_wrapper import MathWrapper        
 
 class Calculator:
+
+    funcList = {
+        ".cls":   ( "func_cls",   "Clear editor" ),
+        ".del":   ( "func_del",   "Delete variables" ),
+        ".res":   ( "func_res",   "Reset, delete variables, clear editor" ),
+        ".deg":   ( "func_deg",   "Use degrees for trigonometric functions" ),
+        ".rad":   ( "func_rad",   "Use radians for trigonometric functions" ),
+        ".copy":  ( "func_copy",  "Copy result to clipboard" ),
+        ".dec":   ( "func_dec",   "Use decimal system for outputs" ),
+        ".hex":   ( "func_hex",   "Use hexadecimal system for outputs" ),
+        ".bin":   ( "func_bin",   "Use binary system for outputs" ),
+        ".round": ( "func_round", "Round results for business use" ),
+        ".reuse": ( "func_reuse", "Re-use result for next calculation" ),
+        ".rom":   ( "func_roman", "Convert given number into roman digits" ),
+        ".help":  ( "func_help",  "Show common or specific help" ),
+        ".exit":  ( "func_exit",  "Terminate application" ),
+    }
     
     def __init__(self):
         self.parser = Parser()
         self.cfg = Config().load()
         self.gui = Gui(self.guiCallback).app_window(self.cfg.get_WindowPos("MainWindow"))
-        self.setupFunctionList()
         self.setupParser()
         self.setupGui()
         
@@ -27,23 +43,6 @@ class Calculator:
         self.gui.set_VariableContent(self.parser.get_VariableContent())
         self.gui.set_ScreenContent(self.cfg.get_ScreenContent())
         self.defineNumberFormat(self.cfg.get_NumberFormat())
-
-    def setupFunctionList(self):
-        self.funclist = {
-            ".cls":   ( self.func_cls,   "Clear editor" ),
-            ".del":   ( self.func_del,   "Delete variables" ),
-            ".res":   ( self.func_res,   "Reset, delete variables, clear editor" ),
-            ".deg":   ( self.func_deg,   "Use degrees for trigonometric functions" ),
-            ".rad":   ( self.func_rad,   "Use radians for trigonometric functions" ),
-            ".copy":  ( self.func_copy,  "Copy result to clipboard" ),
-            ".dec":   ( self.func_dec,   "Use decimal system for outputs" ),
-            ".hex":   ( self.func_hex,   "Use hexadecimal system for outputs" ),
-            ".bin":   ( self.func_bin,   "Use binary system for outputs" ),
-            ".round": ( self.func_round, "Round results for business use" ),
-            ".reuse": ( self.func_reuse, "Re-use result for next calculation" ),
-            ".help":  ( self.func_help,  "Show common or specific help" ),
-            ".exit":  ( self.func_exit,  "Terminate application" ),
-            }
 
     def func_exit(self, parameters = None):
         self.gui.closeWindow()
@@ -97,6 +96,16 @@ class Calculator:
         self.gui.set_ReUse(self.gui.set_ButtonPressed(Gui.Item.TB_ReUse, self.cfg.set_reuse(not self.cfg.get_reuse())))
         return (0.0, "OK", 2 )
 
+    def func_roman(self, parameters = None):
+        if parameters == None or len(parameters) < 2:
+            raise ValueError("Invalid parameter list")
+        text = str(parameters[1]).upper().strip().strip("\"")
+        try:
+            number = int(float(text))
+        except:
+            number = text
+        return (self.parser.parse_RomanNumber(number), "OK", 1 )
+
     def defineNumberFormat(self, fmt: str):
         fmt = fmt[:3].strip().lower()
         self.cfg.set_NumberFormat(fmt)
@@ -122,9 +131,10 @@ class Calculator:
 
     def cmd(self, command: str):
         command = command.strip().replace(" ", ",").split(",")
-        cmdFunction = self.funclist.get(command[0], None)
+        cmdFunction = Calculator.funcList.get(command[0], None)
         if cmdFunction != None:
-            return cmdFunction[0](command)
+            func = getattr(self, cmdFunction[0])
+            return func(command)
         else:
             raise SyntaxError(f"Invalid command \"{command}\"")
 
