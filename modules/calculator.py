@@ -92,7 +92,7 @@ class Calculator:
         result = (0.0, "OK", False)
         elements = string.strip().lower().replace(",", ".").split("=")
         try:
-            result = self.parse(elements[-1]) # **** .replace(" ", ""))
+            result = self.parse(elements[-1])
             if (len(elements) > 1) and result[2]:
                 self.set_Variable(elements[0], result[0])
             self.gui.set_VariableContent(self.get_VariableContent())
@@ -102,17 +102,6 @@ class Calculator:
 
     def get_Cmd(self) -> dict:
         return MathWrapper.get_CommandList()
-
-    def parse(self, formula: str) -> float:
-        if not formula:
-            return ( 0.0, "Error", False )
-        if formula.strip().startswith("."):
-            result = self.cmd(formula)
-            formula = str(result[0])
-            if result[1] != "OK" or result[2] != 1 or self.ro.is_roman_number_string(formula):
-                return result
-        formula = formula.replace("^", "**")
-        return self.__parse_partial(self.__filter_brackets(self.__substitude_specials(formula)))
 
     def __substitude_specials(self, formula: str) -> str:
         pos = -1
@@ -144,99 +133,6 @@ class Calculator:
                 break
         return formula
 
-    def __parse_partial(self, formula: str) -> float:
-        formula = self.__replaceSpecialParts(formula)
-        flag = True
-        while flag:
-            flag = False
-            count  = 0
-            start  = 0
-            length = len(formula)
-            for i in range(length):
-                c = formula[i]
-                if c == "[":
-                    if count == 0:
-                        start = i + 1
-                    count += 1
-                if c == "]":
-                    count -= 1
-                    if count == 0:
-                        k = start
-                        while (k >= 0) and (formula[k].isalnum()): k -= 1
-                        inner = formula[k-1:i+1]
-                        result = self.get_InitializedVariable(inner)
-                        if result[1]:
-                            inner_value = result[0]
-                            formula = formula.replace(inner, str(inner_value))
-                        else:
-                            inner = formula[start:i]
-                            inner_value = self.__parse_partial(inner)
-                            formula = formula[:start] + str(inner_value[0]) + formula[i:]
-                        flag = True
-                        break
-            if count > 0:
-                for i in range(count):
-                    formula = formula + "]"
-        return self.__parse(formula)
-
-    def __parse(self, formula: str) -> float:
-        while True:
-            if self.is_VariableExisting(formula):
-                result = self.get_InitializedVariable(formula)
-                if result[1]:
-                    return (result[0], "OK", 1)
-            try:
-                return ( eval(formula, self.get_VariableContent(), self.get_Cmd()), "OK", True )
-            except NameError as ne:
-                name = (str(ne).split("'"))[1]
-                self.set_Variable(name, 0.0)
-            except Exception as e:
-                return ( 0.0, f"Error: {e}", False )
-
-    def __filter_brackets(self, string: str) ->str:
-        begin = string.count("(")
-        end = string.count(")")
-        if begin != end:
-            while begin < end:
-                string = "(" + string
-                begin += 1
-            while end < begin:
-                string = string + ")"
-                end += 1
-        return string
-
-    def __filter_varname(self, name: str) -> str:
-        if not name: return None
-        name = name.strip().replace("_", "").replace(",", ".").lower()
-        if name[0].isnumeric(): return 
-        _name = ""
-        cmp = ""
-        flag = False
-        for c in name:
-            if c == cmp: continue
-            if c == '[': 
-                cmp = c
-                flag = True
-            if c == ']': 
-                if not cmp: continue
-                cmp = ""
-            _name += c
-
-        if flag:
-            if cmp: _name += "]"
-            start = _name.find("[")
-            end = _name.find("]", start + 1)
-            substr = _name[start+1:end]
-            index = str(int(self.parse(substr)[0]))
-            _name = _name[0:start+1] + index + _name[end:]
-
-        name = ""
-        for c in _name:
-            if c.isalnum() or c == '_' or c == '[' or c == ']':
-                name += c
-
-        return name
-
     def parse_RomanNumber(self, number) -> float:
         if type(number) == str:
             if self.ro.is_roman_number_string(number):
@@ -250,12 +146,20 @@ class Calculator:
             return self.ro.decimal2roman(number)
         return (0.0)
 
+    def __get_variable_unchecked(self, name: str, def_value = 0):
+        if not self.is_VariableExisting(name):
+            value = def_value
+            self.__varlist[name] = value
+        else:
+            value = self.__varlist.get(name)
+        return value
+            
     def set_Variable(self, name: str, value = 0.0):
         name = self.__filter_varname(name)
         if name:
             if name == "pi" or name == "e":
                 raise ValueError(f"Not allowed to change common constant \"{name}\".")
-            self.__varlist[name] = value # *** float(value)
+            self.__varlist[name] = value
 
     def normalize_variable_name(self, name: str) -> str:
         length = len(name)
@@ -277,15 +181,14 @@ class Calculator:
 
     def get_InitializedVariable(self, name: str) -> tuple:
         if not self.is_ValidVariable(name):
-            return (0.0, False)
+            return (0.0, "Name error", 1)
         name = self.normalize_variable_name(name)
         if not self.is_VariableExisting(name):
             self.set_Variable(name, 0.0)
-            return (0.0, True)
+            return (0.0, "OK", 1)
         value = self.__varlist.get(name)
-        if value == None:
-            return (0.0, False)
-        return (value, True)
+        if value == None: value = 0.0
+        return (value, "OK", 1)
 
     def is_ValidVariable(self, name:str) -> bool:
         name = self.normalize_variable_name(name)
@@ -327,7 +230,9 @@ class Calculator:
         return self
 
     def set_AngleMode(self, mode = MathWrapper.AngleMode.DEG):
-        MathWrapper.set_AngleMode(mode)    
+        MathWrapper.set_AngleMode(mode)
+        self.gui.set_ButtonPressed(Gui.Item.TB_Deg, mode == MathWrapper.AngleMode.DEG)
+        self.gui.set_ButtonPressed(Gui.Item.TB_Rad, mode == MathWrapper.AngleMode.RAD)
         return self
 
     def get_AngleMode(self) -> MathWrapper.AngleMode:
@@ -462,3 +367,88 @@ class Calculator:
             case _:
                 print(f"GUI callback error: {id}")
         return None
+
+    def __filter_brackets(self, string: str) ->str:
+        begin = string.count("(")
+        end = string.count(")")
+        if begin != end:
+            while begin < end:
+                string = "(" + string
+                begin += 1
+            while end < begin:
+                string = string + ")"
+                end += 1
+        return string
+
+    def __filter_varname(self, name: str) -> str:
+        if not name: return None
+        name = name.strip().replace("_", "").replace(",", ".").lower()
+        if name[0].isnumeric(): return 
+
+        cnt = name.count("[")
+        if cnt != name.count("]"):
+            raise SyntaxError("Error, brackets not matching")
+        
+        if cnt == 0:
+            return name
+        
+        while True:
+            end     = name.find("]")
+            begin   = name.rfind("[", 0, end)
+            prev    = name.rfind("[", 0, begin)
+            formula = name[begin+1:end]
+            if not formula.isnumeric():
+                result = self.__parse(formula)
+                if result[1] != "OK":
+                    raise ValueError(f"Error, unable to parse \"{formula}\"")
+                value = result[0]
+                if type(value) == float:
+                    value = int(value)
+                name = name[:begin+1] + str(value) + name[end:]
+                continue
+
+            sub_name = name[prev+1:end+1]
+            cnt = name.count("[")
+            if cnt < 2:
+                return sub_name
+            
+            value = self.__get_variable_unchecked(sub_name)
+            if type(value) == float:
+                value = int(value)
+            name = name[:prev+1] + str(value) + name[end+1:]
+
+    def __parse(self, formula: str) -> tuple:
+        while True:
+            if self.is_VariableExisting(formula):
+                return self.get_InitializedVariable(formula)
+
+            if "[" in formula:
+                end = formula.find("]")
+                begin = formula.rfind("[", 0, end) - 1
+                while begin > -1 and formula[begin].isalnum():
+                    begin -= 1
+                name = formula[begin+1:end+1]
+                name = self.__filter_varname(name)
+                value = self.get_InitializedVariable(name)
+                formula = formula[:begin+1] + str(value[0]) + formula[end+1:]
+                continue
+            
+            if formula.strip().startswith("."):
+                result = self.cmd(formula)
+                formula = str(result[0])
+                if result[1] != "OK" or result[2] != 1 or self.ro.is_roman_number_string(formula):
+                    return result
+                
+            try:
+                return ( eval(formula, self.get_VariableContent(), self.get_Cmd()), "OK", True )
+            except NameError as ne:
+                name = (str(ne).split("'"))[1]
+                self.set_Variable(name, 0.0)
+            except Exception as e:
+                return ( 0.0, f"Error: {e}", False )
+
+    def parse(self, formula: str) -> float:
+        if not formula:
+            return ( 0.0, "Error", False )
+        formula = self.__replaceSpecialParts(formula.replace("^", "**"))
+        return self.__parse(self.__filter_brackets(self.__substitude_specials(formula)))
