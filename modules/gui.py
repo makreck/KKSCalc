@@ -194,8 +194,21 @@ class Gui():
         self.varlist.column("value", width = 192)
         self.varlist.tag_configure("even", background="#FFFFFF")
         self.varlist.tag_configure("odd",  background="#E0E0FF")
-        self.varlist.bind('<Double-1>', self.handle_VarListEvent) # partial(self.callback, Gui.Item.VarList))
+        self.varlist.bind('<Double-1>', self.handle_VarListEvent)
         self.varlist.pack(padx=4.0, pady=4.0, fill="both", expand=True)
+
+    #     self.varlist_canvas = tk.Canvas(self.varlist, highlightthickness=0, bg='white')
+    #     self.varlist_canvas.place(in_=self.varlist, relwidth=1, relheight=1)
+    #     self.varlist.bind('<Configure>', self.draw_grid)
+    #     self.varlist_canvas.bind('<Configure>', self.draw_grid)
+        
+    # def draw_grid(self, event=None):
+    #     self.varlist_canvas.delete('grid')
+    #     cy = self.varlist.winfo_height()
+    #     x = 0
+    #     for col in self.varlist['columns']:
+    #         x += self.varlist.column(col)['width']
+    #         self.varlist_canvas.create_line(x, 0, x, cy, fill='gray', width=1, tags='grid')
 
     def createEditor(self):
         self.editor = tk.Text(self.frame_right, borderwidth=0, font=self.editorFont)
@@ -223,8 +236,8 @@ class Gui():
         self.set_Status(result[1])
         return self.resultOutput(result, end, not "=" in text)
 
-    def resultOutput(self, result: tuple, index, hasequ: bool):
-        if hasequ and (result[2] == 1):
+    def resultOutput(self, result: tuple, index, has_equ: bool):
+        if has_equ and (result[2] == 1):
             text, colorAttrib = self.get_ResultString(result[0])
             self.result.config(text=text)
             self.editor.insert(index, text, colorAttrib)
@@ -256,7 +269,15 @@ class Gui():
         self.varlist.delete(*self.varlist.get_children())
         n = 0
         for entry in self.var.keys():
-            self.varlist.insert("", "end", values=(entry, self.var[entry]), tags=("odd") if (n % 2) == 0 else ("even"))
+            value = self.var[entry]
+            if type(value) == float or type(value) == int:
+                entry_str = f"{float(value):18.9f}".rstrip("0")
+                if entry_str.endswith("."):
+                    entry_str = entry_str + "0"
+                entry_str = entry_str.replace(" ", "\u2007")
+            else:
+                entry_str = str(value)
+            self.varlist.insert("", "end", values=(entry, entry_str), tags=("odd") if (n % 2) == 0 else ("even"))
             n += 1
     
     def put_EditString(self, string: str):
