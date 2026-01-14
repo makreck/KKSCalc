@@ -365,6 +365,8 @@ class Calculator:
             name = name[:prev+1] + str(value) + name[end+1:]
 
     def __prepare_parsing(self, formula: str) -> str:
+        formula = formula.replace("^", "**").strip()
+
         # Filter odd brackets
         begin = formula.count("(")
         end = formula.count(")")
@@ -377,7 +379,6 @@ class Calculator:
                 end += 1
 
         # Replace power variants with parsable versions
-        formula = formula.replace("^", "**")
         sub = ""
         begin = 0
         while begin < len(formula):
@@ -439,7 +440,7 @@ class Calculator:
                 formula = formula[:begin+1] + str(value[0]) + formula[end+1:]
                 continue
             
-            if formula.strip().startswith("."):
+            if formula.startswith(".") and not formula[1].isnumeric():
                 result = self.cmd(formula)
                 formula = str(result[0])
                 if result[1] != "OK" or result[2] != 1 or self.ro.is_roman_number_string(formula):
