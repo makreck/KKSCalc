@@ -197,19 +197,6 @@ class Gui():
         self.varlist.bind('<Double-1>', self.handle_VarListEvent)
         self.varlist.pack(padx=4.0, pady=4.0, fill="both", expand=True)
 
-    #     self.varlist_canvas = tk.Canvas(self.varlist, highlightthickness=0, bg='white')
-    #     self.varlist_canvas.place(in_=self.varlist, relwidth=1, relheight=1)
-    #     self.varlist.bind('<Configure>', self.draw_grid)
-    #     self.varlist_canvas.bind('<Configure>', self.draw_grid)
-        
-    # def draw_grid(self, event=None):
-    #     self.varlist_canvas.delete('grid')
-    #     cy = self.varlist.winfo_height()
-    #     x = 0
-    #     for col in self.varlist['columns']:
-    #         x += self.varlist.column(col)['width']
-    #         self.varlist_canvas.create_line(x, 0, x, cy, fill='gray', width=1, tags='grid')
-
     def createEditor(self):
         self.editor = tk.Text(self.frame_right, borderwidth=0, font=self.editorFont)
         self.editor.tag_config("negative", foreground="red")
@@ -279,10 +266,10 @@ class Gui():
                 entry_str = str(value)
             self.varlist.insert("", "end", values=(entry, entry_str), tags=("odd") if (n % 2) == 0 else ("even"))
             n += 1
-    
+
     def put_EditString(self, string: str):
         aktuelle_position = self.editor.index("insert")
-        self.editor.insert(aktuelle_position, string)
+        self.editor.insert(aktuelle_position, string.strip())
 
     def set_Status(self, status: str):
         self.statusline.config(text=status)
@@ -396,4 +383,3 @@ class Gui():
         else:
             base_path = Path(__file__).parent
         return str(base_path) + "/images/" + image_file
-
