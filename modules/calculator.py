@@ -27,13 +27,25 @@ class Calculator:
         ".exit":  ( "func_exit",  "Terminate application" ),
     }
 
+    __pow_substitudes = {
+        "⁰": "0",
+        "¹": "1",
+        "²": "2",
+        "³": "3",
+        "⁴": "4",
+        "⁵": "5",
+        "⁶": "6",
+        "⁷": "7",
+        "⁸": "8",
+        "⁹": "9",
+        "⁻": "-",
+        "⁺": "+",
+    }
+
     __default_varlist = { 
             "pi": math.pi,
             "e":  math.e,
         }
-
-    __exponental_specials    = "⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺"
-    __exponental_substitudes = "0123456789-+"
 
     def __init__(self):
         self.cfg   = Config().load()
@@ -103,36 +115,6 @@ class Calculator:
     def get_Cmd(self) -> dict:
         return MathWrapper.get_CommandList()
 
-    def __substitude_specials(self, formula: str) -> str:
-        pos = -1
-        for i in range(len(formula)):
-            n = Calculator.__exponental_specials.find(formula[i])
-            if n != -1:
-                if pos == -1: pos = i
-                formula = formula.replace(Calculator.__exponental_specials[n], Calculator.__exponental_substitudes[n])                
-        if pos > -1:
-            formula = formula[:pos] + "**" + formula[pos:]
-        return formula        
-
-    def __replaceSpecialParts(self, formula: str) -> str:
-        while True:
-            i = formula.find("#")
-            if i > -1:
-                ro_digit = formula[i+1]
-                if self.ro.is_roman_digit(ro_digit):
-                    ro_num, ro_len = self.ro.parseRomanNumberString(formula[i+1:])
-                    formula = formula[:i] + str(ro_num) + formula[i + 1 + ro_len:]
-                else:
-                    iso, iso_len = self.times.parseToISO(formula[i+1:])
-                    if iso:
-                        factor = str(self.times.get_Factor(iso))
-                        formula = formula[:i] + factor + formula[i + 1 + iso_len:]
-                    else:
-                        break
-            else:
-                break
-        return formula
-
     def parse_RomanNumber(self, number) -> float:
         if type(number) == str:
             if self.ro.is_roman_number_string(number):
@@ -153,7 +135,12 @@ class Calculator:
         else:
             value = self.__varlist.get(name)
         return value
-            
+
+    def get_InitializedVariable(self, name: str) -> tuple:
+        if not self.is_ValidVariable(name):
+            return (0.0, "Name error", 1)
+        return (self.__get_variable_unchecked(self.__filter_varname(name)), "OK", 1)
+
     def set_Variable(self, name: str, value = 0.0):
         name = self.__filter_varname(name)
         if name:
@@ -161,37 +148,8 @@ class Calculator:
                 raise ValueError(f"Not allowed to change common constant \"{name}\".")
             self.__varlist[name] = value
 
-    def normalize_variable_name(self, name: str) -> str:
-        length = len(name)
-        dot = 0
-        if ("[" in name) and ("]" in name):
-            length = name.index("[")
-            end = name.index("]")
-            var_index = name[length+1:end]
-            for c in var_index:
-                if c == ".":
-                    dot += 1
-                    if dot > 1:
-                        return None
-                if not c.isnumeric() and c != ".":
-                    return None
-            index = int(float(var_index))
-            name = f"{name[:length]}[{str(index)}]"
-        return name.lower()
-
-    def get_InitializedVariable(self, name: str) -> tuple:
-        if not self.is_ValidVariable(name):
-            return (0.0, "Name error", 1)
-        name = self.normalize_variable_name(name)
-        if not self.is_VariableExisting(name):
-            self.set_Variable(name, 0.0)
-            return (0.0, "OK", 1)
-        value = self.__varlist.get(name)
-        if value == None: value = 0.0
-        return (value, "OK", 1)
-
     def is_ValidVariable(self, name:str) -> bool:
-        name = self.normalize_variable_name(name)
+        name = self.__filter_varname(name)
         if name == None:
             return False
         length = len(name)
@@ -307,7 +265,7 @@ class Calculator:
         except:
             if not self.ro.is_roman_number_string(text):
                 result = self.parse(text)
-                number = result[0] # *** int(float(result[0]))
+                number = result[0]
             else:
                 number = text
         return (self.parse_RomanNumber(number), "OK", 1 )
@@ -368,18 +326,7 @@ class Calculator:
                 print(f"GUI callback error: {id}")
         return None
 
-    def __filter_brackets(self, string: str) ->str:
-        begin = string.count("(")
-        end = string.count(")")
-        if begin != end:
-            while begin < end:
-                string = "(" + string
-                begin += 1
-            while end < begin:
-                string = string + ")"
-                end += 1
-        return string
-
+    # Filter sub-expressions in variable names, parse and insert results
     def __filter_varname(self, name: str) -> str:
         if not name: return None
         name = name.strip().replace("_", "").replace(",", ".").lower()
@@ -417,6 +364,66 @@ class Calculator:
                 value = int(value)
             name = name[:prev+1] + str(value) + name[end+1:]
 
+    def __prepare_parsing(self, formula: str) -> str:
+        # Filter odd brackets
+        begin = formula.count("(")
+        end = formula.count(")")
+        if begin != end:
+            while begin < end:
+                formula = "(" + formula
+                begin += 1
+            while end < begin:
+                formula = formula + ")"
+                end += 1
+
+        # Replace power variants with parsable versions
+        formula = formula.replace("^", "**")
+        sub = ""
+        begin = 0
+        while begin < len(formula):
+            rep = Calculator.__pow_substitudes.get(formula[begin], "")
+            if rep:
+                if begin == 0:
+                    formula = rep + formula[1:]
+                    begin += 1
+                    continue
+                sub += rep
+                end = begin + 1
+                while (end < len(formula)) and (rep := Calculator.__pow_substitudes.get(formula[end], "")):
+                    sub += rep
+                    end += 1
+                if formula[begin - 1] == "(":
+                    formula = formula[:begin-1] + "**(" + sub + formula[end:]
+                else:
+                    formula = formula[:begin] + "**" + sub + formula[end:]
+                begin += len(sub)
+            begin += 1
+
+        # Parse special formats like date/time and roman numbers            
+        while True:
+            i = formula.find("#")
+            if i > -1:
+                ro_digit = formula[i+1]
+                if self.ro.is_roman_digit(ro_digit):
+                    ro_num, ro_len = self.ro.parseRomanNumberString(formula[i+1:])
+                    formula = formula[:i] + str(ro_num) + formula[i + 1 + ro_len:]
+                else:
+                    iso, iso_len = self.times.parseToISO(formula[i+1:])
+                    if iso:
+                        factor = str(self.times.get_Factor(iso))
+                        formula = formula[:i] + factor + formula[i + 1 + iso_len:]
+                    else:
+                        break
+            else:
+                break
+        return formula
+
+    # Parser main entry
+    def parse(self, formula: str) -> float:
+        if not formula: return ( 0.0, "Error", False )
+        return self.__parse(self.__prepare_parsing(formula))
+
+    # Sub-parser for already prepared strings
     def __parse(self, formula: str) -> tuple:
         while True:
             if self.is_VariableExisting(formula):
@@ -427,8 +434,7 @@ class Calculator:
                 begin = formula.rfind("[", 0, end) - 1
                 while begin > -1 and formula[begin].isalnum():
                     begin -= 1
-                name = formula[begin+1:end+1]
-                name = self.__filter_varname(name)
+                name = self.__filter_varname(formula[begin+1:end+1])
                 value = self.get_InitializedVariable(name)
                 formula = formula[:begin+1] + str(value[0]) + formula[end+1:]
                 continue
@@ -446,9 +452,3 @@ class Calculator:
                 self.set_Variable(name, 0.0)
             except Exception as e:
                 return ( 0.0, f"Error: {e}", False )
-
-    def parse(self, formula: str) -> float:
-        if not formula:
-            return ( 0.0, "Error", False )
-        formula = self.__replaceSpecialParts(formula.replace("^", "**"))
-        return self.__parse(self.__filter_brackets(self.__substitude_specials(formula)))
