@@ -210,7 +210,10 @@ class Calculator:
         exit()
         
     def func_help(self, parameters = None):
-        print("Help: ", parameters)
+        text = ""
+        for key in self.__funclist.keys():
+            text += f"{key:<8s} \t{self.__funclist[key][1]}\n"
+        self.gui.add_EditString(text)
         return (0.0, "OK", 2 )
         
     def func_cls(self, parameters = None):

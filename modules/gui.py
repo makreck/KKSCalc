@@ -271,6 +271,10 @@ class Gui():
         aktuelle_position = self.editor.index("insert")
         self.editor.insert(aktuelle_position, string.strip())
 
+    def add_EditString(self, string: str):
+        aktuelle_position = self.editor.index("end")
+        self.editor.insert(aktuelle_position, "\n" + string.strip())
+
     def set_Status(self, status: str):
         self.statusline.config(text=status)
         
