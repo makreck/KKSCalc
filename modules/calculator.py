@@ -256,20 +256,6 @@ class Calculator:
         self.gui.set_ReUse(self.gui.set_ButtonPressed(Gui.Item.TB_ReUse, self.cfg.set_reuse(not self.cfg.get_reuse())))
         return (0.0, "OK", 2 )
 
-    def func_roman(self, parameters = None):
-        if parameters == None or len(parameters) < 2:
-            raise ValueError("Invalid parameter list")
-        text = str(parameters[1]).upper().strip().strip("\"")
-        try:
-            number = int(float(text))
-        except:
-            if not self.ro.is_roman_number_string(text):
-                result = self.parse(text)
-                number = result[0]
-            else:
-                number = text
-        return (self.parse_RomanNumber(number), "OK", 1 )
-
     def func_tcmvc(self, parameters = None):
         if len(parameters) != 3:
             return (0.0, "Error, invalid parameters")
@@ -281,6 +267,42 @@ class Calculator:
             return (0.0, "Error, invalid parameters")
         result = self.parse(parameters[2])
         return ( self.tc.Celsius_to_mV(parameters[1], result[0]), "OK", 1 )
+
+    def func_roman(self, parameters = None):
+        if parameters == None or len(parameters) < 2:
+            raise ValueError("Invalid parameter list")
+        text = str(parameters[1]).strip().strip("\"")
+        for i in range(len(text)):
+            if not self.ro.is_roman_digit(text[i].upper()):
+                parameters[1] = text[:i]
+                parameters.append(text[i:])
+                break
+        p = list(filter(None, parameters))[1:]
+        sum = 0
+        mode = "DecimalToRoman"
+        for text in p:
+            op = "+"
+            if self.ro.is_roman_number_string(text):
+                result = (self.parse_RomanNumber(text), "OK", 1)
+                mode = "RomanToDecimal"
+            else:
+                if text[0] == "*": op = "*"
+                if text[0] == "/": op = "/"
+                if op != "+": text = text[1:]
+                result = self.__parse(text)
+
+            if result[1] == "OK":
+                if op == "+":
+                    sum += result[0]
+                elif op == "*":
+                    sum *= result[0]
+                elif op == "/" and result[0] != 0:
+                    sum /= result[0]
+                else:
+                    raise ZeroDivisionError(f"Parsing error with \"{text}\"")
+        if mode == "DecimalToRoman":
+            sum = self.ro.decimal2roman(sum)
+        return (sum, "OK", 1)
 
     def guiCallback(self, id: Gui.Item, event = None):
         match id:
@@ -453,3 +475,9 @@ class Calculator:
                 self.set_Variable(name, 0.0)
             except Exception as e:
                 return ( 0.0, f"Error: {e}", False )
+
+    def parse_number(self, text: str):
+        if self.ro.is_roman_number_string(text):
+            return (self.parse_RomanNumber(text), "OK", 1)
+        else:
+            return self._parse(text)
