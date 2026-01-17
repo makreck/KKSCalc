@@ -65,6 +65,8 @@ class Gui():
 
     def __init__(self, callback = None):
         self.root = tk.Tk()
+        #self.root.tk.call("tk", "scaling", 2.0)  # 1.0, 1.5, 2.0 ausprobieren
+        #self.root.tk.call("tk", "scaling", "-displayof", ".", 2.0)
         self.screen_width  = self.root.winfo_screenwidth()
         self.screen_height = self.root.winfo_screenheight()
         self.callback      = callback
