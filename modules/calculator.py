@@ -325,6 +325,8 @@ class Calculator:
                 self.cmd(".del")
             case Gui.Item.Menu_Reset:
                 self.cmd(".res")
+            case Gui.Item.Menu_Help:
+                self.cmd(".help")
             case Gui.Item.Menu_Exit:
                 self.cmd(".exit")
             case Gui.Item.TB_Trashcan:

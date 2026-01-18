@@ -14,32 +14,34 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 class Gui():
 
     class Item(Enum):
-        Cmd_onClose = "close"
-        VarList     = "var.event"
+        Cmd_onClose = "close",
+        VarList     = "var.event",
         Editor      = "editor.event"
         Result      = "result.event"
         Menu_Clear  = "menu.clear",
-        Menu_Delete = "menu.delete"
-        Menu_Reset  = "menu.reset"
+        Menu_Delete = "menu.delete",
+        Menu_Reset  = "menu.reset",
+        Menu_Help   = "menu_help",
         Menu_Exit   = "menu.exit",
-        TB_Sep      = "seperator"
+        TB_Sep      = "separator",
         TB_Trashcan = "button.clear",
         TB_Delete   = "button.delete"
         TB_ReUse    = "button.reuse",
         TB_Round    = "button.round",
-        TB_Copy     = "button_copy"
-        TB_Dec      = "button.decimal"
-        TB_Hex      = "button.hexadecimal"
-        TB_Bin      = "button.binary"
-        TB_Deg      = "button.degrees"
-        TB_Rad      = "button.radians"
+        TB_Copy     = "button_copy",
+        TB_Dec      = "button.decimal",
+        TB_Hex      = "button.hexadecimal",
+        TB_Bin      = "button.binary",
+        TB_Deg      = "button.degrees",
+        TB_Rad      = "button.radians",
 
     menudef = [
-        { "cascade": "File", "text": "Clear",  "id": Item.Menu_Clear,  },
-        { "cascade": "File", "text": "Delete", "id": Item.Menu_Delete, },
-        { "cascade": "File", "text": "Reset",  "id": Item.Menu_Reset,  },
-        { "cascade": "File", "text": "_sep_",  "id": None },
-        { "cascade": "File", "text": "Exit",   "id": Item.Menu_Exit,   },
+        { "cascade": "File", "text": "Clear",         "id": Item.Menu_Clear,  },
+        { "cascade": "File", "text": "Delete",        "id": Item.Menu_Delete, },
+        { "cascade": "File", "text": "Reset",         "id": Item.Menu_Reset,  },
+        { "cascade": "File", "text": "_sep_",         "id": None },
+        { "cascade": "File", "text": "Exit",          "id": Item.Menu_Exit,   },
+        { "cascade": "Help", "text": "Help commands", "id": Item.Menu_Help,   },
     ]
 
     tbdef = [
@@ -390,10 +392,31 @@ class Gui():
             base_path = Path(__file__).parent
         return str(base_path) + "/images/" + image_file
 
-    def display_popup(self, title: str, text: str):
-        help_win = tk.Toplevel(self.root)
-        help_win.title(title)
-        help_win.grab_set()
-        help_win.resizable(False, False)
-        ttk.Label(help_win, text=text, wraplength=300, justify="left").pack(padx=10, pady=10)
-        ttk.Button(help_win, text="Close", command=help_win.destroy).pack(pady=(0,10))
+    def get_position_of(self, widget) -> tuple:
+        geometry = widget.geometry() 
+        parts = re.findall(r'(\d+)x(\d+)\+(\d+)\+(\d+)', geometry)
+        if parts:
+            return ( parts[0][2], parts[0][3], parts[0][0], parts[0][1] ) 
+        return None
+
+    def center_window(self, widget, window):
+        widget.update_idletasks()
+        widget_pos = self.get_position_of(widget)
+        if widget_pos == None: return
+        window_pos = self.get_position_of(window)
+        if window_pos == None: return
+        w = int(widget_pos[2])
+        h = int(widget_pos[3])
+        x = int(window_pos[0]) + (int(window_pos[2]) - w) // 2
+        y = int(window_pos[1]) + (int(window_pos[3]) - h) // 2
+        widget.geometry(f"{w}x{h}+{x}+{y}")
+        widget.update_idletasks()
+
+    def display_popup(self, title = "Message", text = "Text."):
+        dialog_window = tk.Toplevel(self.root)
+        dialog_window.title(title)
+        dialog_window.grab_set()
+        dialog_window.resizable(False, False)
+        ttk.Label(dialog_window, text=text, wraplength=600, justify="left", font=self.varlistFont).pack(padx=10, pady=10)
+        ttk.Button(dialog_window, text="Close", command=dialog_window.destroy).pack(pady=(0,10))
+        self.center_window(dialog_window, self.root)
