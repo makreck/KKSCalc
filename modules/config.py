@@ -85,7 +85,6 @@ class Config:
         return self.configData.get("numformat", "dec")
         
     def get_AppPath(self, filename = "") -> Path:
-        path = sys.path[0]
         if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
             path = str(Path(sys._MEIPASS))
         else:
