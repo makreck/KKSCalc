@@ -7,6 +7,7 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import ttk
 from tkinter.font import Font
+from tkinter import scrolledtext
 from functools import partial
 from enum import Enum
 from PIL import Image, ImageDraw, ImageFont, ImageTk
@@ -14,34 +15,37 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 class Gui():
 
     class Item(Enum):
-        Cmd_onClose = "close",
-        VarList     = "var.event",
-        Editor      = "editor.event"
-        Result      = "result.event"
-        Menu_Clear  = "menu.clear",
-        Menu_Delete = "menu.delete",
-        Menu_Reset  = "menu.reset",
-        Menu_Help   = "menu_help",
-        Menu_Exit   = "menu.exit",
-        TB_Sep      = "separator",
-        TB_Trashcan = "button.clear",
-        TB_Delete   = "button.delete"
-        TB_ReUse    = "button.reuse",
-        TB_Round    = "button.round",
-        TB_Copy     = "button_copy",
-        TB_Dec      = "button.decimal",
-        TB_Hex      = "button.hexadecimal",
-        TB_Bin      = "button.binary",
-        TB_Deg      = "button.degrees",
-        TB_Rad      = "button.radians",
+        Cmd_onClose  = "close",
+        VarList      = "var.event",
+        Editor       = "editor.event"
+        Result       = "result.event"
+        Menu_Clear   = "menu.clear",
+        Menu_Delete  = "menu.delete",
+        Menu_Reset   = "menu.reset",
+        Menu_Help    = "menu_help",
+        Menu_License = "menu_license",
+        Menu_Exit    = "menu.exit",
+        TB_Sep       = "separator",
+        TB_Trashcan  = "button.clear",
+        TB_Delete    = "button.delete"
+        TB_ReUse     = "button.reuse",
+        TB_Round     = "button.round",
+        TB_Copy      = "button_copy",
+        TB_Dec       = "button.decimal",
+        TB_Hex       = "button.hexadecimal",
+        TB_Bin       = "button.binary",
+        TB_Deg       = "button.degrees",
+        TB_Rad       = "button.radians",
 
     menudef = [
-        { "cascade": "File", "text": "Clear",         "id": Item.Menu_Clear,  },
-        { "cascade": "File", "text": "Delete",        "id": Item.Menu_Delete, },
-        { "cascade": "File", "text": "Reset",         "id": Item.Menu_Reset,  },
-        { "cascade": "File", "text": "_sep_",         "id": None },
-        { "cascade": "File", "text": "Exit",          "id": Item.Menu_Exit,   },
-        { "cascade": "Help", "text": "Help commands", "id": Item.Menu_Help,   },
+        { "cascade": "File", "text": "Clear",           "id": Item.Menu_Clear,   },
+        { "cascade": "File", "text": "Delete",          "id": Item.Menu_Delete,  },
+        { "cascade": "File", "text": "Reset",           "id": Item.Menu_Reset,   },
+        { "cascade": "File", "text": "_sep_",           "id": None               },
+        { "cascade": "File", "text": "Exit",            "id": Item.Menu_Exit,    },
+
+        { "cascade": "Help", "text": "Help commands",   "id": Item.Menu_Help,    },
+        { "cascade": "Help", "text": "Display license", "id": Item.Menu_License, },
     ]
 
     tbdef = [
@@ -416,7 +420,7 @@ class Gui():
         dialog_window = tk.Toplevel(self.root)
         dialog_window.title(title)
         dialog_window.grab_set()
-        dialog_window.resizable(False, False)
-        ttk.Label(dialog_window, text=text, wraplength=600, justify="left", font=self.varlistFont).pack(padx=10, pady=10)
-        ttk.Button(dialog_window, text="Close", command=dialog_window.destroy).pack(pady=(0,10))
+        scrolled_text = scrolledtext.ScrolledText(dialog_window, wrap=tk.WORD, width=80, height=20, bg="lightgrey")
+        scrolled_text.insert(tk.END, text)
+        scrolled_text.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
         self.center_window(dialog_window, self.root)
