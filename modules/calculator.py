@@ -1,4 +1,4 @@
-import sys, math
+import sys, os, math
 from modules.gui import Gui
 from modules.config import Config
 from modules.math_wrapper import MathWrapper        
@@ -24,6 +24,7 @@ class Calculator:
         ".tcmvc": ( "func_tcmvc", "Convert thermocouple voltage in mV into °Celsius" ),
         ".tccmv": ( "func_tccmv", "Convert °Celsius into thermocouple voltage in mV" ),
         ".help":  ( "func_help",  "Show common or specific help" ),
+        ".lic":   ( "func_lic",   "Display license file" ),
         ".exit":  ( "func_exit",  "Terminate application" ),
     }
 
@@ -214,9 +215,12 @@ class Calculator:
         for key in self.__funclist.keys():
             text += f"{key:<8s} \t{self.__funclist[key][1]}\n"
         self.gui.display_popup("Help", text)
-        # self.gui.add_EditString(text)
         return (0.0, "OK", 2 )
         
+    def func_lic(self, parameters = None):
+        self.gui.display_popup("License", self.read_license_file())
+        return (0.0, "OK", 0 )
+
     def func_cls(self, parameters = None):
         self.gui.clear()
         return (0.0, "OK", 0 )
@@ -307,52 +311,6 @@ class Calculator:
         if mode == "DecimalToRoman":
             sum = self.ro.decimal2roman(sum)
         return (sum, "OK", 1)
-
-    def guiCallback(self, id: Gui.Item, event = None):
-        match id:
-            case Gui.Item.VarList:
-                self.gui.put_EditString(event[1])
-            case Gui.Item.Result:
-                self.gui.set_Result(0.0)
-            case Gui.Item.Editor:
-                return self.do_parse(event)
-            case Gui.Item.Cmd_onClose:
-                self.exit()
-
-            case Gui.Item.Menu_Clear:
-                self.cmd(".cls")
-            case Gui.Item.Menu_Delete:
-                self.cmd(".del")
-            case Gui.Item.Menu_Reset:
-                self.cmd(".res")
-            case Gui.Item.Menu_Help:
-                self.cmd(".help")
-            case Gui.Item.Menu_Exit:
-                self.cmd(".exit")
-            case Gui.Item.TB_Trashcan:
-                self.cmd(".cls")
-            case Gui.Item.TB_Delete:
-                self.cmd(".del")
-            case Gui.Item.TB_ReUse:
-                self.cmd(".reuse")
-            case Gui.Item.TB_Round:
-                self.cmd(".round")
-            case Gui.Item.TB_Copy:
-                self.cmd(".copy")
-            case Gui.Item.TB_Dec:
-                self.cmd(".dec")
-            case Gui.Item.TB_Hex:
-                self.cmd(".hex")
-            case Gui.Item.TB_Bin:
-                self.cmd(".bin")
-            case Gui.Item.TB_Deg:
-                self.cmd(".deg")
-            case Gui.Item.TB_Rad:
-                self.cmd(".rad")
-
-            case _:
-                print(f"GUI callback error: {id}")
-        return None
 
     # Filter sub-expressions in variable names, parse and insert results
     def __filter_varname(self, name: str) -> str:
@@ -487,3 +445,70 @@ class Calculator:
             return (self.parse_RomanNumber(text), "OK", 1)
         else:
             return self._parse(text)
+
+    def put_edit_string(self, string: str):
+        self.gui.put_EditString(string)
+
+    def reset_result(self, string: str):
+        self.gui.set_Result("0.0")
+        
+    def guiCallback(self, id: Gui.Item, event = None):
+        match id:
+            case Gui.Item.VarList:
+                self.put_edit_string(event[1])
+            case Gui.Item.Result:
+                self.set_result("0.0")
+            case Gui.Item.Editor:
+                return self.do_parse(event)
+            case Gui.Item.Cmd_onClose:
+                self.exit()
+
+            case Gui.Item.Menu_Clear:
+                self.cmd(".cls")
+            case Gui.Item.Menu_Delete:
+                self.cmd(".del")
+            case Gui.Item.Menu_Reset:
+                self.cmd(".res")
+            case Gui.Item.Menu_Help:
+                self.cmd(".help")
+            case Gui.Item.Menu_License:
+                self.cmd(".lic")
+            case Gui.Item.Menu_Exit:
+                self.cmd(".exit")
+            case Gui.Item.TB_Trashcan:
+                self.cmd(".cls")
+            case Gui.Item.TB_Delete:
+                self.cmd(".del")
+            case Gui.Item.TB_ReUse:
+                self.cmd(".reuse")
+            case Gui.Item.TB_Round:
+                self.cmd(".round")
+            case Gui.Item.TB_Copy:
+                self.cmd(".copy")
+            case Gui.Item.TB_Dec:
+                self.cmd(".dec")
+            case Gui.Item.TB_Hex:
+                self.cmd(".hex")
+            case Gui.Item.TB_Bin:
+                self.cmd(".bin")
+            case Gui.Item.TB_Deg:
+                self.cmd(".deg")
+            case Gui.Item.TB_Rad:
+                self.cmd(".rad")
+
+            case _:
+                print(f"GUI callback error: {id}")
+        return None
+
+
+    def asset_path(self, filename):
+        if getattr(sys, 'frozen', False):
+            return os.path.join(sys._MEIPASS, filename)
+        return os.path.join(filename)
+
+    def read_license_file(self) -> str:
+        path = self.asset_path("LICENSE")
+        with open(path, 'r', encoding='utf-8') as f:
+            license_text = f.read()
+        return license_text
+        
