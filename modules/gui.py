@@ -389,3 +389,11 @@ class Gui():
         else:
             base_path = Path(__file__).parent
         return str(base_path) + "/images/" + image_file
+
+    def display_popup(self, title: str, text: str):
+        help_win = tk.Toplevel(self.root)
+        help_win.title(title)
+        help_win.grab_set()
+        help_win.resizable(False, False)
+        ttk.Label(help_win, text=text, wraplength=300, justify="left").pack(padx=10, pady=10)
+        ttk.Button(help_win, text="Close", command=help_win.destroy).pack(pady=(0,10))
