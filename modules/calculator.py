@@ -213,7 +213,8 @@ class Calculator:
         text = ""
         for key in self.__funclist.keys():
             text += f"{key:<8s} \t{self.__funclist[key][1]}\n"
-        self.gui.add_EditString(text)
+        self.gui.display_popup("Help", text)
+        # self.gui.add_EditString(text)
         return (0.0, "OK", 2 )
         
     def func_cls(self, parameters = None):
