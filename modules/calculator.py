@@ -219,7 +219,7 @@ class Calculator:
         
     def func_lic(self, parameters = None):
         self.gui.display_popup("License", self.read_license_file())
-        return (0.0, "OK", 0 )
+        return (0.0, "OK", 2 )
 
     def func_cls(self, parameters = None):
         self.gui.clear()
