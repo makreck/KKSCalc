@@ -207,7 +207,7 @@ class Gui():
     def createVarList(self):
         style = ttk.Style()
         metrics = self.varlistFont.metrics()
-        row_height = int(metrics["linespace"] * self.display_scaling_factor)
+        row_height = int(metrics["linespace"] * self.display_scaling_factor * 0.75)
         style.configure("Treeview", font=self.varlistFont, rowheight=row_height)
         self.varlist = ttk.Treeview(self.frame_left, columns = ("name", "value"), show = "headings")
         self.varlist.heading("name", text = "Name")
