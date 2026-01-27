@@ -71,16 +71,11 @@ class Gui():
 
     def __init__(self, callback = None):
         self.root = tk.Tk()
-        #self.root.tk.call("tk", "scaling", 2.0)  # 1.0, 1.5, 2.0 ausprobieren
-        #self.root.tk.call("tk", "scaling", "-displayof", ".", 2.0)
-        self.screen_width  = self.root.winfo_screenwidth()
-        self.screen_height = self.root.winfo_screenheight()
+        self.get_display_scaling()
+        self.root.call('tk', 'scaling', self.display_scaling_factor)
+        self.create_fonts()
         self.callback      = callback
-        self.editorFont    = Font(family="TkFixedFont", size=14, weight="bold") 
-        self.displayFont   = Font(family="TkFixedFont", size=14, weight="bold") 
-        self.varlistFont   = Font(family="TkFixedFont", size=10, weight="bold") 
-        self.imageFont     = ImageFont.load_default()
-        self.tbIconSize    = (32, 32)
+        self.tbIconSize    = (int(32 * self.display_scaling_factor), int(32 * self.display_scaling_factor))
         self.num_format    = "dec"
         self.reuse         = True
         self.resultValue   = 0.0
@@ -89,6 +84,21 @@ class Gui():
     def closeWindow(self):
         self.callback(Gui.Item.Cmd_onClose, "WM_DELETE_WINDOW")
         self.root.destroy()
+
+    def get_display_scaling(self):
+        self.screen_width = self.root.winfo_screenwidth()
+        self.screen_height = self.root.winfo_screenheight()
+        width_mm = self.root.winfo_screenmmwidth()
+        height_mm = self.root.winfo_screenmmheight()
+        scaling_x = (self.screen_width  / (width_mm  / 25.4)) / 96.0
+        scaling_y = (self.screen_height / (height_mm / 25.4)) / 96.0
+        self.display_scaling_factor = round((scaling_x + scaling_y) / 2, 1)
+
+    def create_fonts(self):
+        self.editorFont    = Font(family="TkFixedFont", size=14, weight="bold") 
+        self.displayFont   = Font(family="TkFixedFont", size=14, weight="bold") 
+        self.varlistFont   = Font(family="TkFixedFont", size=10, weight="bold") 
+        self.imageFont     = ImageFont.load_default()
     
     def app_window(self, pos = {} ):
         self.check_geometry(pos)
@@ -163,7 +173,9 @@ class Gui():
                     img = element["image"]
                     if img == None:
                         path = self.get_ImagePath(element["path"])
-                        img = tk.PhotoImage(file=path)
+                        image_file = Image.open(path)
+                        image_resized = image_file.resize(self.tbIconSize, Image.Resampling.LANCZOS)
+                        img = ImageTk.PhotoImage(image_resized)
                         element["image"] = img
                 else:
                     img = self.text_to_photoimage(element["text"], self.tbIconSize)
@@ -194,7 +206,9 @@ class Gui():
     
     def createVarList(self):
         style = ttk.Style()
-        style.configure("Treeview", font=self.varlistFont)
+        metrics = self.varlistFont.metrics()
+        row_height = int(metrics["linespace"] * self.display_scaling_factor)
+        style.configure("Treeview", font=self.varlistFont, rowheight=row_height)
         self.varlist = ttk.Treeview(self.frame_left, columns = ("name", "value"), show = "headings")
         self.varlist.heading("name", text = "Name")
         self.varlist.column("name", width = 64)
