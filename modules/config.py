@@ -1,14 +1,13 @@
-import sys
-import json
+import sys, os, json
 from modules.math_wrapper import MathWrapper
 from pathlib import Path
 
 class Config:
-    __default_main_window = { "x": 64, "y": 64, "width": 640, "height": 480, }
+    __default_main_window = { "x": 64, "y": 64, "width": 1024, "height": 640, "sashpos": 432, }
 
     def __init__(self):
         self.init()
-        self.path = self.get_AppPath("/config.json")
+        self.path = self.get_AppPath(filename="config.json")
 
     def init(self):
         self.configData = {
@@ -84,9 +83,16 @@ class Config:
     def get_NumberFormat(self) -> str:
         return self.configData.get("numformat", "dec")
         
-    def get_AppPath(self, filename = "") -> Path:
+    def get_AppPath(self, folder = "", filename = "") -> Path:
         if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-            path = str(Path(sys._MEIPASS))
+            self.root_path = str(Path(sys._MEIPASS))
         else:
-            path = str(Path(__file__).resolve().parent)
-        return path + filename
+            self.root_path = str(Path(__file__).resolve().parent)
+
+        path = os.path.join(self.root_path, folder)
+        try:
+            os.makedirs(path)
+        except:
+            pass
+
+        return os.path.join(path, filename)

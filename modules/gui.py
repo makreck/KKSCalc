@@ -113,25 +113,35 @@ class Gui():
         return self
 
     def check_geometry(self, pos = {} ):
-        width  = int(float(pos.get("width",  640)))
-        height = int(float(pos.get("height", 480)))
-        x      = int(float(pos.get("x",      str(int((self.screen_width  - width)  / 2)))))
-        y      = int(float(pos.get("y",      str(int((self.screen_height - height) / 2)))))
-        self.__pos = { "x": x, "y": y, "width": width, "height": height}
+        sashpos = int(float(pos.get("sashpos", 200)))
+        width   = int(float(pos.get("width",   640)))
+        height  = int(float(pos.get("height",  480)))
+        x       = int(float(pos.get("x",       str(int((self.screen_width  - width)  / 2)))))
+        y       = int(float(pos.get("y",       str(int((self.screen_height - height) / 2)))))
+        self.__pos = { "x": x, "y": y, "width": width, "height": height, "sashpos": sashpos, }
         return self.__pos
 
     def get_WindowPos(self) -> dict:
         geometry = self.root.geometry() 
         parts = re.findall(r'(\d+)x(\d+)\+(\d+)\+(\d+)', geometry)
         if parts:
-            self.__pos = { "x": parts[0][2], "y": parts[0][3], "width": parts[0][0], "height": parts[0][1]}
+            self.__pos = { "x": parts[0][2], "y": parts[0][3], "width": parts[0][0], "height": parts[0][1], }
+        self.__pos["sashpos"] = int(self.paned.sashpos(0))
         return self.__pos
-        
+
     def set_WindowPos(self, pos = None):
         if type(pos) != dict:
             pos = self.__pos
-        self.root.geometry(f"{pos["width"]}x{pos["height"]}+{pos["x"]}+{pos["y"]}")
+        self.check_geometry(pos)
+        self.root.update_idletasks()
+        self.root.after(0, self.set_WindowPos_async)
         
+    def set_WindowPos_async(self):
+        pos = self.__pos
+        self.root.geometry(f"{pos["width"]}x{pos["height"]}+{pos["x"]}+{pos["y"]}")
+        self.paned.sashpos(0, pos["sashpos"])
+        self.root.update_idletasks()
+
     def dispatch(self):
         tk.mainloop()
         
