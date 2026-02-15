@@ -12,20 +12,23 @@ class MathWrapper:
     def __init__(self, angle_mode = AngleMode.DEG):
         MathWrapper.set_AngleMode(angle_mode)
     
-    def get_CommandList() -> dict:
-        return { key: value[0] for key, value in MathWrapper.__cmdlist.items() }
+    def get_command_list() -> dict:
+        return { key: value[0] for key, value in MathWrapper.__math_functions.items() }
+
+    def get_math_functions() -> dict:
+        return MathWrapper.__math_functions
 
     def get_count_of_commands() -> int:
-        return len(MathWrapper.__cmdlist)
+        return len(MathWrapper.__math_functions)
     
     def get_function_of(cmd: str):
-        return MathWrapper.__cmdlist[cmd][0]
+        return MathWrapper.__math_functions[cmd][0]
 
     def get_symbol_of(cmd: str) -> str:
-        return MathWrapper.__cmdlist[cmd][1]
+        return MathWrapper.__math_functions[cmd][1]
 
     def get_description_of(cmd: str) -> str:
-        return MathWrapper.__cmdlist[cmd][2]
+        return MathWrapper.__math_functions[cmd][2]
         
     def get_AngleMode() -> AngleMode:
         return MathWrapper.__amode
@@ -186,7 +189,7 @@ class MathWrapper:
         return 1.0 / math.gamma(x)
 
     # Global math command table for wrapped commands
-    __cmdlist = {
+    __math_functions = {
             "sin":    (__f_sin,    "sin",      "Sine function", ),
             "asin":   (__f_asin,   "sin⁻¹",    "Arcsine function x", ),
             "cos":    (__f_cos,    "cos",      "Cosine function", ),
