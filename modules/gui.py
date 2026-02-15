@@ -1,8 +1,6 @@
-import sys
-import platform
-import math
+import sys, platform, math
+import pyperclip, cairosvg
 import re
-import pyperclip
 import tkinter as tk
 from pathlib import Path
 from tkinter import ttk
@@ -11,6 +9,7 @@ from tkinter import scrolledtext
 from functools import partial
 from enum import Enum
 from PIL import Image, ImageDraw, ImageFont, ImageTk
+from io import BytesIO
 
 class Gui():
 
@@ -49,24 +48,24 @@ class Gui():
     ]
 
     tbdef = [
-        { "id": Item.TB_Trashcan,   "text": "Clear", "path": "trashcan.png",       "image": None },
+        { "id": Item.TB_Trashcan,   "text": "CLS",   "path": "trashcan.png",       },
         { "id": Item.TB_Sep },
 
-        { "id": Item.TB_Delete,     "text": "Clear", "path": "delete.png",         "image": None },
-        { "id": Item.TB_ReUse,      "text": "Reuse", "path": "reuse.png",          "image": None },
-        { "id": Item.TB_Round,      "text": "R.2",   "path": None,                 "image": None },
+        { "id": Item.TB_Delete,     "text": "CLR",   "path": "delete.png",         },
+        { "id": Item.TB_ReUse,      "text": "Reuse", "path": "reuse.png",          },
+        { "id": Item.TB_Round,      "text": "R.2",   "path": None,                 },
 
         { "id": Item.TB_Sep },
-        { "id": Item.TB_Dec,        "text": "DEC",   "path": None,                 "image": None },
-        { "id": Item.TB_Hex,        "text": "HEX",   "path": None,                 "image": None },
-        { "id": Item.TB_Bin,        "text": "BIN",   "path": None,                 "image": None },
+        { "id": Item.TB_Dec,        "text": "DEC",   "path": None,                 },
+        { "id": Item.TB_Hex,        "text": "HEX",   "path": None,                 },
+        { "id": Item.TB_Bin,        "text": "BIN",   "path": None,                 },
 
         { "id": Item.TB_Sep },
-        { "id": Item.TB_Deg,        "text": "DEG",   "path": None,                 "image": None },
-        { "id": Item.TB_Rad,        "text": "RAD",   "path": None,                 "image": None },
+        { "id": Item.TB_Deg,        "text": "DEG",   "path": None,                 },
+        { "id": Item.TB_Rad,        "text": "RAD",   "path": None,                 },
 
-        { "id": Item.TB_Sep },
-        { "id": Item.TB_Copy,       "text": "Copy",  "path": "copy_clipboard.png", "image": None },
+        # { "id": Item.TB_Sep },
+        # { "id": Item.TB_Copy,       "text": "Copy",  "path": "copy_clipboard.png", },
     ]
 
     def __init__(self, callback = None):
@@ -74,12 +73,12 @@ class Gui():
         self.get_display_scaling()
         self.root.call('tk', 'scaling', self.display_scaling_factor)
         self.create_fonts()
-        self.callback      = callback
-        self.tbIconSize    = (int(32 * self.display_scaling_factor), int(32 * self.display_scaling_factor))
-        self.num_format    = "dec"
-        self.reuse         = True
-        self.resultValue   = 0.0
-        self.var           = {}
+        self.callback    = callback
+        self.tbIconSize  = (int(40 * self.display_scaling_factor), int(40 * self.display_scaling_factor))
+        self.num_format  = "dec"
+        self.reuse       = True
+        self.resultValue = 0.0
+        self.var         = {}
         
     def closeWindow(self):
         self.callback(Gui.Item.Cmd_onClose, "WM_DELETE_WINDOW")
@@ -175,23 +174,12 @@ class Gui():
             if id == Gui.Item.TB_Sep:
                 spacer = tk.Label(self.toolbar, text="")
                 spacer.grid(row=0, column=col, padx=1, pady=1)
-                self.toolbarButtons.append( { "id": id, "button": spacer, "image": None } )
+                self.toolbarButtons.append( { "id": id, "button": spacer } )
             else:
                 self.toolbar.columnconfigure(col, weight=1)
-                btn = tk.Button(self.toolbar, compound="center", command=partial(self.callback, id))
-                if element["path"] != None:
-                    img = element["image"]
-                    if img == None:
-                        path = self.get_ImagePath(element["path"])
-                        image_file = Image.open(path)
-                        image_resized = image_file.resize(self.tbIconSize, Image.Resampling.LANCZOS)
-                        img = ImageTk.PhotoImage(image_resized)
-                        element["image"] = img
-                else:
-                    img = self.text_to_photoimage(element["text"], self.tbIconSize)
-                btn.configure(image=img)
+                btn = self.create_button(self.toolbar, element["text"], size=self.tbIconSize, compound="center", command=partial(self.callback, id))
+                self.toolbarButtons.append( { "id": id, "button": btn } )
                 btn.grid(row=0, column=col, padx=0, pady=1)
-                self.toolbarButtons.append( { "id": id, "button": btn, "image": img } )
             col += 1
         self.toolbar.columnconfigure(col, weight=999)
         self.result = tk.Label(self.toolbar, text="0.0", width=-1, height=1, anchor="e", bg="#000000", fg="#00F0F0", relief="raised", font=self.displayFont)
@@ -353,30 +341,6 @@ class Gui():
                 button.configure(relief = "sunken" if pressed else "raised")
                 return pressed
         return False
-    
-    def text_to_photoimage(self, text: str, size: tuple):
-        image     = Image.new("RGBA", size, "#00000000")
-        draw      = ImageDraw.Draw(image)
-
-        os_name   = platform.system().strip().lower()
-        if "linux" in os_name:
-            font_path = "DejaVuSans-Bold.ttf"
-        elif "windows" in os_name:
-            font_path = "arialbd.ttf"
-        else:
-            font_path = None
-        try:
-            font  = ImageFont.truetype(font=font_path, size=size[1] / 2.7)
-        except:
-            font  = None
-
-        size      = draw.textbbox(xy=size, text=text, font=font)
-        width     = size[2] - size[0]
-        height    = size[3] - size[1]
-        x         = math.ceil(((size[0] - 1) - width)  / 2)
-        y         = math.ceil(((size[1] - 1) - height) / 2 - 1)
-        draw.text((x, y), text, font=font, fill="#0030C0")
-        return ImageTk.PhotoImage(image)
 
     def get_ScreenContent(self) -> str:
         return self.editor.get("1.0", "end-1c")
@@ -448,3 +412,35 @@ class Gui():
         scrolled_text.insert(tk.END, text)
         scrolled_text.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
         self.center_window(dialog_window, self.root)
+
+    def get_svg(self, symbol, size=(128, 128)):
+            text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) / 4.5)
+            return f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
+        <rect width="{size[0]}" height="{size[1]}" rx="{text_size}" ry="{text_size}" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
+        <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="Arial" font-size="{text_size}" fill="white" text-anchor="middle" 
+        dominant-baseline="middle">
+            {symbol}
+        </text>
+        </svg>'''
+
+    def draw_svg(self, svg_string, size=(128, 128), background_color=(0, 0, 0, 0)):
+        try:
+            png_data = cairosvg.svg2png(bytestring=svg_string.encode('utf-8'), output_width=size[0], output_height=size[1])
+            image_src = Image.open(BytesIO(png_data))
+            image = Image.new('RGBA', (size[0], size[1]), background_color)
+            image.paste(image_src)
+        except Exception as e:
+            image = Image.new('RGBA', (size[0], size[1]), background_color)
+            draw = ImageDraw.Draw(image)
+            draw.text((10, 10), f"{e}", fill=(0, 0, 0, 255))
+        return ImageTk.PhotoImage(image)
+
+    def create_svg_button(self, parent, svg_string, size=(128, 128), **tk_button_kwargs):
+        image = self.draw_svg(svg_string, size)
+        button = tk.Button(parent, image=image, **tk_button_kwargs)
+        button.image = image
+        return button
+
+    def create_button(self, parent, text, size=(128, 128), **tk_button_kwargs):
+        return self.create_svg_button(parent, self.get_svg(text, size), size, **tk_button_kwargs)
