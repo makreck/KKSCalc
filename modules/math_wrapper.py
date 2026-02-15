@@ -13,9 +13,21 @@ class MathWrapper:
         MathWrapper.set_AngleMode(angle_mode)
     
     def get_CommandList() -> dict:
-        return MathWrapper.__cmdlist
+        return { key: value[0] for key, value in MathWrapper.__cmdlist.items() }
 
-    def get_AngleMode():
+    def get_count_of_commands() -> int:
+        return len(MathWrapper.__cmdlist)
+    
+    def get_function_of(cmd: str):
+        return MathWrapper.__cmdlist[cmd][0]
+
+    def get_symbol_of(cmd: str) -> str:
+        return MathWrapper.__cmdlist[cmd][1]
+
+    def get_description_of(cmd: str) -> str:
+        return MathWrapper.__cmdlist[cmd][2]
+        
+    def get_AngleMode() -> AngleMode:
         return MathWrapper.__amode
     
     def set_AngleMode(angle_mode = AngleMode.DEG):
@@ -103,8 +115,20 @@ class MathWrapper:
         return math.asin(1 / x)
 
     # Other math functions
+    def __f_int(x: float) -> float:
+        return float(int(x))
+
     def __f_abs(x: float) -> float:
         return abs(x)
+
+    def __f_floor(x: float) -> float:
+        return math.floor(x)
+
+    def __f_ceil(x: float) -> float:
+        return math.ceil(x)
+
+    def __f_rem(x: float) -> float:
+        return x - int(x)
 
     def __f_rnd(x = 0.0) -> float:
         if x != 0.0:
@@ -131,59 +155,86 @@ class MathWrapper:
     def __f_log10(x: float) -> float:
         return math.log10(x)
 
-    def __f_log(x: float) -> float:
+    def __f_log2(x: float) -> float:
+        return math.log2(x)
+
+    def __f_loge(x: float) -> float:
         return math.log(x)
+
+    def __f_loge(x: float) -> float:
+        return math.ln(x)
 
     def __f_exp(x: float) -> float:
         return math.exp(x)
 
-    def __f_floor(x: float) -> float:
-        return math.floor(x)
-
-    def __f_ceil(x: float) -> float:
-        return math.ceil(x)
-
     def __f_fac(x: float) -> float:
         return math.factorial(x)
 
+    def __f_erf(x: float) -> float:
+        return math.erf(x)
+
+    def __f_erfc(x: float) -> float:
+        return math.erfc(x)
+
+    def __f_gamma(x: float) -> float:
+        return math.gamma(x)
+
+    def __f_lgamma(x: float) -> float:
+        return math.lgamma(x)
+
+    def __f_rgamma(x: float) -> float:
+        return 1.0 / math.gamma(x)
+
     # Global math command table for wrapped commands
     __cmdlist = {
-            "sin":    __f_sin,
-            "asin":   __f_asin,
-            "cos":    __f_cos,
-            "acos":   __f_acos,
-            "tan":    __f_tan,
-            "atan":   __f_atan,
-            "cot":    __f_cot,
-            "acot":   __f_acot,
+            "sin":    (__f_sin,    "sin",      "Sine function", ),
+            "asin":   (__f_asin,   "sin⁻¹",    "Arcsine function x", ),
+            "cos":    (__f_cos,    "cos",      "Cosine function", ),
+            "acos":   (__f_acos,   "cos⁻¹",    "Arccosine function", ),
+            "tan":    (__f_tan,    "tan",      "Tangent function", ),
+            "atan":   (__f_atan,   "tan⁻¹",    "Arctangent function", ),
+            "cot":    (__f_cot,    "cot",      "Cotangent function", ),
+            "acot":   (__f_acot,   "cot⁻¹",    "Arccotangent function", ),
 
-            "sinh":   __f_sinh,
-            "arsinh": __f_arsinh,
-            "cosh":   __f_cosh,
-            "arcosh": __f_arcosh,
-            "tanh":   __f_tanh,
-            "artanh": __f_artanh,
-            "coth":   __f_coth,
-            "arcoth": __f_arcoth,
+            "sinh":   (__f_sinh,   "sinh",     "Hyperbolic sine function", ),
+            "asinh":  (__f_arsinh, "sinh⁻¹",   "Hyperbolic arcus sine function", ),
+            "cosh":   (__f_cosh,   "cosh",     "Hyperbolic cosine function", ),
+            "acosh":  (__f_arcosh, "cosh⁻¹",   "Hyperbolic arcus cosine function", ),
+            "tanh":   (__f_tanh,   "tanh",     "Hyperbolic tangent function", ),
+            "atanh":  (__f_artanh, "tanh⁻¹",   "Hyperbolic arcus tangent function", ),
+            "coth":   (__f_coth,   "coth",     "Hyperbolic cotangent function", ),
+            "acoth":  (__f_arcoth, "coth⁻¹",   "Hyperbolic arcus cotangent function", ),
 
-            "sec":    __f_sec,
-            "asec":   __f_asec,
-            "csc":    __f_csc,
-            "acsc":   __f_acsc,
+            "sec":    (__f_sec,    "sec",      "Secant function", ),
+            "asec":   (__f_asec,   "sec⁻¹",    "Arcus secant function", ),
+            "csc":    (__f_csc,    "csc",      "Cosecant function", ),
+            "acsc":   (__f_acsc,   "csc⁻¹",    "Arcus cosecant function", ),
 
-            "sqrt":   __f_sqr,
-            "sqr":    __f_sqr,
-            "cbr":    __f_cbr,
-            "ln":     __f_log,
-            "log":    __f_log,
-            "log10":  __f_log10,
-            "exp":    __f_exp,
-            "int":    __f_floor,
-            "floor":  __f_floor,
-            "ceil":   __f_ceil,
-            "mod":    __f_mod,
-            "sgn":    __f_sgn,
-            "abs":    __f_abs,
-            "rnd":    __f_rnd,
-            "fac":    __f_fac,
-            }
+            "sqrt":   (__f_sqr,    "√",        "Square root", ),
+            "sqr":    (__f_sqr,    "√",        "Square root", ),
+            "cbr":    (__f_cbr,    "∛",        "Cubic root", ),
+
+            "ln":     (__f_loge,   "logₑ",     "Natural logarithm (base e)", ),
+            "log":    (__f_loge,   "logₑ",     "Natural logarithm (base e)", ),
+            "log2":   (__f_log2,   "log₂",     "Base 2 logarithm", ),
+            "log10":  (__f_log10,  "log₁₀",    "Base 10 logarithm", ),
+            "exp":    (__f_exp,    "eˣ",       "e to the power of x", ),
+
+            "int":    (__f_int,    "int",      "Integer of x", ),
+            "abs":    (__f_abs,    "|x|",      "Absolute value", ),
+            "floor":  (__f_floor,  "⌊x⌋",      "Floor of x", ),
+            "ceil":   (__f_ceil,   "⌈x⌉",      "Ceiling of x", ),
+
+            "mod":    (__f_mod,    "mod",      "", ),
+            "sgn":    (__f_sgn,    "sgn",      "Signum function", ),
+            "rem":    (__f_rem,    "rem",      "Reminder of x", ),
+            "rnd":    (__f_rnd,    "rnd",      "Random number function", ),
+            "fac":    (__f_fac,    "x!",       "Faculty function", ),
+            
+            "erf":    (__f_erf,    "erf",      "Error Function, (2/√π) ∫₀ˣ e⁻ᵗ² dt", ),
+            "erfc":   (__f_erfc,   "erfc",     "Error Function Complement, 1 - erf(x)", ),
+            "gamma":  (__f_gamma,  "Γ",        "Gamma Function", ),
+            "lgamma": (__f_lgamma, "ln(Γ(x))", "Log Gamma Function", ),
+            "rgamma": (__f_rgamma, "1/Γ",      "Reciprocal Gamma Function", ),
+            
+        }
