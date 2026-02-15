@@ -4,7 +4,7 @@ if __name__ == "__main__":
     Calculator().run()
 
 # Dependencies:
-# pip3 install --upgrade pyperclip Pillow
+# pip3 install pyperclip Pillow cairosvg
 #
 # Linux:
 # apt install python3-tk
