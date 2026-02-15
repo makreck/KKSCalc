@@ -114,7 +114,7 @@ class Calculator:
         return result
 
     def get_Cmd(self) -> dict:
-        return MathWrapper.get_CommandList()
+        return MathWrapper.get_command_list()
 
     def parse_RomanNumber(self, number) -> float:
         if type(number) == str:
