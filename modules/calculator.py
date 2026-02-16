@@ -454,6 +454,8 @@ class Calculator:
         
     def guiCallback(self, id: Gui.Item, event = None):
         match id:
+            case Gui.Item.Math_Function:
+                self.handle_keyboard_event(event)
             case Gui.Item.VarList:
                 self.put_edit_string(event[1])
             case Gui.Item.Result:
@@ -512,3 +514,5 @@ class Calculator:
             license_text = f.read()
         return license_text
         
+    def handle_keyboard_event(self, math_function):
+        self.put_edit_string(f"{math_function}(")

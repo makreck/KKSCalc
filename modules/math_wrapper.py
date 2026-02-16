@@ -15,6 +15,9 @@ class MathWrapper:
     def get_command_list() -> dict:
         return { key: value[0] for key, value in MathWrapper.__math_functions.items() }
 
+    def get_keyboard_list() -> dict:
+        return { key: [ value[1], value[2], None ] for key, value in MathWrapper.__math_functions.items() if value[3] }
+        
     def get_math_functions() -> dict:
         return MathWrapper.__math_functions
 
@@ -190,54 +193,54 @@ class MathWrapper:
 
     # Global math command table for wrapped commands
     __math_functions = {
-            "sin":    (__f_sin,    "sin",      "Sine function", ),
-            "asin":   (__f_asin,   "sin⁻¹",    "Arcsine function x", ),
-            "cos":    (__f_cos,    "cos",      "Cosine function", ),
-            "acos":   (__f_acos,   "cos⁻¹",    "Arccosine function", ),
-            "tan":    (__f_tan,    "tan",      "Tangent function", ),
-            "atan":   (__f_atan,   "tan⁻¹",    "Arctangent function", ),
-            "cot":    (__f_cot,    "cot",      "Cotangent function", ),
-            "acot":   (__f_acot,   "cot⁻¹",    "Arccotangent function", ),
+            "sqrt":   (__f_sqr,    "√",        "Square root", True,  ),
+            "sqr":    (__f_sqr,    "√",        "Square root", False, ),
+            "cbr":    (__f_cbr,    "∛",        "Cubic root",  True,  ),
 
-            "sinh":   (__f_sinh,   "sinh",     "Hyperbolic sine function", ),
-            "asinh":  (__f_arsinh, "sinh⁻¹",   "Hyperbolic arcus sine function", ),
-            "cosh":   (__f_cosh,   "cosh",     "Hyperbolic cosine function", ),
-            "acosh":  (__f_arcosh, "cosh⁻¹",   "Hyperbolic arcus cosine function", ),
-            "tanh":   (__f_tanh,   "tanh",     "Hyperbolic tangent function", ),
-            "atanh":  (__f_artanh, "tanh⁻¹",   "Hyperbolic arcus tangent function", ),
-            "coth":   (__f_coth,   "coth",     "Hyperbolic cotangent function", ),
-            "acoth":  (__f_arcoth, "coth⁻¹",   "Hyperbolic arcus cotangent function", ),
+            "ln":     (__f_loge,   "logₑ",     "Natural logarithm (base e)", False, ),
+            "log":    (__f_loge,   "logₑ",     "Natural logarithm (base e)", True, ),
+            "log2":   (__f_log2,   "log₂",     "Base 2 logarithm",           True, ),
+            "log10":  (__f_log10,  "log₁₀",    "Base 10 logarithm",          True, ),
+            "exp":    (__f_exp,    "eˣ",       "e to the power of x",        True, ),
 
-            "sec":    (__f_sec,    "sec",      "Secant function", ),
-            "asec":   (__f_asec,   "sec⁻¹",    "Arcus secant function", ),
-            "csc":    (__f_csc,    "csc",      "Cosecant function", ),
-            "acsc":   (__f_acsc,   "csc⁻¹",    "Arcus cosecant function", ),
+            "sin":    (__f_sin,    "sin",      "Sine function", True, ),
+            "cos":    (__f_cos,    "cos",      "Cosine function", True, ),
+            "tan":    (__f_tan,    "tan",      "Tangent function", True, ),
+            "cot":    (__f_cot,    "cot",      "Cotangent function", True, ),
+            "asin":   (__f_asin,   "sin⁻¹",    "Arcsine function x", True, ),
+            "acos":   (__f_acos,   "cos⁻¹",    "Arccosine function", True, ),
+            "atan":   (__f_atan,   "tan⁻¹",    "Arctangent function", True, ),
+            "acot":   (__f_acot,   "cot⁻¹",    "Arccotangent function", True, ),
 
-            "sqrt":   (__f_sqr,    "√",        "Square root", ),
-            "sqr":    (__f_sqr,    "√",        "Square root", ),
-            "cbr":    (__f_cbr,    "∛",        "Cubic root", ),
+            "sinh":   (__f_sinh,   "sinh",     "Hyperbolic sine function", True, ),
+            "cosh":   (__f_cosh,   "cosh",     "Hyperbolic cosine function", True, ),
+            "tanh":   (__f_tanh,   "tanh",     "Hyperbolic tangent function", True, ),
+            "coth":   (__f_coth,   "coth",     "Hyperbolic cotangent function", True, ),
+            "asinh":  (__f_arsinh, "sinh⁻¹",   "Hyperbolic arcus sine function", True, ),
+            "acosh":  (__f_arcosh, "cosh⁻¹",   "Hyperbolic arcus cosine function", True, ),
+            "atanh":  (__f_artanh, "tanh⁻¹",   "Hyperbolic arcus tangent function", True, ),
+            "acoth":  (__f_arcoth, "coth⁻¹",   "Hyperbolic arcus cotangent function", True, ),
 
-            "ln":     (__f_loge,   "logₑ",     "Natural logarithm (base e)", ),
-            "log":    (__f_loge,   "logₑ",     "Natural logarithm (base e)", ),
-            "log2":   (__f_log2,   "log₂",     "Base 2 logarithm", ),
-            "log10":  (__f_log10,  "log₁₀",    "Base 10 logarithm", ),
-            "exp":    (__f_exp,    "eˣ",       "e to the power of x", ),
+            "sec":    (__f_sec,    "sec",      "Secant function", True, ),
+            "csc":    (__f_csc,    "csc",      "Cosecant function", True, ),
+            "asec":   (__f_asec,   "sec⁻¹",    "Arcus secant function", True, ),
+            "acsc":   (__f_acsc,   "csc⁻¹",    "Arcus cosecant function", True, ),
 
-            "int":    (__f_int,    "int",      "Integer of x", ),
-            "abs":    (__f_abs,    "|x|",      "Absolute value", ),
-            "floor":  (__f_floor,  "⌊x⌋",      "Floor of x", ),
-            "ceil":   (__f_ceil,   "⌈x⌉",      "Ceiling of x", ),
+            "int":    (__f_int,    "int",      "Integer of x", True, ),
+            "abs":    (__f_abs,    "|x|",      "Absolute value", True, ),
+            "floor":  (__f_floor,  "⌊x⌋",      "Floor of x", True, ),
+            "ceil":   (__f_ceil,   "⌈x⌉",      "Ceiling of x", True, ),
 
-            "mod":    (__f_mod,    "mod",      "", ),
-            "sgn":    (__f_sgn,    "sgn",      "Signum function", ),
-            "rem":    (__f_rem,    "rem",      "Reminder of x", ),
-            "rnd":    (__f_rnd,    "rnd",      "Random number function", ),
-            "fac":    (__f_fac,    "x!",       "Faculty function", ),
+            "mod":    (__f_mod,    "mod",      "Modulo", True, ),
+            "sgn":    (__f_sgn,    "sgn",      "Signum function", True, ),
+            "rem":    (__f_rem,    "rem",      "Reminder of x", True, ),
+            "rnd":    (__f_rnd,    "rnd",      "Random number function", True, ),
+            "fac":    (__f_fac,    "x!",       "Faculty function", True, ),
             
-            "erf":    (__f_erf,    "erf",      "Error Function, (2/√π) ∫₀ˣ e⁻ᵗ² dt", ),
-            "erfc":   (__f_erfc,   "erfc",     "Error Function Complement, 1 - erf(x)", ),
-            "gamma":  (__f_gamma,  "Γ",        "Gamma Function", ),
-            "lgamma": (__f_lgamma, "ln(Γ(x))", "Log Gamma Function", ),
-            "rgamma": (__f_rgamma, "1/Γ",      "Reciprocal Gamma Function", ),
+            "erf":    (__f_erf,    "erf",      "Error Function, (2/√π) ∫₀ˣ e⁻ᵗ² dt", True, ),
+            "erfc":   (__f_erfc,   "erfc",     "Error Function Complement, 1 - erf(x)", True, ),
+            "gamma":  (__f_gamma,  "Γ",        "Gamma Function", True, ),
+            "lgamma": (__f_lgamma, "ln(Γ(x))", "Log Gamma Function", True, ),
+            "rgamma": (__f_rgamma, "1/Γ",      "Reciprocal Gamma Function", True, ),
             
         }

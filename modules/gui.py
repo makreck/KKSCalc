@@ -1,4 +1,4 @@
-import sys, platform, math
+import sys, math
 import pyperclip, cairosvg
 import re
 import tkinter as tk
@@ -10,6 +10,7 @@ from functools import partial
 from enum import Enum
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 from io import BytesIO
+from modules.math_wrapper import MathWrapper
 
 class Gui():
 
@@ -35,27 +36,28 @@ class Gui():
                 '''
 
     class Item(Enum):
-        Cmd_onClose  = "close",
-        VarList      = "var.event",
-        Editor       = "editor.event"
-        Result       = "result.event"
-        Menu_Clear   = "menu.clear",
-        Menu_Delete  = "menu.delete",
-        Menu_Reset   = "menu.reset",
-        Menu_Help    = "menu_help",
-        Menu_License = "menu_license",
-        Menu_Copy    = "menu.copy",
-        Menu_Exit    = "menu.exit",
-        TB_Sep       = "separator",
-        TB_Trashcan  = "button.clear",
-        TB_Delete    = "button.delete"
-        TB_ReUse     = "button.reuse",
-        TB_Round     = "button.round",
-        TB_Dec       = "button.decimal",
-        TB_Hex       = "button.hexadecimal",
-        TB_Bin       = "button.binary",
-        TB_Deg       = "button.degrees",
-        TB_Rad       = "button.radians",
+        Cmd_onClose   = "close",
+        VarList       = "var.event",
+        Editor        = "editor.event"
+        Result        = "result.event"
+        Menu_Clear    = "menu.clear",
+        Menu_Delete   = "menu.delete",
+        Menu_Reset    = "menu.reset",
+        Menu_Help     = "menu_help",
+        Menu_License  = "menu_license",
+        Menu_Copy     = "menu.copy",
+        Menu_Exit     = "menu.exit",
+        TB_Sep        = "separator",
+        TB_Trashcan   = "button.clear",
+        TB_Delete     = "button.delete"
+        TB_ReUse      = "button.reuse",
+        TB_Round      = "button.round",
+        TB_Dec        = "button.decimal",
+        TB_Hex        = "button.hexadecimal",
+        TB_Bin        = "button.binary",
+        TB_Deg        = "button.degrees",
+        TB_Rad        = "button.radians",
+        Math_Function = 9000,
 
     menudef = [
         { "cascade": "File", "text": "Clear",           "id": Item.Menu_Clear,   },
@@ -216,19 +218,46 @@ class Gui():
         self.frame_right = tk.Frame(self.paned, bg="lightgreen")
         self.frame_right.pack(fill="both", expand=True)
         self.paned.add(self.frame_right)
-        self.createVarList()
+        self.createFunctionWindow()
         self.createEditor()
 
     def createStatusline(self):
         self.statusline = tk.Label(self.root, text="OK", width=-1, height=1, padx=4, pady=2, anchor="w", bd=1, relief="sunken")
         self.statusline.pack(fill="x", side="bottom", padx=2, pady=2)
     
+    def createFunctionWindow(self):
+        self.notebook = ttk.Notebook(self.frame_left)
+        self.varlist_frame = ttk.Frame(self.notebook)
+        self.keyboard_frame = ttk.Frame(self.notebook)
+        self.notebook.add(self.varlist_frame, text="Variables")
+        self.notebook.add(self.keyboard_frame, text="Keyboard")
+        self.createVarList()
+        self.createKeyboard()
+        self.notebook.pack(expand=1, fill='both')
+        
+    def createKeyboard(self):
+        self.keyboard = MathWrapper.get_keyboard_list()
+        self.kb_btn_size = (40, 40)
+        row = 0
+        col = 0
+        for math_function, values in self.keyboard.items():
+            btn = self.create_button(self.keyboard_frame, text=values[0], tooltip=values[1], size=self.kb_btn_size, command=partial(self.callback, Gui.Item.Math_Function, math_function))
+            btn.grid(row=row, column=col, padx=2, pady=2)
+            self.keyboard[math_function][2] = btn
+            col += 1
+            if col >= 5:
+                col = 0
+                row += 1
+
+    def get_keyboard_property(self, key):
+        return self.keyboard[key]
+    
     def createVarList(self):
         style = ttk.Style()
         metrics = self.varlistFont.metrics()
         row_height = int(metrics["linespace"] * self.display_scaling_factor)
         style.configure("Treeview", font=self.varlistFont, rowheight=row_height)
-        self.varlist = ttk.Treeview(self.frame_left, columns = ("name", "value"), show = "headings")
+        self.varlist = ttk.Treeview(self.varlist_frame, columns = ("name", "value"), show = "headings")
         self.varlist.heading("name", text = "Name")
         self.varlist.column("name", width = 64)
         self.varlist.heading("value", text = "Value")
@@ -434,19 +463,19 @@ class Gui():
         scrolled_text.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
         self.center_window(dialog_window, self.root)
 
-    def get_svg(self, symbol, size=(128, 128)):
+    def get_svg(self, symbol, size=(32, 32)):
             text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) / 4.5)
             return f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
             <rect width="{size[0]}" height="{size[1]}" rx="{text_size}" ry="{text_size}" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
-            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="Arial" font-size="{text_size}" fill="white" text-anchor="middle" dominant-baseline="middle">
+            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="Arial" font-size="{text_size}" fill="white" stroke="none" text-anchor="middle" dominant-baseline="middle">
                 {symbol}
             </text>
         </svg>'''
 
-    def draw_svg(self, svg_string, size=(128, 128), background_color=(0, 0, 0, 0)):
+    def draw_svg(self, svg_string, size=(32, 32), background_color=(0, 0, 0, 0)):
         try:
-            png_data = cairosvg.svg2png(bytestring=svg_string.encode('utf-8'), output_width=size[0], output_height=size[1])
+            png_data = cairosvg.svg2png(bytestring=svg_string.encode('UTF-8'), output_width=size[0], output_height=size[1])
             image_src = Image.open(BytesIO(png_data))
             image = Image.new('RGBA', (size[0], size[1]), background_color)
             image.paste(image_src)
@@ -456,7 +485,7 @@ class Gui():
             draw.text((10, 10), f"{e}", fill=(0, 0, 0, 255))
         return ImageTk.PhotoImage(image)
 
-    def create_svg_button(self, parent, svg_string, size=(128, 128), **tk_button_kwargs):
+    def create_svg_button(self, parent, svg_string, size=(32, 32), **tk_button_kwargs):
         image = self.draw_svg(svg_string, size)
         button = tk.Button(parent, image=image, **tk_button_kwargs)
         button.image = image
@@ -465,7 +494,7 @@ class Gui():
     def is_svg_string(self, text: str) -> bool:
         return '<svg' in text and '</svg>' in text
         
-    def create_button(self, parent, text="", tooltip=None, size=(128, 128), **tk_button_kwargs):
+    def create_button(self, parent, text="", tooltip=None, size=(32, 32), **tk_button_kwargs):
         if self.is_svg_string(text):
             svg_string = text
         else:
