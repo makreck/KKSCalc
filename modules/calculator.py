@@ -473,6 +473,8 @@ class Calculator:
                 self.cmd(".help")
             case Gui.Item.Menu_License:
                 self.cmd(".lic")
+            case Gui.Item.Menu_Copy:
+                self.cmd(".copy")
             case Gui.Item.Menu_Exit:
                 self.cmd(".exit")
             case Gui.Item.TB_Trashcan:
@@ -483,8 +485,6 @@ class Calculator:
                 self.cmd(".reuse")
             case Gui.Item.TB_Round:
                 self.cmd(".round")
-            case Gui.Item.TB_Copy:
-                self.cmd(".copy")
             case Gui.Item.TB_Dec:
                 self.cmd(".dec")
             case Gui.Item.TB_Hex:
