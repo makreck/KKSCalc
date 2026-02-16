@@ -72,9 +72,7 @@ class Gui():
         self.root = tk.Tk()
         self.get_display_scaling()
         self.root.call('tk', 'scaling', self.display_scaling_factor)
-        self.create_fonts()
         self.callback    = callback
-        self.tbIconSize  = (int(40 * self.display_scaling_factor), int(40 * self.display_scaling_factor))
         self.num_format  = "dec"
         self.reuse       = True
         self.resultValue = 0.0
@@ -92,10 +90,13 @@ class Gui():
         scaling_x = (self.screen_width  / (width_mm  / 25.4)) / 96.0
         scaling_y = (self.screen_height / (height_mm / 25.4)) / 96.0
         self.display_scaling_factor = round((scaling_x + scaling_y) / 2, 1)
+        self.tbIconSize = (int(40 * self.display_scaling_factor), int(40 * self.display_scaling_factor))
+        self.create_fonts()
 
     def create_fonts(self):
+        dfs = int(self.tbIconSize[1] * 0.6 + 0.5)
         self.editorFont    = Font(family="TkFixedFont", size=14, weight="bold") 
-        self.displayFont   = Font(family="TkFixedFont", size=14, weight="bold") 
+        self.displayFont   = Font(family="TkFixedFont", size=dfs, weight="bold") 
         self.varlistFont   = Font(family="TkFixedFont", size=10, weight="bold") 
         self.imageFont     = ImageFont.load_default()
     
