@@ -198,8 +198,7 @@ class Gui():
                 self.toolbarButtons.append( { "id": id, "button": spacer } )
             else:
                 self.toolbar.columnconfigure(col, weight=1)
-                btn = self.create_button(self.toolbar, element["text"], size=self.tbIconSize, compound="center", command=partial(self.callback, id))
-                # element["tooltip"]
+                btn = self.create_button(self.toolbar, element["text"], element["tooltip"], size=self.tbIconSize, compound="center", command=partial(self.callback, id))
                 self.toolbarButtons.append( { "id": id, "button": btn } )
                 btn.grid(row=0, column=col, padx=0, pady=1)
             col += 1
@@ -466,9 +465,11 @@ class Gui():
     def is_svg_string(self, text: str) -> bool:
         return '<svg' in text and '</svg>' in text
         
-    def create_button(self, parent, text="", size=(128, 128), **tk_button_kwargs):
+    def create_button(self, parent, text="", tooltip=None, size=(128, 128), **tk_button_kwargs):
         if self.is_svg_string(text):
             svg_string = text
         else:
             svg_string = self.get_svg(text, size)
-        return self.create_svg_button(parent, svg_string, size, **tk_button_kwargs)
+        btn = self.create_svg_button(parent, svg_string, size, **tk_button_kwargs)
+        btn.tooltip = tooltip
+        return btn
