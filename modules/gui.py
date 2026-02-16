@@ -13,6 +13,27 @@ from io import BytesIO
 
 class Gui():
 
+    svg_trashcan = '''
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">
+                    <rect width="32" height="32" rx="8" ry="8" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
+                    <path transform="translate(3 3)" fill-rule="evenodd" fill="white" d="M12,13.5857864 L14.2928932,11.2928932 L15.7071068,12.7071068 L13.4142136,15 L15.7071068,17.2928932 L14.2928932,18.7071068 L12,16.4142136 L9.70710678,18.7071068 L8.29289322,17.2928932 L10.5857864,15 L8.29289322,12.7071068 L9.70710678,11.2928932 L12,13.5857864 Z M7,4 L7,3 C7,1.8954305 7.8954305,1 9,1 L15,1 C16.1045695,1 17,1.8954305 17,3 L17,4 L20,4 C21.1045695,4 22,4.8954305 22,6 L22,8 C22,9.1045695 21.1045695,10 20,10 L19.9198662,10 L19,21 C19,22.1045695 18.1045695,23 17,23 L7,23 C5.8954305,23 5,22.1045695 5.00345424,21.0830455 L4.07986712,10 L4,10 C2.8954305,10 2,9.1045695 2,8 L2,6 C2,4.8954305 2.8954305,4 4,4 L7,4 Z M7,6 L4,6 L4,8 L20,8 L20,6 L17,6 L7,6 Z M6.08648886,10 L7,21 L17,21 L17.0034542,20.9169545 L17.9132005,10 L6.08648886,10 Z M15,4 L15,3 L9,3 L9,4 L15,4 Z"/>
+                </svg>
+                '''
+
+    svg_reuse = '''
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">
+                    <rect width="32" height="32" rx="8" ry="8" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
+                    <path transform="translate(4 4)" fill-rule="evenodd" fill="white" d="M7.41421356,19 L9.70710678,21.2928932 L8.29289322,22.7071068 L3.58578644,18 L8.29289322,13.2928932 L9.70710678,14.7071068 L7.41421356,17 L16,17 C17.6568542,17 19,15.6568542 19,14 L19,11 L21,11 L21,14 C21,16.7614237 18.7614237,19 16,19 L7.41421356,19 Z M16.5867862,5.00099979 L14.2928932,2.70710678 L15.7071068,1.29289322 L20.4142136,6 L15.7071068,10.7071068 L14.2928932,9.29289322 L16.5847866,7.00099979 L8,7.00099979 C6.34314575,7.00099979 5,8.34414554 5,10.0009998 L5,13.0009998 L3,13.0009998 L3,10.0009998 C3,7.23957604 5.23857625,5.00099979 8,5.00099979 L16.5867862,5.00099979 Z"/>
+                </svg>
+                '''
+
+    svg_delete = '''
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">
+                    <rect width="32" height="32" rx="8" ry="8" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
+                    <path transform="translate(4 4)" fill-rule="evenodd" fill="white" d="M12,12.5857864 L14.2928932,10.2928932 L15.7071068,11.7071068 L13.4142136,14 L15.7071068,16.2928932 L14.2928932,17.7071068 L12,15.4142136 L9.70710678,17.7071068 L8.29289322,16.2928932 L10.5857864,14 L8.29289322,11.7071068 L9.70710678,10.2928932 L12,12.5857864 Z M15,3.41421356 L15,7 L18.5857864,7 L15,3.41421356 Z M19,9 L15,9 C13.8954305,9 13,8.1045695 13,7 L13,3 L5,3 L5,21 L19,21 L19,9 Z M5,1 L15.4142136,1 L21,6.58578644 L21,21 C21,22.1045695 20.1045695,23 19,23 L5,23 C3.8954305,23 3,22.1045695 3,21 L3,3 C3,1.8954305 3.8954305,1 5,1 Z"/>
+                </svg>
+                '''
+
     class Item(Enum):
         Cmd_onClose  = "close",
         VarList      = "var.event",
@@ -23,13 +44,13 @@ class Gui():
         Menu_Reset   = "menu.reset",
         Menu_Help    = "menu_help",
         Menu_License = "menu_license",
+        Menu_Copy    = "menu.copy",
         Menu_Exit    = "menu.exit",
         TB_Sep       = "separator",
         TB_Trashcan  = "button.clear",
         TB_Delete    = "button.delete"
         TB_ReUse     = "button.reuse",
         TB_Round     = "button.round",
-        TB_Copy      = "button_copy",
         TB_Dec       = "button.decimal",
         TB_Hex       = "button.hexadecimal",
         TB_Bin       = "button.binary",
@@ -43,29 +64,28 @@ class Gui():
         { "cascade": "File", "text": "_sep_",           "id": None               },
         { "cascade": "File", "text": "Exit",            "id": Item.Menu_Exit,    },
 
+        { "cascade": "Edit", "text": "Copy",            "id": Item.Menu_Copy,    },
+
         { "cascade": "Help", "text": "Help commands",   "id": Item.Menu_Help,    },
         { "cascade": "Help", "text": "Display license", "id": Item.Menu_License, },
     ]
 
     tbdef = [
-        { "id": Item.TB_Trashcan,   "text": "CLS",   "path": "trashcan.png",       },
+        { "id": Item.TB_Trashcan,   "text": svg_trashcan, "tooltip": "Clear screen (input editor)", },
         { "id": Item.TB_Sep },
 
-        { "id": Item.TB_Delete,     "text": "CLR",   "path": "delete.png",         },
-        { "id": Item.TB_ReUse,      "text": "Reuse", "path": "reuse.png",          },
-        { "id": Item.TB_Round,      "text": "R.2",   "path": None,                 },
+        { "id": Item.TB_Delete,     "text": svg_delete,   "tooltip": "Delete all variables", },
+        { "id": Item.TB_ReUse,      "text": svg_reuse,    "tooltip": "Re-use last output as new input", },
+        { "id": Item.TB_Round,      "text": "R.2",        "tooltip": "Round results by 2 digits", },
 
         { "id": Item.TB_Sep },
-        { "id": Item.TB_Dec,        "text": "DEC",   "path": None,                 },
-        { "id": Item.TB_Hex,        "text": "HEX",   "path": None,                 },
-        { "id": Item.TB_Bin,        "text": "BIN",   "path": None,                 },
+        { "id": Item.TB_Dec,        "text": "DEC",        "tooltip": "Display output as decimal formatted number", },
+        { "id": Item.TB_Hex,        "text": "HEX",        "tooltip": "Display output as hexadecimal formatted number", },
+        { "id": Item.TB_Bin,        "text": "BIN",        "tooltip": "Display output as binary formatted number", },
 
         { "id": Item.TB_Sep },
-        { "id": Item.TB_Deg,        "text": "DEG",   "path": None,                 },
-        { "id": Item.TB_Rad,        "text": "RAD",   "path": None,                 },
-
-        # { "id": Item.TB_Sep },
-        # { "id": Item.TB_Copy,       "text": "Copy",  "path": "copy_clipboard.png", },
+        { "id": Item.TB_Deg,        "text": "DEG",        "tooltip": "Represent angles in degree", },
+        { "id": Item.TB_Rad,        "text": "RAD",        "tooltip": "Represent angles in radian", },
     ]
 
     def __init__(self, callback = None):
@@ -179,6 +199,7 @@ class Gui():
             else:
                 self.toolbar.columnconfigure(col, weight=1)
                 btn = self.create_button(self.toolbar, element["text"], size=self.tbIconSize, compound="center", command=partial(self.callback, id))
+                # element["tooltip"]
                 self.toolbarButtons.append( { "id": id, "button": btn } )
                 btn.grid(row=0, column=col, padx=0, pady=1)
             col += 1
@@ -417,12 +438,11 @@ class Gui():
     def get_svg(self, symbol, size=(128, 128)):
             text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) / 4.5)
             return f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-        <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
-        <rect width="{size[0]}" height="{size[1]}" rx="{text_size}" ry="{text_size}" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
-        <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="Arial" font-size="{text_size}" fill="white" text-anchor="middle" 
-        dominant-baseline="middle">
-            {symbol}
-        </text>
+            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
+            <rect width="{size[0]}" height="{size[1]}" rx="{text_size}" ry="{text_size}" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
+            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="Arial" font-size="{text_size}" fill="white" text-anchor="middle" dominant-baseline="middle">
+                {symbol}
+            </text>
         </svg>'''
 
     def draw_svg(self, svg_string, size=(128, 128), background_color=(0, 0, 0, 0)):
@@ -443,5 +463,12 @@ class Gui():
         button.image = image
         return button
 
-    def create_button(self, parent, text, size=(128, 128), **tk_button_kwargs):
-        return self.create_svg_button(parent, self.get_svg(text, size), size, **tk_button_kwargs)
+    def is_svg_string(self, text: str) -> bool:
+        return '<svg' in text and '</svg>' in text
+        
+    def create_button(self, parent, text="", size=(128, 128), **tk_button_kwargs):
+        if self.is_svg_string(text):
+            svg_string = text
+        else:
+            svg_string = self.get_svg(text, size)
+        return self.create_svg_button(parent, svg_string, size, **tk_button_kwargs)
