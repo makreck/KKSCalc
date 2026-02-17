@@ -216,7 +216,7 @@ class Calculator:
             text += f"{key:<8s} \t{self.__funclist[key][1]}\n"
         self.gui.display_popup("Help", text)
         return (0.0, "OK", 2 )
-        
+
     def func_lic(self, parameters = None):
         self.gui.display_popup("License", self.read_license_file())
         return (0.0, "OK", 2 )

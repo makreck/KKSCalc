@@ -11,6 +11,7 @@ from enum import Enum
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 from io import BytesIO
 from modules.math_wrapper import MathWrapper
+from modules.tooltip import ToolTip
 
 class Gui():
 
@@ -121,7 +122,7 @@ class Gui():
         self.displayFont   = Font(family="TkFixedFont", size=dfs, weight="bold") 
         self.varlistFont   = Font(family="TkFixedFont", size=10, weight="bold") 
         self.imageFont     = ImageFont.load_default()
-    
+
     def app_window(self, pos = {} ):
         self.check_geometry(pos)
         self.createWindow()
@@ -186,7 +187,7 @@ class Gui():
                 menu_cascade.add_separator()
             else:
                 menu_cascade.add_command(label=element["text"], command=partial(self.callback, element["id"]))
-        
+
     def createToolbar(self):
         self.toolbar = tk.Frame(self.root, bd=1, relief="sunken")
         self.toolbar.pack(side="top", fill="x")
@@ -208,7 +209,7 @@ class Gui():
         self.result = tk.Label(self.toolbar, text="0.0", width=-1, height=1, anchor="e", bg="#000000", fg="#00F0F0", relief="raised", font=self.displayFont)
         self.result.grid(row=0, column=col, padx=2, pady=2, sticky="NSEW")
         self.result.bind("<Double-1>", self.handle_ResultEvent)
-        
+
     def createPaned(self):
         self.paned = ttk.PanedWindow(self.root, orient="horizontal")
         self.paned.pack(fill="both", expand=True)
@@ -224,7 +225,7 @@ class Gui():
     def createStatusline(self):
         self.statusline = tk.Label(self.root, text="OK", width=-1, height=1, padx=4, pady=2, anchor="w", bd=1, relief="sunken")
         self.statusline.pack(fill="x", side="bottom", padx=2, pady=2)
-    
+
     def createFunctionWindow(self):
         self.notebook = ttk.Notebook(self.frame_left)
         self.varlist_frame = ttk.Frame(self.notebook)
@@ -234,7 +235,7 @@ class Gui():
         self.createVarList()
         self.createKeyboard()
         self.notebook.pack(expand=1, fill='both')
-        
+
     def createKeyboard(self):
         self.keyboard = MathWrapper.get_keyboard_list()
         self.kb_btn_size = (40, 40)
@@ -251,7 +252,7 @@ class Gui():
 
     def get_keyboard_property(self, key):
         return self.keyboard[key]
-    
+
     def createVarList(self):
         style = ttk.Style()
         metrics = self.varlistFont.metrics()
@@ -312,7 +313,7 @@ class Gui():
             return None
         else:
             return None
-        
+
     def guiDefaultCallback(self, id: Item):
         print(f"Internal GUI callback error: {id}")
 
@@ -320,7 +321,7 @@ class Gui():
         self.var = var
         self.update_Variables()
         return self
-        
+
     def update_Variables(self):
         if (type(self.var) != dict): return
         self.varlist.delete(*self.varlist.get_children())
@@ -347,7 +348,7 @@ class Gui():
 
     def set_Status(self, status: str):
         self.statusline.config(text=status)
-        
+
     def get_ResultString(self, value: float) -> str:
         if type(value) == str:
             return (f"\"{value}\"", "neutral" )
@@ -372,7 +373,7 @@ class Gui():
 
     def get_Result(self) -> float:
         return self.resultValue
-    
+
     def clear(self) -> float:
         self.editor.delete("1.0", "end")
         self.set_Result(0.0)
@@ -394,11 +395,11 @@ class Gui():
 
     def get_ScreenContent(self) -> str:
         return self.editor.get("1.0", "end-1c")
-    
+
     def set_ScreenContent(self, content: str):
         self.editor.delete("1.0", "end")
         self.editor.insert("1.0", content)
-    
+
     def copyResultToClipboard(self):
         pyperclip.copy(self.result.cget("text"))
 
@@ -426,7 +427,7 @@ class Gui():
             frac_digits += format(digit, fmt)
             frac -= digit
         return fu(int(whole)) + "." + frac_digits.rstrip("0")
-    
+
     def get_ImagePath(self, image_file = "") -> str:
         if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
             base_path = Path(sys._MEIPASS)
@@ -464,11 +465,11 @@ class Gui():
         self.center_window(dialog_window, self.root)
 
     def get_svg(self, symbol, size=(32, 32)):
-            text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) / 4.5)
+            text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) / 4.25)
             return f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
             <rect width="{size[0]}" height="{size[1]}" rx="{text_size}" ry="{text_size}" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
-            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="Arial" font-size="{text_size}" fill="white" stroke="none" text-anchor="middle" dominant-baseline="middle">
+            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="TkFixedFont" font-size="{text_size}" fill="white" stroke="none" text-anchor="middle" dominant-baseline="middle">
                 {symbol}
             </text>
         </svg>'''
@@ -493,12 +494,16 @@ class Gui():
 
     def is_svg_string(self, text: str) -> bool:
         return '<svg' in text and '</svg>' in text
-        
+
     def create_button(self, parent, text="", tooltip=None, size=(32, 32), **tk_button_kwargs):
         if self.is_svg_string(text):
             svg_string = text
         else:
             svg_string = self.get_svg(text, size)
         btn = self.create_svg_button(parent, svg_string, size, **tk_button_kwargs)
-        btn.tooltip = tooltip
+        if tooltip:
+            btn.tooltip = ToolTip(self.root, btn, tooltip)
+        else:
+            btn.tooltip = None
+        
         return btn
