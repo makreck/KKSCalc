@@ -96,6 +96,7 @@ class Gui():
         self.get_display_scaling()
         self.root.call('tk', 'scaling', self.display_scaling_factor)
         self.callback    = callback
+        self.kb_btn_size = (40, 40)
         self.num_format  = "dec"
         self.reuse       = True
         self.resultValue = 0.0
@@ -236,37 +237,62 @@ class Gui():
     def createFunctionWindow(self):
         self.notebook = ttk.Notebook(self.frame_left)
         self.varlist_frame = ttk.Frame(self.notebook)
-        self.keyboard_frame = ttk.Frame(self.notebook)
         self.notebook.add(self.varlist_frame, text="Variables")
-        self.notebook.add(self.keyboard_frame, text="Keyboard")
+        self.operations_frame = ttk.Frame(self.notebook)
+        self.notebook.add(self.operations_frame, text="Key pad")
+        self.functions_frame = ttk.Frame(self.notebook)
+        self.notebook.add(self.functions_frame, text="Functions")
         self.createVarList()
         self.createKeyboard()
+        self.createFunctions()
         self.notebook.pack(expand=1, fill='both')
 
     def createKeyboard(self):
-        fu_add = {
+        self.operations_pad = {
+            "0": [ "0", "0", None ],
+            "1": [ "1", "1", None ],
+            "2": [ "2", "2", None ],
+            "3": [ "3", "3", None ],
+            "4": [ "4", "4", None ],
+
+            "5": [ "5", "5", None ],
+            "6": [ "6", "6", None ],
+            "7": [ "7", "7", None ],
+            "8": [ "8", "8", None ],
+            "9": [ "9", "9", None ],
+
+            ".": [ ".", ".", None ],
+            "(": [ "(", "(", None ],
+            ")": [ ")", ")", None ],
+            "[": [ "[", "[", None ],
+            "]": [ "]", "]", None ],
+
             "+": [ "+", "+", None ],
             "-": [ "-", "-", None ],
             "*": [ "*", "*", None ],
             "/": [ "/", "/", None ],
             "=": [ "=", "=", None ],
         }
-        self.keyboard = MathWrapper.get_keyboard_list()
-        self.keyboard.update(fu_add)
-        self.kb_btn_size = (40, 40)
+        self.create_keypad(self.operations_frame, self.operations_pad)
+    
+    def createFunctions(self):
+        self.math_keyboard = MathWrapper.get_keyboard_list()
+        self.create_keypad(self.functions_frame, self.math_keyboard)
+        
+    def create_keypad(self, frame_item: tk.Widget, pad_dict: dict):
         row = 0
         col = 0
-        for math_function, values in self.keyboard.items():
-            btn = self.create_button(self.keyboard_frame, text=values[0], tooltip=values[1], size=self.kb_btn_size, command=partial(self.callback, Gui.Item.Math_Function, math_function))
+        for element, values in pad_dict.items():
+            btn = self.create_button(frame_item, text=values[0], tooltip=values[1], size=self.kb_btn_size, command=partial(self.callback, Gui.Item.Math_Function, element))
             btn.grid(row=row, column=col, padx=2, pady=2)
-            self.keyboard[math_function][2] = btn
+            pad_dict[element][2] = btn
             col += 1
             if col >= 5:
                 col = 0
                 row += 1
 
     def get_keyboard_property(self, key):
-        return self.keyboard[key]
+        return self.math_keyboard[key]
 
     def createVarList(self):
         style = ttk.Style()
