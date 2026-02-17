@@ -244,7 +244,15 @@ class Gui():
         self.notebook.pack(expand=1, fill='both')
 
     def createKeyboard(self):
+        fu_add = {
+            "+": [ "+", "+", None ],
+            "-": [ "-", "-", None ],
+            "*": [ "*", "*", None ],
+            "/": [ "/", "/", None ],
+            "=": [ "=", "=", None ],
+        }
         self.keyboard = MathWrapper.get_keyboard_list()
+        self.keyboard.update(fu_add)
         self.kb_btn_size = (40, 40)
         row = 0
         col = 0
@@ -292,7 +300,7 @@ class Gui():
             value = self.varlist.item(itemID, 'values')        
             self.callback(Gui.Item.VarList, value)
 
-    def handle_EditorEvent(self, event):
+    def handle_EditorEvent(self, event=None):
         start  = self.editor.index("insert linestart")
         end    = self.editor.index("insert")
         text   = self.editor.get(start, end).strip()
@@ -346,8 +354,16 @@ class Gui():
             n += 1
 
     def put_EditString(self, string: str):
+        start = False
+        if string.endswith("="):
+            string = string[:-1]
+            start = True
         aktuelle_position = self.editor.index("insert")
         self.editor.insert(aktuelle_position, string.strip())
+        if start:
+            self.handle_EditorEvent()
+            if not self.reuse:
+                self.editor.insert(self.editor.index("insert lineend"), "\n")
 
     def add_EditString(self, string: str):
         aktuelle_position = self.editor.index("end")
@@ -472,10 +488,10 @@ class Gui():
         self.center_window(dialog_window, self.root)
 
     def get_svg(self, symbol, size=(32, 32)):
-        text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) / 4.3)
+        text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) * (0.2 if len(symbol) > 4 else 0.2))
         return f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
-            <rect width="{size[0]}" height="{size[1]}" rx="{text_size}" ry="{text_size}" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
+            <rect width="{size[0]}" height="{size[1]}" rx="{text_size//2}" ry="{text_size//2}" fill="#4a90e2" stroke-width="0"/>
             <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="{self.platform_font}" font-size="{text_size}" fill="white" stroke="none" text-anchor="middle" dominant-baseline="middle">
                 {symbol}
             </text>
@@ -485,10 +501,10 @@ class Gui():
         try:
             png_data = cairosvg.svg2png(bytestring=svg_string.encode('UTF-8'), output_width=size[0], output_height=size[1])
             image_src = Image.open(BytesIO(png_data))
-            image = Image.new('RGBA', (size[0], size[1]), background_color)
+            image = Image.new('RGBA', size, background_color)
             image.paste(image_src)
         except Exception as e:
-            image = Image.new('RGBA', (size[0], size[1]), background_color)
+            image = Image.new('RGBA', size, background_color)
             draw = ImageDraw.Draw(image)
             draw.text((10, 10), f"{e}", fill=(0, 0, 0, 255))
         return ImageTk.PhotoImage(image)
@@ -512,5 +528,4 @@ class Gui():
             btn.tooltip = ToolTip(self.root, btn, tooltip)
         else:
             btn.tooltip = None
-        
         return btn

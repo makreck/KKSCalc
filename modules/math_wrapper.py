@@ -240,7 +240,7 @@ class MathWrapper:
             "erf":    (__f_erf,    "erf",      "Error Function, (2/√π) ∫₀ˣ e⁻ᵗ² dt", True, ),
             "erfc":   (__f_erfc,   "erfc",     "Error Function Complement, 1 - erf(x)", True, ),
             "gamma":  (__f_gamma,  "Γ",        "Gamma Function", True, ),
-            "lgamma": (__f_lgamma, "ln(Γ(x))", "Log Gamma Function", True, ),
+            "lgamma": (__f_lgamma, "ln(Γ)",    "Log Gamma Function", True, ),
             "rgamma": (__f_rgamma, "1/Γ",      "Reciprocal Gamma Function", True, ),
             
         }

@@ -448,7 +448,7 @@ class Calculator:
 
     def put_edit_string(self, string: str):
         self.gui.put_EditString(string)
-
+            
     def reset_result(self, string: str):
         self.gui.set_Result("0.0")
         
@@ -459,7 +459,7 @@ class Calculator:
             case Gui.Item.VarList:
                 self.put_edit_string(event[1])
             case Gui.Item.Result:
-                self.set_result("0.0")
+                pass
             case Gui.Item.Editor:
                 return self.do_parse(event)
             case Gui.Item.Cmd_onClose:
@@ -515,4 +515,4 @@ class Calculator:
         return license_text
         
     def handle_keyboard_event(self, math_function):
-        self.put_edit_string(f"{math_function}(")
+        self.put_edit_string(f"{math_function}(" if len(math_function) > 1 else math_function)
