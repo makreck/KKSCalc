@@ -1,4 +1,4 @@
-import sys, math
+import sys, math, platform
 import pyperclip, cairosvg
 import re
 import tkinter as tk
@@ -117,11 +117,18 @@ class Gui():
         self.create_fonts()
 
     def create_fonts(self):
+        if platform.system() == "Windows":
+            self.platform_font = "Arial Unicode MS"
+        elif platform.system() == "Linux":
+            self.platform_font = "DejaVuSans"
+        else:
+            self.platform_font = "TkFixedFont"
+        self.platform_fixed_font = "TkFixedFont"
         dfs = int(self.tbIconSize[1] * 0.6 + 0.5)
-        self.editorFont    = Font(family="TkFixedFont", size=14, weight="bold") 
-        self.displayFont   = Font(family="TkFixedFont", size=dfs, weight="bold") 
-        self.varlistFont   = Font(family="TkFixedFont", size=10, weight="bold") 
-        self.imageFont     = ImageFont.load_default()
+        self.editorFont  = Font(family=self.platform_fixed_font, size=14,  weight="bold") 
+        self.displayFont = Font(family=self.platform_fixed_font, size=dfs, weight="bold") 
+        self.varlistFont = Font(family=self.platform_fixed_font, size=10,  weight="bold") 
+        self.imageFont   = ImageFont.load_default()
 
     def app_window(self, pos = {} ):
         self.check_geometry(pos)
@@ -465,11 +472,11 @@ class Gui():
         self.center_window(dialog_window, self.root)
 
     def get_svg(self, symbol, size=(32, 32)):
-            text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) / 4.25)
-            return f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) / 4.3)
+        return f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
             <rect width="{size[0]}" height="{size[1]}" rx="{text_size}" ry="{text_size}" fill="#4a90e2" stroke="#357abd" stroke-width="0"/>
-            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="TkFixedFont" font-size="{text_size}" fill="white" stroke="none" text-anchor="middle" dominant-baseline="middle">
+            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="{self.platform_font}" font-size="{text_size}" fill="white" stroke="none" text-anchor="middle" dominant-baseline="middle">
                 {symbol}
             </text>
         </svg>'''
