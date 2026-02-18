@@ -248,29 +248,29 @@ class Gui():
 
     def createKeyboard(self):
         self.operations_pad = {
-            "0": [ "0", "0", None ],
-            "1": [ "1", "1", None ],
-            "2": [ "2", "2", None ],
-            "3": [ "3", "3", None ],
-            "4": [ "4", "4", None ],
+            "0": [ "0", "Digit 0", None ],
+            "1": [ "1", "Digit 1", None ],
+            "2": [ "2", "Digit 2", None ],
+            "3": [ "3", "Digit 3", None ],
+            "4": [ "4", "Digit 4", None ],
 
-            "5": [ "5", "5", None ],
-            "6": [ "6", "6", None ],
-            "7": [ "7", "7", None ],
-            "8": [ "8", "8", None ],
-            "9": [ "9", "9", None ],
+            "5": [ "5", "Digit 5", None ],
+            "6": [ "6", "Digit 6", None ],
+            "7": [ "7", "Digit 7", None ],
+            "8": [ "8", "Digit 8", None ],
+            "9": [ "9", "Digit 9", None ],
 
-            ".": [ ".", ".", None ],
-            "(": [ "(", "(", None ],
-            ")": [ ")", ")", None ],
-            "[": [ "[", "[", None ],
-            "]": [ "]", "]", None ],
+            ".": [ ".", "Decimal point", None ],
+            "(": [ "(", "Open parentesis", None ],
+            ")": [ ")", "Close parentesis", None ],
+            "[": [ "[", "Open bracket (indexing)", None ],
+            "]": [ "]", "Close bracket (indexing)", None ],
 
-            "+": [ "+", "+", None ],
-            "-": [ "-", "-", None ],
-            "*": [ "*", "*", None ],
-            "/": [ "/", "/", None ],
-            "=": [ "=", "=", None ],
+            "+": [ "+", "Add", None ],
+            "-": [ "-", "Subtract", None ],
+            "*": [ "*", "Multiply", None ],
+            "/": [ "/", "Division", None ],
+            "=": [ "=", "Calculate", None ],
         }
         self.create_keypad(self.operations_frame, self.operations_pad)
     
@@ -306,6 +306,8 @@ class Gui():
         self.varlist.tag_configure("even", background="#FFFFFF")
         self.varlist.tag_configure("odd",  background="#E0E0FF")
         self.varlist.bind('<Double-1>', self.handle_VarListEvent)
+        self.varlist.tooltip = ToolTip(self.root, self.varlist, "List of all pre-defined and user-defined variables")
+        
         self.varlist.pack(padx=4.0, pady=4.0, fill="both", expand=True)
 
     def createEditor(self):
