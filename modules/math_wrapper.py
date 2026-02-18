@@ -167,9 +167,6 @@ class MathWrapper:
     def __f_loge(x: float) -> float:
         return math.log(x)
 
-    def __f_loge(x: float) -> float:
-        return math.ln(x)
-
     def __f_exp(x: float) -> float:
         return math.exp(x)
 
