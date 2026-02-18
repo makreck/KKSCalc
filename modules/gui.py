@@ -12,6 +12,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 from io import BytesIO
 from modules.math_wrapper import MathWrapper
 from modules.tooltip import ToolTip
+from fractions import Fraction
 
 class Gui():
 
@@ -56,6 +57,7 @@ class Gui():
         TB_Dec        = "button.decimal",
         TB_Hex        = "button.hexadecimal",
         TB_Bin        = "button.binary",
+        TB_Frc        = "button.fraction"
         TB_Deg        = "button.degrees",
         TB_Rad        = "button.radians",
         Math_Function = 9000,
@@ -85,6 +87,7 @@ class Gui():
         { "id": Item.TB_Dec,        "text": "DEC",        "tooltip": "Display output as decimal formatted number", },
         { "id": Item.TB_Hex,        "text": "HEX",        "tooltip": "Display output as hexadecimal formatted number", },
         { "id": Item.TB_Bin,        "text": "BIN",        "tooltip": "Display output as binary formatted number", },
+        { "id": Item.TB_Frc,        "text": "X/Y",        "tooltip": "Display output as decimal fraction", },
 
         { "id": Item.TB_Sep },
         { "id": Item.TB_Deg,        "text": "DEG",        "tooltip": "Represent angles in degree", },
@@ -126,9 +129,9 @@ class Gui():
             self.platform_font   = "TkFixedFont"
         self.platform_fixed_font = "TkFixedFont"
         self.font_scaling = round((self.tbIconSize[1] / self.icon_size[1]) * 0.6, 1)
-        self.editorFont   = Font(family=self.platform_fixed_font, size=int(18 * self.font_scaling), weight="bold") 
-        self.displayFont  = Font(family=self.platform_fixed_font, size=int(20 * self.font_scaling), weight="bold") 
-        self.varlistFont  = Font(family=self.platform_fixed_font, size=int(14 * self.font_scaling), weight="bold") 
+        self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.33), weight="bold") 
+        self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.60), weight="bold") 
+        self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.25), weight="bold") 
 
     def app_window(self, pos = {} ):
         self.check_geometry(pos)
@@ -261,8 +264,8 @@ class Gui():
             "9": [ "9", "Digit 9", None ],
 
             ".": [ ".", "Decimal point", None ],
-            "(": [ "(", "Open parentesis", None ],
-            ")": [ ")", "Close parentesis", None ],
+            "(": [ "(", "Open parenthesis", None ],
+            ")": [ ")", "Close parenthesis", None ],
             "[": [ "[", "Open bracket (indexing)", None ],
             "]": [ "]", "Close bracket (indexing)", None ],
 
@@ -409,6 +412,8 @@ class Gui():
             result = self.float2fractional(value, 2, 8 if not self.round else 2)
         elif self.num_format == "hex":
             result = self.float2fractional(value, 16, 4 if not self.round else 2)
+        elif self.num_format == "frc":
+            result = self.decimalFraction(value)
         else:
             if self.round:
                 result = f"{value:.2f}"
@@ -456,6 +461,14 @@ class Gui():
     def set_NumberFormat(self, fmt = "dec"):
         self.num_format = fmt
 
+    def decimalFraction(self, value: float):
+        max_denominator = 1000000
+        full = int(value)
+        frac = value - full
+        fraction = Fraction(frac).limit_denominator(max_denominator)
+        full = f"{full}+" if full != 0 else ""
+        return f"({full}{fraction})"
+    
     def float2fractional(self, value: float, base = 16, digits = 8):
         digits = int(digits)
         base = int(base)

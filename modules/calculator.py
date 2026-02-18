@@ -18,6 +18,7 @@ class Calculator:
         ".dec":   ( "func_dec",   "Use decimal system for outputs" ),
         ".hex":   ( "func_hex",   "Use hexadecimal system for outputs" ),
         ".bin":   ( "func_bin",   "Use binary system for outputs" ),
+        ".frc":   ( "func_frc",   "Use decimal fraction for outputs" ),
         ".round": ( "func_round", "Round results for business use" ),
         ".reuse": ( "func_reuse", "Re-use result for next calculation" ),
         ".rom":   ( "func_roman", "Convert given number into roman digits" ),
@@ -79,6 +80,7 @@ class Calculator:
         self.gui.set_ButtonPressed(Gui.Item.TB_Dec, fmt == "dec")
         self.gui.set_ButtonPressed(Gui.Item.TB_Hex, fmt == "hex")
         self.gui.set_ButtonPressed(Gui.Item.TB_Bin, fmt == "bin")
+        self.gui.set_ButtonPressed(Gui.Item.TB_Frc, fmt == "frc")
         self.gui.set_Result(self.gui.get_Result())
         return (0.0, "OK", 2 )
 
@@ -255,6 +257,9 @@ class Calculator:
 
     def func_bin(self, parameters = None):
         return self.defineNumberFormat("bin")
+
+    def func_frc(self, parameters = None):
+        return self.defineNumberFormat("frc")
 
     def func_round(self, parameters = None):
         self.gui.set_Round(self.gui.set_ButtonPressed(Gui.Item.TB_Round, self.cfg.set_round(not self.cfg.get_round())))
@@ -493,6 +498,8 @@ class Calculator:
                 self.cmd(".hex")
             case Gui.Item.TB_Bin:
                 self.cmd(".bin")
+            case Gui.Item.TB_Frc:
+                self.cmd(".frc")
             case Gui.Item.TB_Deg:
                 self.cmd(".deg")
             case Gui.Item.TB_Rad:
