@@ -23,7 +23,7 @@ class ToolTip:
 
         self.popup = tk.Toplevel(self.root, background="yellow")
         self.popup.overrideredirect(True)
-        self.label = tk.Label(self.popup, text=self.text, background="yellow", relief="flat", borderwidth=0)
+        self.label = tk.Label(self.popup, text=self.text, background="yellow", relief="flat", borderwidth=4)
         self.label.pack(fill="both", padx=4, pady=4)
         
         x = self.widget.winfo_rootx() + 16
