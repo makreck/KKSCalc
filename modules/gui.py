@@ -93,10 +93,10 @@ class Gui():
 
     def __init__(self, callback = None):
         self.root = tk.Tk()
+        self.icon_size   = (40, 40)
         self.get_display_scaling()
         self.root.call('tk', 'scaling', self.display_scaling_factor)
         self.callback    = callback
-        self.kb_btn_size = (40, 40)
         self.num_format  = "dec"
         self.reuse       = True
         self.resultValue = 0.0
@@ -111,10 +111,10 @@ class Gui():
         self.screen_height = self.root.winfo_screenheight()
         width_mm = self.root.winfo_screenmmwidth()
         height_mm = self.root.winfo_screenmmheight()
-        scaling_x = (self.screen_width  / (width_mm  / 25.4)) / 96.0
-        scaling_y = (self.screen_height / (height_mm / 25.4)) / 96.0
-        self.display_scaling_factor = round((scaling_x + scaling_y) / 2, 1)
-        self.tbIconSize = (int(40 * self.display_scaling_factor), int(40 * self.display_scaling_factor))
+        scaling_x = round((self.screen_width  / (width_mm  / 25.4)) / 96.0, 1)
+        scaling_y = round((self.screen_height / (height_mm / 25.4)) / 96.0, 1)
+        self.display_scaling_factor = round(max(scaling_x, scaling_y), 1)
+        self.tbIconSize = (int(self.icon_size[0] * self.display_scaling_factor), int(self.icon_size[1] * self.display_scaling_factor))
         self.create_fonts()
 
     def create_fonts(self):
@@ -125,10 +125,10 @@ class Gui():
         else:
             self.platform_font = "TkFixedFont"
         self.platform_fixed_font = "TkFixedFont"
-        dfs = int(self.tbIconSize[1] * 0.6 + 0.5)
-        self.editorFont  = Font(family=self.platform_fixed_font, size=14,  weight="bold") 
-        self.displayFont = Font(family=self.platform_fixed_font, size=dfs, weight="bold") 
-        self.varlistFont = Font(family=self.platform_fixed_font, size=10,  weight="bold") 
+        self.font_scaling = round((self.tbIconSize[1] / self.icon_size[1]) * 0.6, 1)
+        self.editorFont  = Font(family=self.platform_fixed_font, size=int(14 * self.font_scaling),  weight="bold") 
+        self.displayFont = Font(family=self.platform_fixed_font, size=int(20 * self.font_scaling), weight="bold") 
+        self.varlistFont = Font(family=self.platform_fixed_font, size=int(10 * self.font_scaling),  weight="bold") 
         self.imageFont   = ImageFont.load_default()
 
     def app_window(self, pos = {} ):
@@ -283,7 +283,7 @@ class Gui():
         row = 0
         col = 0
         for element, values in pad_dict.items():
-            btn = self.create_button(frame_item, text=values[0], tooltip=values[1], size=self.kb_btn_size, command=partial(self.callback, Gui.Item.Math_Function, element))
+            btn = self.create_button(frame_item, text=values[0], tooltip=values[1], size=self.tbIconSize, command=partial(self.callback, Gui.Item.Math_Function, element))
             btn.grid(row=row, column=col, padx=2, pady=2)
             pad_dict[element][2] = btn
             col += 1
