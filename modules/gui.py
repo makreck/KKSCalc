@@ -129,9 +129,9 @@ class Gui():
             self.platform_font   = "TkFixedFont"
         self.platform_fixed_font = "TkFixedFont"
         self.font_scaling = round((self.tbIconSize[1] / self.icon_size[1]) * 0.6, 1)
-        self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.33), weight="bold") 
-        self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.60), weight="bold") 
-        self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.25), weight="bold") 
+        self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.24), weight="bold") 
+        self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.32), weight="bold") 
+        self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.20), weight="bold") 
 
     def app_window(self, pos = {} ):
         self.check_geometry(pos)
@@ -206,18 +206,20 @@ class Gui():
         for element in Gui.tbdef:
             id = element["id"]
             if id == Gui.Item.TB_Sep:
-                spacer = tk.Label(self.toolbar, text="")
-                spacer.grid(row=0, column=col, padx=1, pady=1)
+                spacer = tk.Label(self.toolbar, text="", width=-1, height=1)
+                spacer.grid(row=0, column=col, padx=6, pady=1)
                 self.toolbarButtons.append( { "id": id, "button": spacer } )
             else:
                 self.toolbar.columnconfigure(col, weight=1)
-                btn = self.create_button(self.toolbar, element["text"], element["tooltip"], size=self.tbIconSize, compound="center", command=partial(self.callback, id))
+                btn = self.create_button(self.toolbar, element["text"], element["tooltip"],
+                                         size=self.tbIconSize, compound="center", command=partial(self.callback, id))
                 self.toolbarButtons.append( { "id": id, "button": btn } )
-                btn.grid(row=0, column=col, padx=0, pady=1)
+                btn.grid(row=0, column=col, padx=0, pady=0)
             col += 1
         self.toolbar.columnconfigure(col, weight=999)
-        self.result = tk.Label(self.toolbar, text="0.0", width=-1, height=1, anchor="e", bg="#000000", fg="#00F0F0", relief="raised", font=self.displayFont)
-        self.result.grid(row=0, column=col, padx=2, pady=2, sticky="NSEW")
+        self.result = tk.Label(self.toolbar, text="0.0", width=-1, height=1, anchor="e",
+                               bg="#000000", fg="#00F0F0", relief="raised", font=self.displayFont, padx=8, pady=0)
+        self.result.grid(row=0, column=col, padx=2, pady=0, sticky="NSEW")
         self.result.bind("<Double-1>", self.handle_ResultEvent)
 
     def createPaned(self):
@@ -299,7 +301,7 @@ class Gui():
     def createVarList(self):
         style = ttk.Style()
         metrics = self.varlistFont.metrics()
-        row_height = int(metrics["linespace"] * self.display_scaling_factor)
+        row_height = int(metrics["linespace"]) # * self.display_scaling_factor)
         style.configure("Treeview", font=self.varlistFont, rowheight=row_height)
         self.varlist = ttk.Treeview(self.varlist_frame, columns = ("name", "value"), show = "headings")
         self.varlist.heading("name", text = "Name")
@@ -310,7 +312,6 @@ class Gui():
         self.varlist.tag_configure("odd",  background="#E0E0FF")
         self.varlist.bind('<Double-1>', self.handle_VarListEvent)
         self.varlist.tooltip = ToolTip(self.root, self.varlist, "List of all pre-defined and user-defined variables")
-        
         self.varlist.pack(padx=4.0, pady=4.0, fill="both", expand=True)
 
     def createEditor(self):
