@@ -9,7 +9,7 @@ from tkinter.font import Font
 from tkinter import scrolledtext
 from functools import partial
 from enum import Enum
-from PIL import Image, ImageDraw, ImageFont, ImageTk
+from PIL import Image, ImageDraw, ImageTk
 from io import BytesIO
 from modules.math_wrapper import MathWrapper
 from modules.tooltip import ToolTip
