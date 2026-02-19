@@ -57,31 +57,31 @@ class Config:
         return self
     
     def set_ScreenContent(self, content: str):
-        self.configData["screen"] = content
+        self.configData["Screen"] = content
         return self
 
     def get_ScreenContent(self) -> str:
-        return self.configData.get("screen", "")
+        return self.configData.get("Screen", "")
 
-    def set_round(self, mode: bool) -> bool:
-        self.configData["round"] = mode
+    def set_Round(self, mode: bool) -> bool:
+        self.configData["Round"] = mode
         return mode
 
-    def get_round(self) -> bool:
-        return self.configData.get("round", False)
+    def get_Round(self) -> bool:
+        return self.configData.get("Round", False)
 
-    def set_reuse(self, mode: bool) -> bool:
-        self.configData["reuse"] = mode
+    def set_ReUse(self, mode: bool) -> bool:
+        self.configData["ReUse"] = mode
         return mode
 
-    def get_reuse(self) -> bool:
-        return self.configData.get("reuse", False)
+    def get_ReUse(self) -> bool:
+        return self.configData.get("ReUse", False)
         
     def set_NumberFormat(self, fmt: str):
-        self.configData["numformat"] = fmt
+        self.configData["NumFormat"] = fmt
         
     def get_NumberFormat(self) -> str:
-        return self.configData.get("numformat", "dec")
+        return self.configData.get("NumFormat", "dec")
         
     def get_AppPath(self, folder = "", filename = "") -> Path:
         if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -96,3 +96,10 @@ class Config:
             pass
 
         return os.path.join(path, filename)
+
+    def get_Display(self) -> float:
+        return self.configData.get("Display", 0.0)
+
+    def set_Display(self, value: float):
+        self.configData["Display"] = value
+    

@@ -67,10 +67,11 @@ class Calculator:
         amode = self.cfg.get_AngleMode()
         self.gui.set_ButtonPressed(Gui.Item.TB_Deg, amode == MathWrapper.AngleMode.DEG)
         self.gui.set_ButtonPressed(Gui.Item.TB_Rad, amode != MathWrapper.AngleMode.DEG)
-        self.gui.set_Round(self.gui.set_ButtonPressed(Gui.Item.TB_Round, self.cfg.get_round()))
-        self.gui.set_ReUse(self.gui.set_ButtonPressed(Gui.Item.TB_ReUse, self.cfg.get_reuse()))
+        self.gui.set_Round(self.gui.set_ButtonPressed(Gui.Item.TB_Round, self.cfg.get_Round()))
+        self.gui.set_ReUse(self.gui.set_ButtonPressed(Gui.Item.TB_ReUse, self.cfg.get_ReUse()))
         self.gui.set_VariableContent(self.get_VariableContent())
         self.gui.set_ScreenContent(self.cfg.get_ScreenContent())
+        self.gui.set_Result(self.cfg.get_Display())
         self.defineNumberFormat(self.cfg.get_NumberFormat())
 
     def defineNumberFormat(self, fmt: str):
@@ -88,13 +89,11 @@ class Calculator:
         self.gui.dispatch()
         return self
 
-    def get_configFile(self):
-        path = sys.path[0] + "/KKSCalc.cfg"
-
     def exit(self, event = None):
         self.cfg.set_VariableContent(self.get_VariableContent())
         self.cfg.set_WindowPos("MainWindow", self.gui.get_WindowPos())
         self.cfg.set_ScreenContent(self.gui.get_ScreenContent())
+        self.cfg.set_Display(self.gui.get_Result())
         self.cfg.save()
 
     def set_AngleMode(self, amode = MathWrapper.AngleMode.DEG):
@@ -262,11 +261,11 @@ class Calculator:
         return self.defineNumberFormat("frc")
 
     def func_round(self, parameters = None):
-        self.gui.set_Round(self.gui.set_ButtonPressed(Gui.Item.TB_Round, self.cfg.set_round(not self.cfg.get_round())))
+        self.gui.set_Round(self.gui.set_ButtonPressed(Gui.Item.TB_Round, self.cfg.set_Round(not self.cfg.get_Round())))
         return (0.0, "OK", 2 )
 
     def func_reuse(self, parameters = None):
-        self.gui.set_ReUse(self.gui.set_ButtonPressed(Gui.Item.TB_ReUse, self.cfg.set_reuse(not self.cfg.get_reuse())))
+        self.gui.set_ReUse(self.gui.set_ButtonPressed(Gui.Item.TB_ReUse, self.cfg.set_ReUse(not self.cfg.get_ReUse())))
         return (0.0, "OK", 2 )
 
     def func_tcmvc(self, parameters = None):
@@ -420,7 +419,6 @@ class Calculator:
         while True:
             if self.is_VariableExisting(formula):
                 return self.get_InitializedVariable(formula)
-
             if "[" in formula:
                 end = formula.find("]")
                 begin = formula.rfind("[", 0, end) - 1
@@ -430,13 +428,11 @@ class Calculator:
                 value = self.get_InitializedVariable(name)
                 formula = formula[:begin+1] + str(value[0]) + formula[end+1:]
                 continue
-            
             if formula.startswith(".") and not formula[1].isnumeric():
                 result = self.cmd(formula)
                 formula = str(result[0])
                 if result[1] != "OK" or result[2] != 1 or self.ro.is_roman_number_string(formula):
                     return result
-                
             try:
                 return ( eval(formula, self.get_VariableContent(), self.get_Cmd()), "OK", True )
             except NameError as ne:
@@ -454,9 +450,6 @@ class Calculator:
     def put_edit_string(self, string: str):
         self.gui.put_EditString(string)
             
-    def reset_result(self, string: str):
-        self.gui.set_Result("0.0")
-        
     def guiCallback(self, id: Gui.Item, event = None):
         match id:
             case Gui.Item.Math_Function:
@@ -469,7 +462,6 @@ class Calculator:
                 return self.do_parse(event)
             case Gui.Item.Cmd_onClose:
                 self.exit()
-
             case Gui.Item.Menu_Clear:
                 self.cmd(".cls")
             case Gui.Item.Menu_Delete:
@@ -504,11 +496,9 @@ class Calculator:
                 self.cmd(".deg")
             case Gui.Item.TB_Rad:
                 self.cmd(".rad")
-
             case _:
                 print(f"GUI callback error: {id}")
         return None
-
 
     def asset_path(self, filename):
         if getattr(sys, 'frozen', False):
