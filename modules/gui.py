@@ -3,6 +3,7 @@ import pyperclip, cairosvg
 import re
 import tkinter as tk
 from pathlib import Path
+from fractions import Fraction
 from tkinter import ttk
 from tkinter.font import Font
 from tkinter import scrolledtext
@@ -12,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 from io import BytesIO
 from modules.math_wrapper import MathWrapper
 from modules.tooltip import ToolTip
-from fractions import Fraction
+from modules.scollframe import ScrollableFrame
 
 class Gui():
 
@@ -242,10 +243,8 @@ class Gui():
         self.notebook = ttk.Notebook(self.frame_left)
         self.varlist_frame = ttk.Frame(self.notebook)
         self.notebook.add(self.varlist_frame, text="Variables")
-        self.operations_frame = ttk.Frame(self.notebook)
-        self.notebook.add(self.operations_frame, text="Key pad")
-        self.functions_frame = ttk.Frame(self.notebook)
-        self.notebook.add(self.functions_frame, text="Functions")
+        self.keypad_frame = ScrollableFrame(self.notebook) # ttk.Frame(self.notebook)
+        self.notebook.add(self.keypad_frame, text="Key pad")
         self.createVarList()
         self.createKeyboard()
         self.createFunctions()
@@ -277,12 +276,16 @@ class Gui():
             "/": [ "/", "Division", None ],
             "=": [ "=", "Calculate", None ],
         }
+        self.operations_frame = tk.Frame(self.keypad_frame.get())
         self.create_keypad(self.operations_frame, self.operations_pad)
+        self.operations_frame.pack(pady=8)
     
     def createFunctions(self):
+        self.functions_frame = tk.Frame(self.keypad_frame.get())
         self.math_keyboard = MathWrapper.get_keyboard_list()
         self.create_keypad(self.functions_frame, self.math_keyboard)
-        
+        self.functions_frame.pack(pady=8)
+
     def create_keypad(self, frame_item: tk.Widget, pad_dict: dict):
         row = 0
         col = 0
