@@ -1,5 +1,4 @@
-import math
-import random
+import math, random
 from enum import Enum
 
 class MathWrapper:

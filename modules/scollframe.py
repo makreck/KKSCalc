@@ -1,5 +1,5 @@
-import tkinter as tk
 import platform
+import tkinter as tk
 
 class ScrollableFrame(tk.Frame):
     def __init__(self, parent, scrollbar_width=14, *args, **kwargs):

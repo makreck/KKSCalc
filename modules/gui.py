@@ -1,6 +1,4 @@
-import sys, math, platform
-import pyperclip, cairosvg
-import re
+import sys, math, platform, pyperclip, cairosvg, re
 import tkinter as tk
 from tkinterweb import HtmlFrame
 from pathlib import Path

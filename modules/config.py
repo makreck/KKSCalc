@@ -1,6 +1,6 @@
 import sys, os, json
-from modules.math_wrapper import MathWrapper
 from pathlib import Path
+from modules.math_wrapper import MathWrapper
 
 class Config:
     __default_main_window = { "x": 64, "y": 64, "width": 1024, "height": 640, "sashpos": 432, }
