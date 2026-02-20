@@ -6,9 +6,19 @@ if __name__ == "__main__":
     Calculator().run()
 
 # Dependencies:
+#
 # pip3 install pyperclip Pillow cairosvg tkinterweb
 #
 # Linux:
-# sudo apt install python3-pil python3-tk
+#
 # Overwrite system wide:
-# sudo pip3 install --user pyperclip Pillow cairosvg tkinterweb --break-system-packages
+# sudo apt remove python3-pil python3-pil.imagetk
+# sudo apt update
+#
+# sudo apt install -y libjpeg-dev zlib1g-dev libfreetype6-dev
+# sudo apt install -y python3 python3-dev python3-pip python3-tk python3-pyperclip python3-pil python3-cairosvg
+#
+# python3 -m pip install --user --upgrade Pillow --break-system-packages
+# python3 -m pip install --user --upgrade cairosvg --break-system-packages
+# python3 -m pip install --user --upgrade tkinterweb --break-system-packages
+# python3 -m pip install --user --upgrade pyperclip --break-system-packages
