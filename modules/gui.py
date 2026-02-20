@@ -324,7 +324,7 @@ class Gui():
         self.varlist.heading("value", text = "Value")
         self.varlist.column("value", width = 192)
         self.varlist.tag_configure("even", background="#FFFFFF")
-        self.varlist.tag_configure("odd",  background="#E0E0FF")
+        self.varlist.tag_configure("odd",  background="#9fcfff")
         self.varlist.bind('<Double-1>', self.handle_VarListEvent)
         self.varlist.tooltip = ToolTip(self.root, self.varlist, "List of all pre-defined and user-defined variables")
         self.varlist.pack(padx=4.0, pady=4.0, fill="both", expand=True)
