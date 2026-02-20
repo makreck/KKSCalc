@@ -2,6 +2,7 @@ import sys, math, platform
 import pyperclip, cairosvg
 import re
 import tkinter as tk
+from tkinterweb import HtmlFrame
 from pathlib import Path
 from fractions import Fraction
 from tkinter import ttk
@@ -541,9 +542,14 @@ class Gui():
         dialog_window = tk.Toplevel(self.root)
         dialog_window.title(title)
         dialog_window.grab_set()
-        scrolled_text = scrolledtext.ScrolledText(dialog_window, wrap=tk.WORD, width=80, height=20, bg="lightgrey")
-        scrolled_text.insert(tk.END, text)
-        scrolled_text.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
+        if "<html>" in text:
+            html_widget = HtmlFrame(dialog_window, messages_enabled=False)
+            html_widget.load_html(text)
+            html_widget.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
+        else:        
+            scrolled_text = scrolledtext.ScrolledText(dialog_window, wrap=tk.WORD, width=80, height=20, bg="lightgrey")
+            scrolled_text.insert(tk.END, text)
+            scrolled_text.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
         self.center_window(dialog_window, self.root)
 
     def draw_svg(self, svg_string, size=(32, 32), background_color=(0, 0, 0, 0)):
