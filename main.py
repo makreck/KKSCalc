@@ -6,7 +6,7 @@ if __name__ == "__main__":
     Calculator().run()
 
 # Dependencies:
-# pip3 install pyperclip Pillow cairosvg
+# pip3 install pyperclip Pillow cairosvg tkinterweb
 #
 # Linux:
 # apt install python3-tk
