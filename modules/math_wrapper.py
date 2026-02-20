@@ -18,6 +18,9 @@ class MathWrapper:
     def get_keyboard_list() -> dict:
         return { key: [ value[1], value[2], None ] for key, value in MathWrapper.__math_functions.items() if value[3] }
         
+    def get_help_list() -> dict:
+        return { key: value[2] for key, value in MathWrapper.__math_functions.items() }
+        
     def get_math_functions() -> dict:
         return MathWrapper.__math_functions
 
