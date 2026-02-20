@@ -212,10 +212,7 @@ class Calculator:
         exit()
         
     def func_help(self, parameters = None):
-        text = ""
-        for key in self.__funclist.keys():
-            text += f"{key:<8s} \t{self.__funclist[key][1]}\n"
-        self.gui.display_popup("Help", text)
+        self.gui.display_popup("Help", self.create_html_help_text())
         return (0.0, "OK", 2 )
 
     def func_lic(self, parameters = None):
@@ -513,3 +510,26 @@ class Calculator:
         
     def handle_keyboard_event(self, math_function):
         self.put_edit_string(f"{math_function}(" if len(math_function) > 1 else math_function)
+
+    def create_html_help_text(self) -> str:
+        text = """
+            <html>
+            <body>
+        """
+
+        text += '<p><h2>Command functions:</h2><br>'
+        for key, value in self.__funclist.items():
+            text += f'<b>{key}</b>  {value[1]}<br>'
+        text += "<br></p>"
+        
+        text += '<p><h2>Math functions:</h2><br>'
+        math_functions = MathWrapper.get_help_list()
+        for key, hint in math_functions.items():
+            text += f'<b>{key}(x)</b>   {hint}<br>'
+        text += "</p><br>"
+
+        text += """            
+            </body>
+            </html>
+        """
+        return text
