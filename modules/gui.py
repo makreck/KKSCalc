@@ -143,16 +143,9 @@ class Gui():
             self.platform_font   = "TkFixedFont"
         self.platform_fixed_font = "TkFixedFont"
         self.font_scaling = self.tbIconSize[1] * (3.0 - self.display_scaling_factor)
-
-        # For screen scaling = 1.0
         self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.32), weight="bold") 
         self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.20), weight="bold") 
         self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.12), weight="bold") 
-
-        # For screen scaling = 2.0
-        # self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.24), weight="bold") 
-        # self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.32), weight="bold") 
-        # self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.20), weight="bold") 
 
     def app_window(self, pos = {} ):
         self.check_geometry(pos)
