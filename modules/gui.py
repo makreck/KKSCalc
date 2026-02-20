@@ -97,7 +97,7 @@ class Gui():
 
     def __init__(self, callback = None):
         self.root = tk.Tk()
-        self.icon_size   = (40, 40)
+        self.icon_size   = (36, 36)
         self.get_display_scaling()
         self.root.call('tk', 'scaling', self.display_scaling_factor)
         self.callback    = callback
@@ -129,10 +129,17 @@ class Gui():
         else:
             self.platform_font   = "TkFixedFont"
         self.platform_fixed_font = "TkFixedFont"
-        self.font_scaling = round((self.tbIconSize[1] / self.icon_size[1]) * 0.6, 1)
-        self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.24), weight="bold") 
-        self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.32), weight="bold") 
-        self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.tbIconSize[1] * 0.20), weight="bold") 
+        self.font_scaling = self.tbIconSize[1] * (3.0 - self.display_scaling_factor)
+
+        # For screen scaling = 1.0
+        self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.32), weight="bold") 
+        self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.20), weight="bold") 
+        self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.12), weight="bold") 
+
+        # For screen scaling = 2.0
+        # self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.24), weight="bold") 
+        # self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.32), weight="bold") 
+        # self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.20), weight="bold") 
 
     def app_window(self, pos = {} ):
         self.check_geometry(pos)
@@ -243,7 +250,7 @@ class Gui():
         self.notebook = ttk.Notebook(self.frame_left)
         self.varlist_frame = ttk.Frame(self.notebook)
         self.notebook.add(self.varlist_frame, text="Variables")
-        self.keypad_frame = ScrollableFrame(self.notebook) # ttk.Frame(self.notebook)
+        self.keypad_frame = ScrollableFrame(self.notebook, scrollbar_width=14*self.display_scaling_factor)
         self.notebook.add(self.keypad_frame, text="Key pad")
         self.createVarList()
         self.createKeyboard()

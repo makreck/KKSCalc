@@ -2,11 +2,11 @@ import tkinter as tk
 import platform
 
 class ScrollableFrame(tk.Frame):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, scrollbar_width=14, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.canvas = tk.Canvas(self, borderwidth=0)
-        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview, width=20)
+        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview, width=scrollbar_width)
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.scrollbar.pack(side="right", fill="y")
         self.canvas.pack(side="left", fill="both", expand=True)
