@@ -9,5 +9,6 @@ if __name__ == "__main__":
 # pip3 install pyperclip Pillow cairosvg tkinterweb
 #
 # Linux:
-# apt install python3-tk
-
+# sudo apt install python3-pil python3-tk
+# Overwrite system wide:
+# sudo pip3 install --user pyperclip Pillow cairosvg tkinterweb --break-system-packages
