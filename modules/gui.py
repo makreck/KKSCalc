@@ -17,41 +17,45 @@ from modules.scollframe import ScrollableFrame
 class Gui():
 
     class Item(Enum):
-        Cmd_onClose   = "close",
-        VarList       = "var.event",
-        Editor        = "editor.event"
-        Result        = "result.event"
-        Menu_Clear    = "menu.clear",
-        Menu_Delete   = "menu.delete",
-        Menu_Reset    = "menu.reset",
-        Menu_Help     = "menu_help",
-        Menu_License  = "menu_license",
-        Menu_Copy     = "menu.copy",
-        Menu_Exit     = "menu.exit",
-        TB_Sep        = "separator",
-        TB_Trashcan   = "button.clear",
-        TB_Delete     = "button.delete"
-        TB_ReUse      = "button.reuse",
-        TB_Round      = "button.round",
-        TB_Dec        = "button.decimal",
-        TB_Hex        = "button.hexadecimal",
-        TB_Bin        = "button.binary",
-        TB_Frc        = "button.fraction"
-        TB_Deg        = "button.degrees",
-        TB_Rad        = "button.radians",
-        Math_Function = 9000,
+        Cmd_onClose    = "close",
+        VarList        = "var.event",
+        Editor         = "editor.event"
+        Result         = "result.event"
+        Menu_Clear     = "menu.clear",
+        Menu_Delete    = "menu.delete",
+        Menu_Reset     = "menu.reset",
+        Menu_DefVars   = "menu.default_vars"
+        Menu_Help      = "menu_help",
+        Menu_License   = "menu_license",
+        Menu_Copy      = "menu.copy",
+        Menu_Exit      = "menu.exit",
+        Popup_Varl_rmv = "popup.varlis.remove_var"
+        TB_Sep         = "separator",
+        TB_Trashcan    = "button.clear",
+        TB_Delete      = "button.delete"
+        TB_ReUse       = "button.reuse",
+        TB_Round       = "button.round",
+        TB_Dec         = "button.decimal",
+        TB_Hex         = "button.hexadecimal",
+        TB_Bin         = "button.binary",
+        TB_Frc         = "button.fraction"
+        TB_Deg         = "button.degrees",
+        TB_Rad         = "button.radians",
+        Math_Function  = 9000,
 
     menudef = [
-        { "cascade": "File", "text": "Clear",           "id": Item.Menu_Clear,   },
-        { "cascade": "File", "text": "Delete",          "id": Item.Menu_Delete,  },
-        { "cascade": "File", "text": "Reset",           "id": Item.Menu_Reset,   },
-        { "cascade": "File", "text": "_sep_",           "id": None               },
-        { "cascade": "File", "text": "Exit",            "id": Item.Menu_Exit,    },
+        { "cascade": "File", "text": "Clear",            "id": Item.Menu_Clear,   },
+        { "cascade": "File", "text": "Delete",           "id": Item.Menu_Delete,  },
+        { "cascade": "File", "text": "Reset",            "id": Item.Menu_Reset,   },
+        { "cascade": "File", "text": "_sep_",            "id": None               },
+        { "cascade": "File", "text": "Set default vars", "id": Item.Menu_DefVars, },
+        { "cascade": "File", "text": "_sep_",            "id": None               },
+        { "cascade": "File", "text": "Exit",             "id": Item.Menu_Exit,    },
 
-        { "cascade": "Edit", "text": "Copy",            "id": Item.Menu_Copy,    },
+        { "cascade": "Edit", "text": "Copy",             "id": Item.Menu_Copy,    },
 
-        { "cascade": "Help", "text": "Help commands",   "id": Item.Menu_Help,    },
-        { "cascade": "Help", "text": "Display license", "id": Item.Menu_License, },
+        { "cascade": "Help", "text": "Help commands",    "id": Item.Menu_Help,    },
+        { "cascade": "Help", "text": "Display license",  "id": Item.Menu_License, },
     ]
 
     def svg_trashcan(self, color_background="#4a90e2", color_text="#ffffff"):
@@ -92,7 +96,7 @@ class Gui():
         { "id": Item.TB_Trashcan,   "text": svg_trashcan, "tooltip": "Clear screen (input editor)", },
         { "id": Item.TB_Sep },
 
-        { "id": Item.TB_Delete,     "text": svg_delete,   "tooltip": "Delete all variables", },
+        { "id": Item.TB_Delete,     "text": svg_delete,   "tooltip": "Delete user defined variables and restore predefined variables", },
         { "id": Item.TB_ReUse,      "text": svg_reuse,    "tooltip": "Re-use last output as new input", },
         { "id": Item.TB_Round,      "text": "R.2",        "tooltip": "Round results by 2 digits", },
 
@@ -326,6 +330,7 @@ class Gui():
         self.varlist.tag_configure("even", background="#FFFFFF")
         self.varlist.tag_configure("odd",  background="#9fcfff")
         self.varlist.bind('<Double-1>', self.handle_VarListEvent)
+        self.varlist.bind("<Button-3>", self.handle_VarListPopup)        
         self.varlist.tooltip = ToolTip(self.root, self.varlist, "List of all pre-defined and user-defined variables")
         self.varlist.pack(padx=4.0, pady=4.0, fill="both", expand=True)
 
@@ -340,6 +345,22 @@ class Gui():
     def handle_ResultEvent(self, event):
         self.callback(Gui.Item.Result, 0.0)
         
+    def handle_VarListPopup(self, event):
+        # sel = self.varlist.selection()
+        itemID = self.varlist.identify_row(event.y)
+        if itemID:
+            value = self.varlist.item(itemID, 'values')
+            print(f"{itemID}: {value[0]}")
+            self.varlist.selection_set(itemID)
+            self.varlist.focus(itemID)
+            menu = tk.Menu(self.root, tearoff=0)
+            menu.add_command(label="Delete variable", command=partial(self.callback, Gui.Item.Popup_Varl_rmv, value[0]))
+            try:
+                menu.tk_popup(event.x_root, event.y_root)
+            finally:
+                menu.grab_release()
+
+    
     def handle_VarListEvent(self, event):
         itemID = self.varlist.identify_row(event.y)
         if itemID:
