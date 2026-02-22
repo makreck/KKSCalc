@@ -22,3 +22,7 @@ if __name__ == "__main__":
 # python3 -m pip install --user --upgrade cairosvg --break-system-packages
 # python3 -m pip install --user --upgrade tkinterweb --break-system-packages
 # python3 -m pip install --user --upgrade pyperclip --break-system-packages
+#
+# Installer:
+#
+# pyinstaller --onefile --add-data="modules/images/*.png:modules/images/" main.py
