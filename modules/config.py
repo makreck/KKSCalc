@@ -103,3 +103,9 @@ class Config:
     def set_Display(self, value: float):
         self.configData["Display"] = value
     
+    def store_default_variables(self, def_variables: dict):
+        self.configData["DefaultVariables"] = def_variables
+
+    def get_default_variables(self) -> dict:
+        return self.configData.get("DefaultVariables", {})
+
