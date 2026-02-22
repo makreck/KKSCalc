@@ -10,7 +10,7 @@ class Calculator:
 
     __funclist = {
         ".cls":   ( "func_cls",   "Clear editor" ),
-        ".del":   ( "func_del",   "Delete variables" ),
+        ".del":   ( "func_del",   "Delete user defined variables and restore predefined variables" ),
         ".res":   ( "func_res",   "Reset, delete variables, clear editor" ),
         ".deg":   ( "func_deg",   "Use degrees for trigonometric functions" ),
         ".rad":   ( "func_rad",   "Use radians for trigonometric functions" ),
@@ -24,6 +24,8 @@ class Calculator:
         ".rom":   ( "func_roman", "Convert given number into roman digits" ),
         ".tcmvc": ( "func_tcmvc", "Convert thermocouple voltage in mV into °Celsius" ),
         ".tccmv": ( "func_tccmv", "Convert °Celsius into thermocouple voltage in mV" ),
+        ".dvar":  ( "func_dvar",  "Store currently used variable set as default" ),
+        ".rmv":   ( "func_rmv",   "<varname> Remove variable"),
         ".help":  ( "func_help",  "Show common or specific help" ),
         ".lic":   ( "func_lic",   "Display license file" ),
         ".exit":  ( "func_exit",  "Terminate application" ),
@@ -185,8 +187,12 @@ class Calculator:
     def get_VariableContent(self) -> dict:
         return dict(self.__varlist)
 
+    def remove_variable(self, varname: str):
+        del(self.__varlist[varname])
+        
     def clr_Variables(self):
         self.__varlist = dict(Calculator.__default_varlist)
+        self.__varlist.update(self.cfg.get_default_variables())
         return self
 
     def set_AngleMode(self, mode = MathWrapper.AngleMode.DEG):
@@ -219,6 +225,18 @@ class Calculator:
         self.gui.display_popup("License", self.read_license_file())
         return (0.0, "OK", 2 )
 
+    def func_dvar(self, parameters = None):
+        self.cfg.store_default_variables(self.get_VariableContent())
+        return (0.0, "OK", 2 )
+    
+    def func_rmv(self, parameters = None):
+        if parameters != None and len(parameters) >= 2:
+            self.remove_variable(parameters[1])
+            self.gui.set_VariableContent(self.get_VariableContent())
+            return (0.0, "OK", 2 )
+        else:
+            return (0.0, "Error, invalid variable name", 2 )
+    
     def func_cls(self, parameters = None):
         self.gui.clear()
         return (0.0, "OK", 0 )
@@ -465,6 +483,8 @@ class Calculator:
                 self.cmd(".del")
             case Gui.Item.Menu_Reset:
                 self.cmd(".res")
+            case Gui.Item.Menu_DefVars:
+                self.cmd(".dvar")
             case Gui.Item.Menu_Help:
                 self.cmd(".help")
             case Gui.Item.Menu_License:
@@ -473,6 +493,10 @@ class Calculator:
                 self.cmd(".copy")
             case Gui.Item.Menu_Exit:
                 self.cmd(".exit")
+
+            case Gui.Item.Popup_Varl_rmv:
+                self.cmd(f".rmv {event}")
+
             case Gui.Item.TB_Trashcan:
                 self.cmd(".cls")
             case Gui.Item.TB_Delete:
