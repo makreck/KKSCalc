@@ -1,4 +1,4 @@
-import sys, math, platform, pyperclip, cairosvg, re
+import os, sys, math, platform, pyperclip, re
 import tkinter as tk
 from tkinterweb import HtmlFrame
 from pathlib import Path
@@ -13,6 +13,22 @@ from io import BytesIO
 from modules.math_wrapper import MathWrapper
 from modules.tooltip import ToolTip
 from modules.scollframe import ScrollableFrame
+from itertools import groupby
+
+# For using cairosvg ...
+if platform.system() == "Windows":
+    # On Windows, cairosvg is not working properly. So, we always need
+    # ready for use PNG images for the buttons!
+    pass
+elif platform.system() == "Linux":
+    # On Linux, cairosvg is available and working properly. So, we can
+    # use the internal SVG resources to build the PNG images we need
+    # for running on the other operating systems.
+    import cairosvg
+else:
+    # On other OS, like MacOS, it is currently unknown if cairosvg library
+    # is available. So, we also use the PNG images only
+    pass
 
 class Gui():
 
@@ -571,6 +587,49 @@ class Gui():
             scrolled_text.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
         self.center_window(dialog_window, self.root)
 
+    def create_button(self, parent, text="", tooltip=None, size=(32, 32), **tk_button_kwargs):
+        folder = "modules/images/buttons"
+        if tooltip:
+            filename = self.get_filename_from_tooltip(tooltip)
+            il = []
+            for n in range(2):
+                path = self.get_button_image_path(folder, filename, n)
+                if path.exists():
+                    image_data = Image.open(path)
+                    il.append(ImageTk.PhotoImage(image_data))
+            if len(il) >= 2:
+                images = (il[0], il[1], )
+                btn = tk.Button(parent, image=images[0], **tk_button_kwargs)
+                btn.images = images
+                btn.tooltip = ToolTip(self.root, btn, tooltip)
+                return btn
+
+        if platform.system() == "Windows":
+            btn = None
+        else:
+            if type(text) != str:
+                svg_string_normal  = text(self)
+                svg_string_pressed = text(self, color_background="#3b6cac")
+            elif self.is_svg_string(text):
+                svg_string_normal  = text
+                svg_string_pressed = text
+            else:
+                svg_string_normal  = self.svg_from_text(text, size)
+                svg_string_pressed = self.svg_from_text(text, size, color_background="#3b6cac")
+            btn = self.create_svg_button(parent, svg_string_normal, svg_string_pressed, size, **tk_button_kwargs)
+            if tooltip:
+                btn.tooltip = ToolTip(self.root, btn, tooltip)
+                self.save_images(btn, folder, filename)
+            else:
+                btn.tooltip = None
+        return btn
+
+    def get_filename_from_tooltip(self, tooltip):
+        return ''.join(key for key, group in groupby(re.sub(r'[^a-z0-9._-]', '_', tooltip.strip().lower()).strip("_").replace("_-_", "_")))
+        
+    def get_button_image_path(self, folder, filename, n):
+        return Path(f"{folder}/btn_{filename}_{n}.png")
+    
     def draw_svg(self, svg_string, size=(32, 32), background_color=(0, 0, 0, 0)):
         try:
             png_data = cairosvg.svg2png(bytestring=svg_string.encode('UTF-8'), output_width=size[0], output_height=size[1])
@@ -595,19 +654,11 @@ class Gui():
     def is_svg_string(self, text: str) -> bool:
         return '<svg' in text and '</svg>' in text
 
-    def create_button(self, parent, text="", tooltip=None, size=(32, 32), **tk_button_kwargs):
-        if type(text) != str:
-            svg_string_normal  = text(self)
-            svg_string_pressed = text(self, color_background="#3b6cac")
-        elif self.is_svg_string(text):
-            svg_string_normal  = text
-            svg_string_pressed = text
-        else:
-            svg_string_normal  = self.svg_from_text(text, size)
-            svg_string_pressed = self.svg_from_text(text, size, color_background="#3b6cac")
-        btn = self.create_svg_button(parent, svg_string_normal, svg_string_pressed, size, **tk_button_kwargs)
-        if tooltip:
-            btn.tooltip = ToolTip(self.root, btn, tooltip)
-        else:
-            btn.tooltip = None
-        return btn
+    def save_images(self, button, folder=None, filename="button"):
+        os.makedirs(folder, exist_ok=True)
+        n = 0
+        for image in button.images:
+            pil_image_out = ImageTk.getimage(image)
+            pil_image_out.save(self.get_button_image_path(folder, filename, n))
+            n += 1
+
