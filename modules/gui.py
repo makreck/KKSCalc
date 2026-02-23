@@ -59,6 +59,12 @@ class Gui():
         TB_Rad         = "button.radians",
         Math_Function  = 9000,
 
+    class NumFormat(Enum):
+        DEC = "DEC"
+        HEX = "HEX"
+        BIN = "BIN"
+        FRC = "FRC"
+
     menudef = [
         { "cascade": "File", "text": "Clear",            "id": Item.Menu_Clear,   },
         { "cascade": "File", "text": "Delete",           "id": Item.Menu_Delete,  },
@@ -132,7 +138,7 @@ class Gui():
         self.get_display_scaling()
         self.root.call('tk', 'scaling', self.display_scaling_factor)
         self.callback    = callback
-        self.num_format  = "dec"
+        self.num_format  = Gui.NumFormat.DEC
         self.reuse       = True
         self.resultValue = 0.0
         self.var         = {}
@@ -461,11 +467,11 @@ class Gui():
         self.resultValue = float(value)
         if self.round:
             value = round(value, 2)
-        if self.num_format == "bin":
+        if self.num_format == Gui.NumFormat.BIN:
             result = self.float2fractional(value, 2, 8 if not self.round else 2)
-        elif self.num_format == "hex":
+        elif self.num_format == Gui.NumFormat.HEX:
             result = self.float2fractional(value, 16, 4 if not self.round else 2)
-        elif self.num_format == "frc":
+        elif self.num_format == Gui.NumFormat.FRC:
             result = self.decimalFraction(value)
         else:
             if self.round:
@@ -513,7 +519,11 @@ class Gui():
     def copyResultToClipboard(self):
         pyperclip.copy(self.result.cget("text"))
 
-    def set_NumberFormat(self, fmt = "dec"):
+    def pasteFromClipboard(self):
+        string = pyperclip.paste()
+        print(f"Paste: {string}")
+    
+    def set_NumberFormat(self, fmt = NumFormat.DEC):
         self.num_format = fmt
 
     def decimalFraction(self, value: float):

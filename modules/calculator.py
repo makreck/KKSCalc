@@ -15,13 +15,14 @@ class Calculator:
         ".deg":   ( "func_deg",   "Use degrees for trigonometric functions" ),
         ".rad":   ( "func_rad",   "Use radians for trigonometric functions" ),
         ".copy":  ( "func_copy",  "Copy result to clipboard" ),
+        ".paste": ( "func_paste", "Paste content from the clipboard" ),
         ".dec":   ( "func_dec",   "Use decimal system for outputs" ),
         ".hex":   ( "func_hex",   "Use hexadecimal system for outputs" ),
         ".bin":   ( "func_bin",   "Use binary system for outputs" ),
         ".frc":   ( "func_frc",   "Use decimal fraction for outputs" ),
         ".round": ( "func_round", "Round results for business use" ),
         ".reuse": ( "func_reuse", "Re-use result for next calculation" ),
-        ".rom":   ( "func_roman", "Convert given number into roman digits" ),
+        ".rom":   ( "func_roman", "Convert given number into roman digits and vice versa" ),
         ".tcmvc": ( "func_tcmvc", "Convert thermocouple voltage in mV into °Celsius" ),
         ".tccmv": ( "func_tccmv", "Convert °Celsius into thermocouple voltage in mV" ),
         ".dvar":  ( "func_dvar",  "Store currently used variable set as default" ),
@@ -76,14 +77,13 @@ class Calculator:
         self.gui.set_Result(self.cfg.get_Display())
         self.defineNumberFormat(self.cfg.get_NumberFormat())
 
-    def defineNumberFormat(self, fmt: str):
-        fmt = fmt[:3].strip().lower()
+    def defineNumberFormat(self, fmt: Gui.NumFormat):
         self.cfg.set_NumberFormat(fmt)
         self.gui.set_NumberFormat(fmt)
-        self.gui.set_ButtonPressed(Gui.Item.TB_Dec, fmt == "dec")
-        self.gui.set_ButtonPressed(Gui.Item.TB_Hex, fmt == "hex")
-        self.gui.set_ButtonPressed(Gui.Item.TB_Bin, fmt == "bin")
-        self.gui.set_ButtonPressed(Gui.Item.TB_Frc, fmt == "frc")
+        self.gui.set_ButtonPressed(Gui.Item.TB_Dec, fmt == Gui.NumFormat.DEC)
+        self.gui.set_ButtonPressed(Gui.Item.TB_Hex, fmt == Gui.NumFormat.HEX)
+        self.gui.set_ButtonPressed(Gui.Item.TB_Bin, fmt == Gui.NumFormat.BIN)
+        self.gui.set_ButtonPressed(Gui.Item.TB_Frc, fmt == Gui.NumFormat.FRC)
         self.gui.set_Result(self.gui.get_Result())
         return (0.0, "OK", 2 )
 
@@ -263,17 +263,21 @@ class Calculator:
         self.gui.copyResultToClipboard()
         return (0.0, "OK", 2 )
 
+    def func_paste(self, parameters = None):
+        self.gui.pasteFromClipboard()
+        return (0.0, "OK", 2 )
+
     def func_dec(self, parameters = None):
-        return self.defineNumberFormat("dec")
+        return self.defineNumberFormat(Gui.NumFormat.DEC)
 
     def func_hex(self, parameters = None):
-        return self.defineNumberFormat("hex")
+        return self.defineNumberFormat(Gui.NumFormat.HEX)
 
     def func_bin(self, parameters = None):
-        return self.defineNumberFormat("bin")
+        return self.defineNumberFormat(Gui.NumFormat.BIN)
 
     def func_frc(self, parameters = None):
-        return self.defineNumberFormat("frc")
+        return self.defineNumberFormat(Gui.NumFormat.FRC)
 
     def func_round(self, parameters = None):
         self.gui.set_Round(self.gui.set_ButtonPressed(Gui.Item.TB_Round, self.cfg.set_Round(not self.cfg.get_Round())))

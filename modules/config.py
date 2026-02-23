@@ -1,6 +1,7 @@
 import sys, os, json
 from pathlib import Path
 from modules.math_wrapper import MathWrapper
+from modules.gui import Gui
 
 class Config:
     __default_main_window = { "x": 64, "y": 64, "width": 1024, "height": 640, "sashpos": 432, }
@@ -77,12 +78,13 @@ class Config:
     def get_ReUse(self) -> bool:
         return self.configData.get("ReUse", False)
         
-    def set_NumberFormat(self, fmt: str):
-        self.configData["NumFormat"] = fmt
-        
-    def get_NumberFormat(self) -> str:
-        return self.configData.get("NumFormat", "dec")
-        
+    def set_NumberFormat(self, fmt: Gui.NumFormat):
+        self.configData["NumFormat"] = fmt.value
+
+    def get_NumberFormat(self) -> Gui.NumFormat:
+        fmt = self.configData.get("NumFormat", Gui.NumFormat.DEC.value)
+        return Gui.NumFormat[fmt]
+
     def get_AppPath(self, folder = "", filename = "") -> Path:
         if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
             self.root_path = str(Path(sys._MEIPASS))
@@ -108,4 +110,3 @@ class Config:
 
     def get_default_variables(self) -> dict:
         return self.configData.get("DefaultVariables", {})
-
