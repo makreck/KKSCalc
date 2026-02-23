@@ -1,4 +1,4 @@
-import sys, os, math
+import sys, os, math, re
 from modules.gui import Gui
 from modules.config import Config
 from modules.math_wrapper import MathWrapper        
@@ -106,7 +106,7 @@ class Calculator:
 
     def do_parse(self, string: str) -> float:
         result = (0.0, "OK", False)
-        elements = string.strip().lower().replace(",", ".").split("=")
+        elements = string.strip().lower().split("=")
         try:
             result = self.parse(elements[-1])
             if (len(elements) > 1) and result[2]:
@@ -375,6 +375,18 @@ class Calculator:
 
     def __prepare_parsing(self, formula: str) -> str:
         formula = formula.replace("^", "**").strip()
+        
+        # Check digit grouping
+        if "," in formula and "." in formula:
+            s = ''.join(re.sub(r'[^0-9+-]', '', formula))
+            if s.isnumeric():
+                i1 = formula.rfind(",")
+                i2 = formula.rfind(".")
+                if abs(i1 - i2) == 4:
+                    formula = formula.replace(",", ".")
+                    while formula.count(".") > 1:
+                        i = formula.find(".")
+                        formula = formula[:i] + formula[i+1:]
 
         # Filter odd brackets
         begin = formula.count("(")

@@ -464,6 +464,8 @@ class Gui():
     def get_ResultString(self, value: float) -> str:
         if type(value) == str:
             return (f"\"{value}\"", "neutral" )
+        if type(value) == tuple:
+            value = value[-1]
         self.resultValue = float(value)
         if self.round:
             value = round(value, 2)
