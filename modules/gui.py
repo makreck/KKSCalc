@@ -129,7 +129,6 @@ class Gui():
 
     def __init__(self, callback = None):
         self.root = tk.Tk()
-        self.icon_size   = (36, 36)
         self.get_display_scaling()
         self.root.call('tk', 'scaling', self.display_scaling_factor)
         self.callback    = callback
@@ -150,21 +149,22 @@ class Gui():
         scaling_x = round((self.screen_width  / (width_mm  / 25.4)) / 96.0, 1)
         scaling_y = round((self.screen_height / (height_mm / 25.4)) / 96.0, 1)
         self.display_scaling_factor = round(max(scaling_x, scaling_y), 1)
-        self.tbIconSize = (int(self.icon_size[0] * self.display_scaling_factor), int(self.icon_size[1] * self.display_scaling_factor))
-        self.create_fonts()
-
-    def create_fonts(self):
+        self.icon_size    = (36, 36)
+        self.tbIconSize   = (int(self.icon_size[0] * self.display_scaling_factor), int(self.icon_size[1] * self.display_scaling_factor))
+        self.font_scaling = self.tbIconSize[1] * (3.0 - self.display_scaling_factor)
         if platform.system() == "Windows":
             self.platform_font = "Arial Unicode MS"
+            self.font_scaling *= 1.5
+            self.root.option_add("*Font", ('TkFixedFont', 14))
+            self.root.option_add("*Menu.Font", ('TkFixedFont', 14))
         elif platform.system() == "Linux":
             self.platform_font = "DejaVuSans"
         else:
             self.platform_font   = "TkFixedFont"
         self.platform_fixed_font = "TkFixedFont"
-        self.font_scaling = self.tbIconSize[1] * (3.0 - self.display_scaling_factor)
         self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.32), weight="bold") 
         self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.20), weight="bold") 
-        self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.12), weight="bold") 
+        self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.14), weight="bold") 
 
     def app_window(self, pos = {} ):
         self.check_geometry(pos)
