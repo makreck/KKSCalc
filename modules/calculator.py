@@ -1,4 +1,4 @@
-import sys, os, math, re
+import sys, os, math, re, pyperclip
 from modules.gui import Gui
 from modules.config import Config
 from modules.math_wrapper import MathWrapper        
@@ -264,7 +264,7 @@ class Calculator:
         return (0.0, "OK", 2 )
 
     def func_paste(self, parameters = None):
-        self.gui.pasteFromClipboard()
+        self.pasteFromClipboard(*parameters if parameters else None)
         return (0.0, "OK", 2 )
 
     def func_dec(self, parameters = None):
@@ -373,10 +373,7 @@ class Calculator:
                 value = int(value)
             name = name[:prev+1] + str(value) + name[end+1:]
 
-    def __prepare_parsing(self, formula: str) -> str:
-        formula = formula.replace("^", "**").strip()
-        
-        # Check digit grouping
+    def handle_number_grouping(self, formula):
         if "," in formula and "." in formula:
             s = ''.join(re.sub(r'[^0-9+-]', '', formula))
             if s.isnumeric():
@@ -387,7 +384,16 @@ class Calculator:
                     while formula.count(".") > 1:
                         i = formula.find(".")
                         formula = formula[:i] + formula[i+1:]
-
+        else:
+            formula = formula.replace(",", ".")
+        return formula
+        
+    def __prepare_parsing(self, formula: str) -> str:
+        formula = formula.replace("^", "**").strip()
+        
+        # Check digit grouping
+        formula = self.handle_number_grouping(formula)
+        
         # Filter odd brackets
         begin = formula.count("(")
         end = formula.count(")")
@@ -573,3 +579,22 @@ class Calculator:
             </html>
         """
         return text
+
+    def pasteFromClipboard(self, fu=".paste", varname=None, *index_list):
+        parameter_list = list(filter(lambda s: len(s) > 0, pyperclip.paste().strip().replace("\t", " ").split(" ")))
+        if index_list:
+            index_list = list(map(lambda x: int(float(x)), index_list))
+            parameter_list = [parameter_list[i] if 0 <= i < len(parameter_list) else None for i in index_list]
+        for n, element in enumerate(parameter_list):
+            if self.times.is_DateTimeString(element):
+                element = "#" + element
+            elif self.ro.is_roman_number_string(element):
+                element = "#" + element
+            else:
+                element = self.handle_number_grouping(element)
+            if varname:
+                s = (f"{varname}[{n}]={element}")
+            else:
+                s = element
+            self.gui.add_EditString(s)
+            self.do_parse(s)
