@@ -5,6 +5,7 @@ from modules.math_wrapper import MathWrapper
 from modules.times import Times
 from modules.roman_numbers import RomanNumber
 from modules.thermocouple import Thermocouple
+from modules.helptext import general_usage
 
 class Calculator:
 
@@ -557,29 +558,6 @@ class Calculator:
     def handle_keyboard_event(self, math_function):
         self.put_edit_string(f"{math_function}(" if len(math_function) > 1 else math_function)
 
-    def create_html_help_text(self) -> str:
-        text = """
-            <html>
-            <body>
-        """
-
-        text += '<p><h2>Command functions:</h2><br>'
-        for key, value in self.__funclist.items():
-            text += f'<b>{key}</b>  {value[1]}<br>'
-        text += "<br></p>"
-        
-        text += '<p><h2>Math functions:</h2><br>'
-        math_functions = MathWrapper.get_help_list()
-        for key, hint in math_functions.items():
-            text += f'<b>{key}(x)</b>   {hint}<br>'
-        text += "</p><br>"
-
-        text += """            
-            </body>
-            </html>
-        """
-        return text
-
     def pasteFromClipboard(self, fu=".paste", varname=None, *index_list):
         parameter_list = list(filter(lambda s: len(s) > 0, pyperclip.paste().strip().replace("\t", " ").split(" ")))
         if index_list:
@@ -598,3 +576,28 @@ class Calculator:
                 s = element
             self.gui.add_EditString(s)
             self.do_parse(s)
+
+    def create_html_help_text(self) -> str:
+        text = """
+            <html>
+            <body>
+        """
+
+        text += general_usage
+
+        text += '<p><h2>Command functions:</h2><br>'
+        for key, value in self.__funclist.items():
+            text += f'<b>{key}</b>  {value[1]}<br>'
+        text += '<br></p>'
+        
+        text += '<p><h2>Math functions:</h2><br>'
+        math_functions = MathWrapper.get_help_list()
+        for key, hint in math_functions.items():
+            text += f'<b>{key}(x)</b>   {hint}<br>'
+        text += '<br></p>'
+
+        text += """            
+            </body>
+            </html>
+        """
+        return text
