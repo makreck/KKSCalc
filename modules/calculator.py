@@ -578,26 +578,23 @@ class Calculator:
             self.do_parse(s)
 
     def create_html_help_text(self) -> str:
-        text = """
-            <html>
-            <body>
-        """
+        text = '<html><body>'
 
         text += general_usage
 
-        text += '<p><h2>Command functions:</h2><br>'
+        text += '<p><h2>Command functions:</h2>'
+        text += '<ul style="list-style-type: none;">'
         for key, value in self.__funclist.items():
-            text += f'<b>{key}</b>  {value[1]}<br>'
-        text += '<br></p>'
+            text += f'<li style="margin-bottom: 4px;"><b>{key}</b>   {value[1]}</li>'
+        text += '</ul></p>'
         
-        text += '<p><h2>Math functions:</h2><br>'
+        text += '<p><h2>Math functions:</h2>'
+        text += '<ul style="list-style-type: none;">'
         math_functions = MathWrapper.get_help_list()
         for key, hint in math_functions.items():
-            text += f'<b>{key}(x)</b>   {hint}<br>'
-        text += '<br></p>'
+            text += f'<li style="margin-bottom: 4px;"><b>{key}(x)</b>   {hint}</li>'
+        text += '</ul></p>'
 
-        text += """            
-            </body>
-            </html>
-        """
+        text += '</body></html>'
+
         return text
