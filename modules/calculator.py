@@ -24,6 +24,7 @@ class Calculator:
         ".round": ( "func_round", "Round results for business use" ),
         ".reuse": ( "func_reuse", "Re-use result for next calculation" ),
         ".rom":   ( "func_roman", "Convert given number into roman digits and vice versa" ),
+        ".sum":   ( "func_sum",   "Add variables, opt: base_name, from, to" ),
         ".tcmvc": ( "func_tcmvc", "Convert thermocouple voltage in mV into °Celsius" ),
         ".tccmv": ( "func_tccmv", "Convert °Celsius into thermocouple voltage in mV" ),
         ".dvar":  ( "func_dvar",  "Store currently used variable set as default" ),
@@ -336,6 +337,33 @@ class Calculator:
             sum = self.ro.decimal2roman(sum)
         return (sum, "OK", 1)
 
+    def var_get_index(self, name):
+        if not "[" in name or not "]" in name:
+            return -1
+        idx = int(name[name.find("[")+1:name.rfind("]")])
+        return idx
+
+    def enum_vars(self, flt=None, start=0, end=-1):
+        for name, value in self.__varlist.items():
+            i = self.var_get_index(name)
+            if name != "pi" and name != "e" and (flt != None and i != -1 and i >= start and (end < 0 or i <= end)):
+                yield value
+        
+    def func_sum(self, parameters = None):
+        flt   = None
+        start = 0
+        end   = -1
+        if len(parameters) > 1:
+            flt = parameters[1]
+            if len(parameters) > 2:
+                start = int(self.do_parse(parameters[2])[0])
+                if len(parameters) > 3:
+                    end = int(self.do_parse(parameters[3])[0])
+            s = sum(self.enum_vars(flt, start, end))
+        else:
+            pass
+        return (s, "OK", 1)
+    
     # Filter sub-expressions in variable names, parse and insert results
     def __filter_varname(self, name: str) -> str:
         if not name: return None
