@@ -37,6 +37,7 @@ class Gui():
         VarList        = "var.event",
         Editor         = "editor.event"
         Result         = "result.event"
+        Timer          = "timer.event"
         Menu_Clear     = "menu.clear",
         Menu_Delete    = "menu.delete",
         Menu_Reset     = "menu.reset",
@@ -147,6 +148,10 @@ class Gui():
         self.callback(Gui.Item.Cmd_onClose, "WM_DELETE_WINDOW")
         self.root.destroy()
 
+    def interval_timer(self):
+        self.callback(Gui.Item.Timer)
+        self.timer_id = self.root.after(1000, self.interval_timer)
+        
     def get_display_scaling(self):
         self.screen_width = self.root.winfo_screenwidth()
         self.screen_height = self.root.winfo_screenheight()
@@ -182,6 +187,7 @@ class Gui():
         self.set_WindowPos()
         self.set_ButtonPressed(Gui.Item.TB_Deg, True)
         self.set_ButtonPressed(Gui.Item.TB_Rad, False)
+        self.timer_id = self.root.after(1000, self.interval_timer)
         return self
 
     def check_geometry(self, pos = {} ):
