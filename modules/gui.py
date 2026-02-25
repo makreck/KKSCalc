@@ -47,6 +47,9 @@ class Gui():
         Menu_License   = "menu_license",
         Menu_Copy      = "menu.copy",
         Menu_Exit      = "menu.exit",
+        Menu_MacroAdd  = "menu.macro.add"
+        Menu_MacroEdit = "menu.macro.edit"
+        Menu_MacroRun  = "menu.macro.run"
         Popup_Varl_rmv = "popup.varlis.remove_var"
         TB_Sep         = "separator",
         TB_Trashcan    = "button.clear",
@@ -68,19 +71,23 @@ class Gui():
         FRC = "FRC"
 
     menudef = [
-        { "cascade": "File", "text": "Exit",             "id": Item.Menu_Exit,      },
+        { "cascade": "File",  "text": "Exit",             "id": Item.Menu_Exit,      },
 
-        { "cascade": "Edit", "text": "Clear",            "id": Item.Menu_Clear,     },
-        { "cascade": "Edit", "text": "Delete",           "id": Item.Menu_Delete,    },
-        { "cascade": "Edit", "text": "Reset",            "id": Item.Menu_Reset,     },
-        { "cascade": "Edit", "text": "_sep_",            "id": None                 },
-        { "cascade": "Edit", "text": "Set default vars", "id": Item.Menu_DefVars,   },
-        { "cascade": "Edit", "text": "Update def. vars", "id": Item.Menu_DefUpdate, },
-        { "cascade": "Edit", "text": "_sep_",            "id": None                 },
-        { "cascade": "Edit", "text": "Copy",             "id": Item.Menu_Copy,      },
+        { "cascade": "Edit",  "text": "Clear",            "id": Item.Menu_Clear,     },
+        { "cascade": "Edit",  "text": "Delete",           "id": Item.Menu_Delete,    },
+        { "cascade": "Edit",  "text": "Reset",            "id": Item.Menu_Reset,     },
+        { "cascade": "Edit",  "text": "_sep_",            "id": None                 },
+        { "cascade": "Edit",  "text": "Set default vars", "id": Item.Menu_DefVars,   },
+        { "cascade": "Edit",  "text": "Update def. vars", "id": Item.Menu_DefUpdate, },
+        { "cascade": "Edit",  "text": "_sep_",            "id": None                 },
+        { "cascade": "Edit",  "text": "Copy",             "id": Item.Menu_Copy,      },
 
-        { "cascade": "Help", "text": "Help commands",    "id": Item.Menu_Help,      },
-        { "cascade": "Help", "text": "Display license",  "id": Item.Menu_License,   },
+        { "cascade": "Macro", "text": "Add macro",        "id": Item.Menu_MacroAdd,  },
+        { "cascade": "Macro", "text": "Edit macro",       "id": Item.Menu_MacroEdit, },
+        { "cascade": "Macro", "text": "Run macro",        "id": Item.Menu_MacroRun,  },
+
+        { "cascade": "Help",  "text": "Help commands",    "id": Item.Menu_Help,      },
+        { "cascade": "Help",  "text": "Display license",  "id": Item.Menu_License,   },
     ]
 
     def svg_trashcan(self, color_background="#4a90e2", color_text="#ffffff"):
