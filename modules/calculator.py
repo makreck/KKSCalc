@@ -29,6 +29,9 @@ class Calculator:
         ".tccmv": ( "func_tccmv", "Convert °Celsius into thermocouple voltage in mV" ),
         ".dvar":  ( "func_dvar",  "Store currently used variable set as default" ),
         ".udv":   ( "func_udv",   "Update default variables with the currently set values." ),
+        ".madd":  ( "func_madd",  "Add a new macro." ),
+        ".medit": ( "func_medit", "Edit a macro." ),
+        ".mrun":  ( "func_mrun",  "Run a macro." ),
         ".rmv":   ( "func_rmv",   "<varname> Remove variable"),
         ".help":  ( "func_help",  "Show common or specific help" ),
         ".lic":   ( "func_lic",   "Display license file" ),
@@ -376,6 +379,15 @@ class Calculator:
         else:
             pass
         return (s, "OK", 1)
+
+    def func_madd(self, parameters = None):
+        return (0.0, "OK", 2 )
+
+    def func_medit(self, parameters = None):
+        return (0.0, "OK", 2 )
+
+    def func_mrun(self, parameters = None):
+        return (0.0, "OK", 2 )
     
     # Filter sub-expressions in variable names, parse and insert results
     def __filter_varname(self, name: str) -> str:
@@ -604,6 +616,8 @@ class Calculator:
                 self.handle_keyboard_event(event)
             case Gui.Item.VarList:
                 self.handle_varlist_event(event)
+            case Gui.Item.Timer:
+                self.interval_update()
             case Gui.Item.Result:
                 pass
             case Gui.Item.Editor:
@@ -652,8 +666,12 @@ class Calculator:
                 self.cmd(".deg")
             case Gui.Item.TB_Rad:
                 self.cmd(".rad")
-            case Gui.Item.Timer:
-                self.interval_update()
+            case Gui.Item.Menu_MacroAdd:
+                self.cmd(".madd")
+            case Gui.Item.Menu_MacroEdit:
+                self.cmd(".medit")
+            case Gui.Item.Menu_MacroRun:
+                self.cmd(".mrun")
             case _:
                 print(f"GUI callback error: {id}")
         return None
