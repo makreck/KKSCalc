@@ -110,3 +110,18 @@ class Config:
 
     def get_default_variables(self) -> dict:
         return self.configData.get("DefaultVariables", {})
+
+    def parse_macro_name(self, macro_name="default"):
+        if not macro_name:
+            macro_name = "default"
+        elif type(macro_name) != str:
+            macro_name = str(macro_name)
+        name = macro_name.strip().lower().replace(" ", "_")
+        return "Macro." + name
+
+    def get_Macro(self, name="default"):
+        return self.configData.get(self.parse_macro_name(name), [ "a=a+1", "b=a+2", "c=a+3", "d=a+b+c", ]) # Test-Macro
+
+    def set_Macro(self, name="default", macro=[ ".res" ]):
+        key = self.parse_macro_name(name)
+        self.configData[key] = macro        
