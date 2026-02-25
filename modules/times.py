@@ -126,4 +126,10 @@ class Times:
     def get_current_date(self):
         return dt.now().strftime("#%Y-%m-%d")        
 
+    def get_current_time_value(self):
+        return self.get_Factor(self.get_current_time()[1:])
+
+    def get_current_date_value(self):
+        s = self.get_current_date()[1:]
+        return self.get_Factor(s)
     
