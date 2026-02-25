@@ -42,6 +42,7 @@ class Gui():
         Menu_Delete    = "menu.delete",
         Menu_Reset     = "menu.reset",
         Menu_DefVars   = "menu.default_vars"
+        Menu_DefUpdate = "menu.default_vars_update"
         Menu_Help      = "menu_help",
         Menu_License   = "menu_license",
         Menu_Copy      = "menu.copy",
@@ -67,18 +68,19 @@ class Gui():
         FRC = "FRC"
 
     menudef = [
-        { "cascade": "File", "text": "Clear",            "id": Item.Menu_Clear,   },
-        { "cascade": "File", "text": "Delete",           "id": Item.Menu_Delete,  },
-        { "cascade": "File", "text": "Reset",            "id": Item.Menu_Reset,   },
-        { "cascade": "File", "text": "_sep_",            "id": None               },
-        { "cascade": "File", "text": "Set default vars", "id": Item.Menu_DefVars, },
-        { "cascade": "File", "text": "_sep_",            "id": None               },
-        { "cascade": "File", "text": "Exit",             "id": Item.Menu_Exit,    },
+        { "cascade": "File", "text": "Clear",            "id": Item.Menu_Clear,     },
+        { "cascade": "File", "text": "Delete",           "id": Item.Menu_Delete,    },
+        { "cascade": "File", "text": "Reset",            "id": Item.Menu_Reset,     },
+        { "cascade": "File", "text": "_sep_",            "id": None                 },
+        { "cascade": "File", "text": "Set default vars", "id": Item.Menu_DefVars,   },
+        { "cascade": "File", "text": "Update def. vars", "id": Item.Menu_DefUpdate, },
+        { "cascade": "File", "text": "_sep_",            "id": None                 },
+        { "cascade": "File", "text": "Exit",             "id": Item.Menu_Exit,      },
 
-        { "cascade": "Edit", "text": "Copy",             "id": Item.Menu_Copy,    },
+        { "cascade": "Edit", "text": "Copy",             "id": Item.Menu_Copy,      },
 
-        { "cascade": "Help", "text": "Help commands",    "id": Item.Menu_Help,    },
-        { "cascade": "Help", "text": "Display license",  "id": Item.Menu_License, },
+        { "cascade": "Help", "text": "Help commands",    "id": Item.Menu_Help,      },
+        { "cascade": "Help", "text": "Display license",  "id": Item.Menu_License,   },
     ]
 
     def svg_trashcan(self, color_background="#4a90e2", color_text="#ffffff"):

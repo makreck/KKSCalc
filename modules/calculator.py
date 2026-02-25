@@ -28,6 +28,7 @@ class Calculator:
         ".tcmvc": ( "func_tcmvc", "Convert thermocouple voltage in mV into °Celsius" ),
         ".tccmv": ( "func_tccmv", "Convert °Celsius into thermocouple voltage in mV" ),
         ".dvar":  ( "func_dvar",  "Store currently used variable set as default" ),
+        ".udv":   ( "func_udv",   "Update default variables with the currently set values." ),
         ".rmv":   ( "func_rmv",   "<varname> Remove variable"),
         ".help":  ( "func_help",  "Show common or specific help" ),
         ".lic":   ( "func_lic",   "Display license file" ),
@@ -96,6 +97,7 @@ class Calculator:
         return self
 
     def exit(self, event = None):
+        self.update_default_variables()
         self.cfg.set_VariableContent(self.get_VariableContent())
         self.cfg.set_WindowPos("MainWindow", self.gui.get_WindowPos())
         self.cfg.set_ScreenContent(self.gui.get_ScreenContent())
@@ -237,7 +239,11 @@ class Calculator:
     def func_dvar(self, parameters = None):
         self.cfg.store_default_variables(self.get_VariableContent())
         return (0.0, "OK", 2 )
-    
+
+    def func_udv(self, parameters = None):
+        self.update_default_variables()
+        return (0.0, "OK", 2 )
+        
     def func_rmv(self, parameters = None):
         if parameters != None and len(parameters) >= 2:
             self.remove_variable(parameters[1])
@@ -528,64 +534,6 @@ class Calculator:
 
     def put_edit_string(self, string: str):
         self.gui.put_EditString(string)
-            
-    def guiCallback(self, id: Gui.Item, event = None):
-        match id:
-            case Gui.Item.Math_Function:
-                self.handle_keyboard_event(event)
-            case Gui.Item.VarList:
-                self.handle_varlist_event(event)
-            case Gui.Item.Result:
-                pass
-            case Gui.Item.Editor:
-                return self.do_parse(event)
-            case Gui.Item.Cmd_onClose:
-                self.exit()
-            case Gui.Item.Menu_Clear:
-                self.cmd(".cls")
-            case Gui.Item.Menu_Delete:
-                self.cmd(".del")
-            case Gui.Item.Menu_Reset:
-                self.cmd(".res")
-            case Gui.Item.Menu_DefVars:
-                self.cmd(".dvar")
-            case Gui.Item.Menu_Help:
-                self.cmd(".help")
-            case Gui.Item.Menu_License:
-                self.cmd(".lic")
-            case Gui.Item.Menu_Copy:
-                self.cmd(".copy")
-            case Gui.Item.Menu_Exit:
-                self.cmd(".exit")
-
-            case Gui.Item.Popup_Varl_rmv:
-                self.cmd(f".rmv {event}")
-
-            case Gui.Item.TB_Trashcan:
-                self.cmd(".cls")
-            case Gui.Item.TB_Delete:
-                self.cmd(".del")
-            case Gui.Item.TB_ReUse:
-                self.cmd(".reuse")
-            case Gui.Item.TB_Round:
-                self.cmd(".round")
-            case Gui.Item.TB_Dec:
-                self.cmd(".dec")
-            case Gui.Item.TB_Hex:
-                self.cmd(".hex")
-            case Gui.Item.TB_Bin:
-                self.cmd(".bin")
-            case Gui.Item.TB_Frc:
-                self.cmd(".frc")
-            case Gui.Item.TB_Deg:
-                self.cmd(".deg")
-            case Gui.Item.TB_Rad:
-                self.cmd(".rad")
-            case Gui.Item.Timer:
-                self.interval_update()
-            case _:
-                print(f"GUI callback error: {id}")
-        return None
 
     def asset_path(self, filename):
         if getattr(sys, 'frozen', False):
@@ -649,13 +597,71 @@ class Calculator:
 
     def handle_varlist_event(self, event):
         self.put_edit_string(event[1])
-        # value = str(event[1])
-        # result = self.do_parse(value)
-        # if result[1] != "OK":
-        #     self.put_edit_string(event[1])
-        # else:
-        #     self.put_edit_string(str(result[0]))
 
-        # varlist["date"]=self.times.get_current_date_value()
-        # varlist["time"]=self.times.get_current_time_value()
-        # return varlist
+    def guiCallback(self, id: Gui.Item, event = None):
+        match id:
+            case Gui.Item.Math_Function:
+                self.handle_keyboard_event(event)
+            case Gui.Item.VarList:
+                self.handle_varlist_event(event)
+            case Gui.Item.Result:
+                pass
+            case Gui.Item.Editor:
+                return self.do_parse(event)
+            case Gui.Item.Cmd_onClose:
+                self.exit()
+            case Gui.Item.Menu_Clear:
+                self.cmd(".cls")
+            case Gui.Item.Menu_Delete:
+                self.cmd(".del")
+            case Gui.Item.Menu_Reset:
+                self.cmd(".res")
+            case Gui.Item.Menu_DefVars:
+                self.cmd(".dvar")
+            case Gui.Item.Menu_DefUpdate:
+                self.cmd(".udv")
+            case Gui.Item.Menu_Help:
+                self.cmd(".help")
+            case Gui.Item.Menu_License:
+                self.cmd(".lic")
+            case Gui.Item.Menu_Copy:
+                self.cmd(".copy")
+            case Gui.Item.Menu_Exit:
+                self.cmd(".exit")
+
+            case Gui.Item.Popup_Varl_rmv:
+                self.cmd(f".rmv {event}")
+
+            case Gui.Item.TB_Trashcan:
+                self.cmd(".cls")
+            case Gui.Item.TB_Delete:
+                self.cmd(".del")
+            case Gui.Item.TB_ReUse:
+                self.cmd(".reuse")
+            case Gui.Item.TB_Round:
+                self.cmd(".round")
+            case Gui.Item.TB_Dec:
+                self.cmd(".dec")
+            case Gui.Item.TB_Hex:
+                self.cmd(".hex")
+            case Gui.Item.TB_Bin:
+                self.cmd(".bin")
+            case Gui.Item.TB_Frc:
+                self.cmd(".frc")
+            case Gui.Item.TB_Deg:
+                self.cmd(".deg")
+            case Gui.Item.TB_Rad:
+                self.cmd(".rad")
+            case Gui.Item.Timer:
+                self.interval_update()
+            case _:
+                print(f"GUI callback error: {id}")
+        return None
+
+    def update_default_variables(self):
+        varlist = self.get_VariableContent()
+        default_vars = self.cfg.get_default_variables()
+        for varname in default_vars.keys():
+            value = varlist[varname]
+            default_vars[varname] = value
+        self.cfg.store_default_variables(default_vars)
