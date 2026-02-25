@@ -12,6 +12,12 @@ class Times:
         iso_date, _ = self.parseToISO(iso_date)
         if not iso_date:
             return 0.0
+        if iso_date.startswith("T"):
+            t = iso_date[1:].split(":")
+            h = int(t[0])
+            m = int(t[1])
+            s = int(t[2])
+            return (h * 3600 + m * 60 + s) / Times.seconds_per_day
         diff = dt.fromisoformat(iso_date) - dt.fromisoformat(Times.gregorianCalendarBegin_ISO)
         return diff.days + (diff.seconds / Times.seconds_per_day)
 
@@ -21,7 +27,7 @@ class Times:
     def parse_date(self, string) -> tuple:
         if type(string) != str:
             string = str(string)
-            
+
         i = string.find("#")
         if i > -1:
             while i > 0 and not string[i].isnumeric():
@@ -113,3 +119,11 @@ class Times:
                 t.append("00")
             tim = f"{t[0]:t[1]:s[2]}"
         return (dt.combine(date=dat, time=tim) - dt.fromisoformat(Times.gregorianCalendarBegin_ISO)).seconds / Times.seconds_per_day
+
+    def get_current_time(self):
+        return dt.now().strftime("#T%H:%M:%S")        
+
+    def get_current_date(self):
+        return dt.now().strftime("#%Y-%m-%d")        
+
+    
