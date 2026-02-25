@@ -387,6 +387,11 @@ class Calculator:
         return (0.0, "OK", 2 )
 
     def func_mrun(self, parameters = None):
+        if parameters and len(parameters) > 1:
+            name = parameters[1]
+        else:
+            name = "default"
+        self.run_macro(name, self.cfg.get_Macro(name))
         return (0.0, "OK", 2 )
     
     # Filter sub-expressions in variable names, parse and insert results
@@ -683,3 +688,9 @@ class Calculator:
             value = varlist[varname]
             default_vars[varname] = value
         self.cfg.store_default_variables(default_vars)
+
+    def run_macro(self, name="default", data=[]):
+        for command in data:
+            result = self.do_parse(command)
+            if result[1] == "OK":
+                self.gui.set_Result(result[0])
