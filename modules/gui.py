@@ -501,6 +501,7 @@ class Gui():
     def set_Result(self, value: float):
         text, colorAttrib = self.get_ResultString(value)
         self.result.config(text=text)
+        self.root.update_idletasks()
 
     def get_Result(self) -> float:
         return self.resultValue
@@ -535,15 +536,6 @@ class Gui():
 
     def copyResultToClipboard(self):
         pyperclip.copy(self.result.cget("text"))
-
-    # def pasteFromClipboard(self, varname=None):
-    #     string = pyperclip.paste()
-    #     parameter_list = list(filter(lambda s: len(s) > 0, string.strip().replace("\t", " ").split(" ")))
-    #     for n, element in enumerate(parameter_list):
-    #         if varname:
-    #             self.add_EditString(f"{varname}[{n}]={element}")
-    #         else:
-    #             self.add_EditString(element)
 
     def set_NumberFormat(self, fmt = NumFormat.DEC):
         self.num_format = fmt
