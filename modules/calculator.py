@@ -147,7 +147,12 @@ class Calculator:
     def get_InitializedVariable(self, name: str) -> tuple:
         if not self.is_ValidVariable(name):
             return (0.0, "Name error", 1)
-        return (self.__get_variable_unchecked(self.__filter_varname(name)), "OK", 1)
+        value = self.__get_variable_unchecked(self.__filter_varname(name))
+        if type(value) == str and value.startswith("#"):
+            result = self.do_parse(value)
+            if result[1] == 'OK':
+                value = result[0]
+        return (value, "OK", 1)
 
     def set_Variable(self, name: str, value = 0.0):
         name = self.__filter_varname(name)
@@ -502,13 +507,19 @@ class Calculator:
                 if result[1] != "OK" or result[2] != 1 or self.ro.is_roman_number_string(formula):
                     return result
             try:
-                return ( eval(formula, self.get_VariableContent(), self.get_Cmd()), "OK", True )
+                return ( eval(formula, self.get_updated_varlist(), self.get_Cmd()), "OK", True )
             except NameError as ne:
                 name = (str(ne).split("'"))[1]
                 self.set_Variable(name, 0.0)
             except Exception as e:
                 return ( 0.0, f"Error: {e}", False )
 
+    def get_updated_varlist(self):
+        varlist = self.get_VariableContent()
+        varlist["date"]=self.times.get_current_date_value()
+        varlist["time"]=self.times.get_current_time_value()
+        return varlist
+        
     def parse_number(self, text: str):
         if self.ro.is_roman_number_string(text):
             return (self.parse_RomanNumber(text), "OK", 1)
@@ -523,7 +534,7 @@ class Calculator:
             case Gui.Item.Math_Function:
                 self.handle_keyboard_event(event)
             case Gui.Item.VarList:
-                self.put_edit_string(event[1])
+                self.handle_varlist_event(event)
             case Gui.Item.Result:
                 pass
             case Gui.Item.Editor:
@@ -635,3 +646,16 @@ class Calculator:
         self.__varlist["date"] = self.times.get_current_date()
         self.__varlist["time"] = self.times.get_current_time()
         self.gui.set_VariableContent(self.get_VariableContent())
+
+    def handle_varlist_event(self, event):
+        self.put_edit_string(event[1])
+        # value = str(event[1])
+        # result = self.do_parse(value)
+        # if result[1] != "OK":
+        #     self.put_edit_string(event[1])
+        # else:
+        #     self.put_edit_string(str(result[0]))
+
+        # varlist["date"]=self.times.get_current_date_value()
+        # varlist["time"]=self.times.get_current_time_value()
+        # return varlist
