@@ -68,15 +68,15 @@ class Gui():
         FRC = "FRC"
 
     menudef = [
-        { "cascade": "File", "text": "Clear",            "id": Item.Menu_Clear,     },
-        { "cascade": "File", "text": "Delete",           "id": Item.Menu_Delete,    },
-        { "cascade": "File", "text": "Reset",            "id": Item.Menu_Reset,     },
-        { "cascade": "File", "text": "_sep_",            "id": None                 },
-        { "cascade": "File", "text": "Set default vars", "id": Item.Menu_DefVars,   },
-        { "cascade": "File", "text": "Update def. vars", "id": Item.Menu_DefUpdate, },
-        { "cascade": "File", "text": "_sep_",            "id": None                 },
         { "cascade": "File", "text": "Exit",             "id": Item.Menu_Exit,      },
 
+        { "cascade": "Edit", "text": "Clear",            "id": Item.Menu_Clear,     },
+        { "cascade": "Edit", "text": "Delete",           "id": Item.Menu_Delete,    },
+        { "cascade": "Edit", "text": "Reset",            "id": Item.Menu_Reset,     },
+        { "cascade": "Edit", "text": "_sep_",            "id": None                 },
+        { "cascade": "Edit", "text": "Set default vars", "id": Item.Menu_DefVars,   },
+        { "cascade": "Edit", "text": "Update def. vars", "id": Item.Menu_DefUpdate, },
+        { "cascade": "Edit", "text": "_sep_",            "id": None                 },
         { "cascade": "Edit", "text": "Copy",             "id": Item.Menu_Copy,      },
 
         { "cascade": "Help", "text": "Help commands",    "id": Item.Menu_Help,      },
