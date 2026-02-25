@@ -50,8 +50,10 @@ class Calculator:
     }
 
     __default_varlist = { 
-            "pi": math.pi,
-            "e":  math.e,
+            "pi":   math.pi,
+            "e":    math.e,
+            "date": "2026-01-01",
+            "time": "00:00:00",
         }
 
     def __init__(self):
@@ -460,15 +462,15 @@ class Calculator:
         while True:
             i = formula.find("#")
             if i > -1:
-                ro_digit = formula[i+1]
-                if self.ro.is_roman_digit(ro_digit):
-                    ro_num, ro_len = self.ro.parseRomanNumberString(formula[i+1:])
-                    formula = formula[:i] + str(ro_num) + formula[i + 1 + ro_len:]
+                iso, iso_len = self.times.parseToISO(formula[i+1:])
+                if iso:
+                    factor = str(self.times.get_Factor(iso))
+                    formula = formula[:i] + factor + formula[i + 1 + iso_len:]
                 else:
-                    iso, iso_len = self.times.parseToISO(formula[i+1:])
-                    if iso:
-                        factor = str(self.times.get_Factor(iso))
-                        formula = formula[:i] + factor + formula[i + 1 + iso_len:]
+                    ro_digit = formula[i+1]
+                    if self.ro.is_roman_digit(ro_digit):
+                        ro_num, ro_len = self.ro.parseRomanNumberString(formula[i+1:])
+                        formula = formula[:i] + str(ro_num) + formula[i + 1 + ro_len:]
                     else:
                         break
             else:
@@ -568,6 +570,8 @@ class Calculator:
                 self.cmd(".deg")
             case Gui.Item.TB_Rad:
                 self.cmd(".rad")
+            case Gui.Item.Timer:
+                self.interval_update()
             case _:
                 print(f"GUI callback error: {id}")
         return None
@@ -626,3 +630,8 @@ class Calculator:
         text += '</body></html>'
 
         return text
+
+    def interval_update(self):
+        self.__varlist["date"] = self.times.get_current_date()
+        self.__varlist["time"] = self.times.get_current_time()
+        self.gui.set_VariableContent(self.get_VariableContent())
