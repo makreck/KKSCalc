@@ -384,6 +384,12 @@ class Calculator:
         return (0.0, "OK", 2 )
 
     def func_medit(self, parameters = None):
+        if parameters and len(parameters) > 1:
+            name = parameters[1]
+        else:
+            name = "default"
+        cmd = self.cfg.get_Macro(name)
+        self.gui.macro_editor(name, cmd)
         return (0.0, "OK", 2 )
 
     def func_mrun(self, parameters = None):
@@ -627,6 +633,8 @@ class Calculator:
                 pass
             case Gui.Item.Editor:
                 return self.do_parse(event)
+            case Gui.Item.EditorMacro:
+                self.handle_close_macro_editor(event)
             case Gui.Item.Cmd_onClose:
                 self.exit()
             case Gui.Item.Menu_Clear:
@@ -694,3 +702,7 @@ class Calculator:
             result = self.do_parse(command)
             if result[1] == "OK":
                 self.gui.set_Result(result[0])
+
+    def handle_close_macro_editor(self, event):
+        if len(event) == 2:
+            self.cfg.set_Macro(name=event[0], macro=event[1])

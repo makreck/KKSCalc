@@ -36,6 +36,7 @@ class Gui():
         Cmd_onClose    = "close",
         VarList        = "var.event",
         Editor         = "editor.event"
+        EditorMacro    = "editor.macro.event"
         Result         = "result.event"
         Timer          = "timer.event"
         Menu_Clear     = "menu.clear",
@@ -686,3 +687,30 @@ class Gui():
             pil_image_out.save(self.get_button_image_path(folder, filename, n))
             n += 1
 
+    def macro_editor(self, name="default", cmd=[]):
+        text = "\n".join(cmd)
+        self.macro_editor = tk.Toplevel(self.root)
+        self.macro_editor.title("Macro editor")
+        self.macro_editor.grab_set()
+        self.macro_editor.protocol("WM_DELETE_WINDOW", self.on_macro_closing)
+
+        self.macro_name = tk.Text(self.macro_editor, width=-1, height=1, relief="raised", font=self.editorFont)
+        self.macro_name.grid(row=0, column=0, padx=2, pady=2, sticky="NSEW")
+        self.macro_name.insert(self.macro_name.index("insert lineend"), name)
+
+        self.macro_text = tk.Text(self.macro_editor, borderwidth=0, font=self.editorFont, relief="groove")
+        self.macro_text.grid(row=1, column=0, padx=2, pady=2, sticky="NSEW")
+        self.macro_text.insert(self.macro_text.index("insert lineend"), text + "\n")
+
+        self.center_window(self.macro_editor, self.root)
+
+    def on_macro_closing(self):
+        name = self.macro_name.get("1.0", tk.END)
+        content = self.macro_text.get("1.0", tk.END)
+        cmd = content.strip().split("\n")
+        cmd = list(map(lambda line: line.strip(), cmd))
+        self.macro_editor.destroy()
+        del self.macro_name
+        del self.macro_text
+        del self.macro_editor
+        self.callback(Gui.Item.EditorMacro, (name, cmd))
