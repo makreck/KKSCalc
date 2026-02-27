@@ -34,6 +34,8 @@ class Gui():
 
     class Item(Enum):
         Cmd_onClose    = "close",
+        Cmd_getMacros  = "get.macro.list"
+        Cmd_getMacCode = "get.macro.code"
         VarList        = "var.event",
         Editor         = "editor.event"
         EditorMacro    = "editor.macro.event"
@@ -243,15 +245,46 @@ class Gui():
         self.menubar = tk.Menu(self.root)
         self.root.config(menu=self.menubar)
         last_cascade = ""
+        index = 0
         for element in Gui.menudef:
-            if element["cascade"] != last_cascade:
-                last_cascade = element["cascade"]
+            cascade = element["cascade"]
+            text    = element["text"]
+            id      = element["id"]
+            
+            if cascade != last_cascade:
+                index = 0
+                last_cascade = cascade
                 menu_cascade = tk.Menu(self.menubar, tearoff=False)
                 self.menubar.add_cascade(label=last_cascade, menu=menu_cascade)        
-            if element["text"] == "_sep_":
+            else:
+                index += 1
+                
+            if text == "_sep_":
                 menu_cascade.add_separator()
             else:
-                menu_cascade.add_command(label=element["text"], command=partial(self.callback, element["id"]))
+                if id == Gui.Item.Menu_MacroEdit:
+                    self.branch_macro_edit = tk.Menu(self.menubar, tearoff=False, postcommand=partial(self.populate_dynamic, text, id))
+                    menu_cascade.add_cascade(label=text, menu=self.branch_macro_edit)
+                elif id == Gui.Item.Menu_MacroRun:
+                    self.branch_macro_run = tk.Menu(self.menubar, tearoff=False, postcommand=partial(self.populate_dynamic, text, id))
+                    menu_cascade.add_cascade(label=text, menu=self.branch_macro_run)
+                else:
+                    menu_cascade.add_command(label=text, command=partial(self.callback, id))
+
+    def populate_dynamic(self, text: str, id: Gui.Item):
+        if id == Gui.Item.Menu_MacroEdit:
+            menu = self.branch_macro_edit
+        elif id == Gui.Item.Menu_MacroRun:
+            menu = self.branch_macro_run
+        else:
+            return
+        menu.delete(0, 'end')
+        macro_list = []
+        result = self.callback(Gui.Item.Cmd_getMacros, 0.0)
+        if result[1] == "OK":
+            macro_list = result[0]
+            for name in macro_list:
+                menu.add_command(label=name, command=partial(self.callback, id, name))
 
     def createToolbar(self):
         self.toolbar = tk.Frame(self.root, bd=1, relief="sunken")

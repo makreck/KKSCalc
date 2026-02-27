@@ -125,3 +125,6 @@ class Config:
     def set_Macro(self, name="default", macro=[ ".res" ]):
         key = self.parse_macro_name(name)
         self.configData[key] = macro        
+
+    def get_Macro_List(self):
+        return [key[6:].lower() for key in self.configData.keys() if key.startswith("Macro.")]

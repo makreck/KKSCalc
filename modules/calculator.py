@@ -540,6 +540,7 @@ class Calculator:
             except NameError as ne:
                 name = (str(ne).split("'"))[1]
                 self.set_Variable(name, 0.0)
+                formula = formula.replace(name, "0.0")
             except Exception as e:
                 return ( 0.0, f"Error: {e}", False )
 
@@ -637,6 +638,10 @@ class Calculator:
                 self.handle_close_macro_editor(event)
             case Gui.Item.Cmd_onClose:
                 self.exit()
+            case Gui.Item.Cmd_getMacros:
+                return (self.cfg.get_Macro_List(), "OK", 1)
+            case Gui.Item.Cmd_getMacCode:
+                pass
             case Gui.Item.Menu_Clear:
                 self.cmd(".cls")
             case Gui.Item.Menu_Delete:
@@ -655,6 +660,12 @@ class Calculator:
                 self.cmd(".copy")
             case Gui.Item.Menu_Exit:
                 self.cmd(".exit")
+            case Gui.Item.Menu_MacroAdd:
+                self.cmd(".madd")
+            case Gui.Item.Menu_MacroEdit:
+                self.cmd(f".medit {event}")
+            case Gui.Item.Menu_MacroRun:
+                self.cmd(f".mrun {event}")
 
             case Gui.Item.Popup_Varl_rmv:
                 self.cmd(f".rmv {event}")
@@ -679,12 +690,6 @@ class Calculator:
                 self.cmd(".deg")
             case Gui.Item.TB_Rad:
                 self.cmd(".rad")
-            case Gui.Item.Menu_MacroAdd:
-                self.cmd(".madd")
-            case Gui.Item.Menu_MacroEdit:
-                self.cmd(".medit")
-            case Gui.Item.Menu_MacroRun:
-                self.cmd(".mrun")
             case _:
                 print(f"GUI callback error: {id}")
         return None
