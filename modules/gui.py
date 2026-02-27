@@ -36,10 +36,11 @@ class Gui():
         Cmd_onClose    = "close",
         Cmd_getMacros  = "get.macro.list"
         Cmd_getMacCode = "get.macro.code"
-        VarList        = "var.event",
-        Editor         = "editor.event"
-        EditorMacro    = "editor.macro.event"
-        Result         = "result.event"
+        Cmd_hotkey     = "event.hotkey"
+        VarList        = "event.variable",
+        Editor         = "event.editor"
+        EditorMacro    = "event.editor.macro"
+        Result         = "event.result"
         Timer          = "timer.event"
         Menu_Clear     = "menu.clear",
         Menu_Delete    = "menu.delete",
@@ -199,9 +200,14 @@ class Gui():
         self.set_WindowPos()
         self.set_ButtonPressed(Gui.Item.TB_Deg, True)
         self.set_ButtonPressed(Gui.Item.TB_Rad, False)
+        self.bind_hotkeys()
         self.timer_id = self.root.after(1000, self.interval_timer)
         return self
 
+    def bind_hotkeys(self):
+        for i in range(1, 13):
+            self.root.bind_all(f'<F{i}>', self.hotkey)
+        
     def check_geometry(self, pos = {} ):
         sashpos = int(float(pos.get("sashpos", 200)))
         width   = int(float(pos.get("width",   640)))
@@ -283,8 +289,9 @@ class Gui():
         result = self.callback(Gui.Item.Cmd_getMacros, 0.0)
         if result[1] == "OK":
             macro_list = result[0]
-            for name in macro_list:
-                menu.add_command(label=name, command=partial(self.callback, id, name))
+            for i, name in enumerate(macro_list):
+                entry = f"F{i+1}  {name}" if id == Gui.Item.Menu_MacroRun else name
+                menu.add_command(label=entry, command=partial(self.callback, id, name))
 
     def createToolbar(self):
         self.toolbar = tk.Frame(self.root, bd=1, relief="sunken")
@@ -300,13 +307,13 @@ class Gui():
             else:
                 self.toolbar.columnconfigure(col, weight=1)
                 btn = self.create_button(self.toolbar, element["text"], element["tooltip"],
-                                         size=self.tbIconSize, compound="center", command=partial(self.callback, id))
+                    size=self.tbIconSize, compound="center", command=partial(self.callback, id))
                 self.toolbarButtons.append( { "id": id, "button": btn } )
                 btn.grid(row=0, column=col, padx=0, pady=0)
             col += 1
         self.toolbar.columnconfigure(col, weight=999)
         self.result = tk.Label(self.toolbar, text="0.0", width=-1, height=1, anchor="e",
-                               bg="#000000", fg="#00F0F0", relief="raised", font=self.displayFont, padx=8, pady=0)
+            bg="#000000", fg="#00F0F0", relief="raised", font=self.displayFont, padx=8, pady=0)
         self.result.grid(row=0, column=col, padx=2, pady=0, sticky="NSEW")
         self.result.bind("<Double-1>", self.handle_ResultEvent)
 
@@ -747,3 +754,7 @@ class Gui():
         del self.macro_text
         del self.macro_editor
         self.callback(Gui.Item.EditorMacro, (name, cmd))
+
+    def hotkey(self, event):
+        print(f"Hotkey: {event}")
+        self.callback(Gui.Item.Cmd_hotkey, event.keysym)

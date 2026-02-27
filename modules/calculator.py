@@ -642,6 +642,8 @@ class Calculator:
                 return (self.cfg.get_Macro_List(), "OK", 1)
             case Gui.Item.Cmd_getMacCode:
                 pass
+            case Gui.Item.Cmd_hotkey:
+                self.handle_hotkey(event)
             case Gui.Item.Menu_Clear:
                 self.cmd(".cls")
             case Gui.Item.Menu_Delete:
@@ -711,3 +713,12 @@ class Calculator:
     def handle_close_macro_editor(self, event):
         if len(event) == 2:
             self.cfg.set_Macro(name=event[0], macro=event[1])
+
+    def handle_hotkey(self, hotkey: str):
+        if hotkey.startswith("F"):
+            macro_names = self.cfg.get_Macro_List()
+            macro_index = int(hotkey[1:3]) - 1
+            if 0 <= macro_index < len(macro_names):
+                self.cmd(f".mrun {macro_names[macro_index]}")
+
+
