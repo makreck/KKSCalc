@@ -277,7 +277,7 @@ class Gui():
                 else:
                     menu_cascade.add_command(label=text, command=partial(self.callback, id))
 
-    def populate_dynamic(self, text: str, id: Gui.Item):
+    def populate_dynamic(self, text: str, id):
         if id == Gui.Item.Menu_MacroEdit:
             menu = self.branch_macro_edit
         elif id == Gui.Item.Menu_MacroRun:
