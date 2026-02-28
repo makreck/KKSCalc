@@ -195,7 +195,8 @@ class Gui():
         self.createWindow()
         self.createMenu()
         self.createToolbar()
-        self.createStatusline()
+        self.createInfoLine()
+        self.createStatusLine()
         self.createPaned()
         self.set_WindowPos()
         self.set_ButtonPressed(Gui.Item.TB_Deg, True)
@@ -316,6 +317,15 @@ class Gui():
             bg="#000000", fg="#00F0F0", relief="raised", font=self.displayFont, padx=8, pady=0)
         self.result.grid(row=0, column=col, padx=2, pady=0, sticky="NSEW")
         self.result.bind("<Double-1>", self.handle_ResultEvent)
+        
+    def createInfoLine(self):
+        result = self.callback(Gui.Item.Cmd_getMacros, 0.0)
+        if result[1] == "OK":
+            macro_list = result[0]
+            if macro_list != None and len(macro_list) > 0:
+                text = "   ".join(f"F{i+1}: \"{macro_list[i]}\"" for i in range(len(macro_list)))
+                self.infoline = tk.Label(self.root, text=text, width=-1, height=1, padx=4, pady=2, anchor="w", bd=1, relief="raised")
+                self.infoline.pack(fill="x", padx=2, pady=2)
 
     def createPaned(self):
         self.paned = ttk.PanedWindow(self.root, orient="horizontal")
@@ -329,7 +339,7 @@ class Gui():
         self.createFunctionWindow()
         self.createEditor()
 
-    def createStatusline(self):
+    def createStatusLine(self):
         self.statusline = tk.Label(self.root, text="OK", width=-1, height=1, padx=4, pady=2, anchor="w", bd=1, relief="sunken")
         self.statusline.pack(fill="x", side="bottom", padx=2, pady=2)
 
