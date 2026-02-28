@@ -226,7 +226,7 @@ class MathWrapper:
             "acsc":   (__f_acsc,   "csc⁻¹",    "Arcus cosecant function", True, ),
 
             "int":    (__f_int,    "int",      "Integer of x", True, ),
-            "abs":    (__f_abs,    "|x|",      "Absolute value", True, ),
+            "abs":    (__f_abs,    "|x|",      "Absolute value of x", True, ),
             "floor":  (__f_floor,  "⌊x⌋",      "Floor of x", True, ),
             "ceil":   (__f_ceil,   "⌈x⌉",      "Ceiling of x", True, ),
 
