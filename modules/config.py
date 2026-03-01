@@ -128,3 +128,10 @@ class Config:
 
     def get_Macro_List(self):
         return [key[6:].lower() for key in self.configData.keys() if key.startswith("Macro.")]
+
+    def delete_Macro(self, name=None):
+        if name == None: return
+        key = self.parse_macro_name(name)
+        deleted_macro = self.configData.pop(key, None)
+        print(f"Delete macro \"{name}\", content=\"{deleted_macro}\"")
+        

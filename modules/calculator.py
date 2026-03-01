@@ -640,6 +640,9 @@ class Calculator:
         if len(event) == 2:
             self.cfg.set_Macro(name=event[0], macro=event[1])
 
+    def handle_delete_macro(self, name):
+        self.cfg.delete_Macro(name)
+
     def handle_hotkey(self, hotkey: str):
         if hotkey.startswith("F"):
             macro_names = self.cfg.get_Macro_List()
@@ -661,6 +664,8 @@ class Calculator:
                 return self.do_parse(event)
             case Gui.Item.EditorMacro:
                 self.handle_close_macro_editor(event)
+            case Gui.Item.EditorDelMacro:
+                self.handle_delete_macro(event)
             case Gui.Item.Cmd_onClose:
                 self.exit()
             case Gui.Item.Cmd_getMacros:

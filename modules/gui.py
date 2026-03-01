@@ -40,6 +40,7 @@ class Gui():
         VarList        = "event.variable",
         Editor         = "event.editor"
         EditorMacro    = "event.editor.macro"
+        EditorDelMacro = "event.editor.macro.delete"
         Result         = "event.result"
         Timer          = "timer.event"
         Menu_Clear     = "menu.clear",
@@ -738,6 +739,7 @@ class Gui():
             n += 1
 
     def macro_editor(self, name="default", cmd=[]):
+        self.original_macro_name = name
         text = "\n".join(cmd)
         self.macro_editor = tk.Toplevel(self.root)
         self.macro_editor.title("Macro editor")
@@ -755,15 +757,25 @@ class Gui():
         self.center_window(self.macro_editor, self.root)
 
     def on_macro_closing(self):
-        name = self.macro_name.get("1.0", tk.END)
+        name = self.macro_name.get("1.0", tk.END).strip().lower()
+        if name != self.original_macro_name:
+            self.callback(Gui.Item.EditorDelMacro, self.original_macro_name)
+
         content = self.macro_text.get("1.0", tk.END)
         cmd = content.strip().split("\n")
         cmd = list(map(lambda line: line.strip(), cmd))
+
         self.macro_editor.destroy()
+        del self.original_macro_name
         del self.macro_name
         del self.macro_text
         del self.macro_editor
-        self.callback(Gui.Item.EditorMacro, (name, cmd))
+
+        if cmd == ['']:
+            self.callback(Gui.Item.EditorDelMacro, name)
+            cmd = None
+        else:
+            self.callback(Gui.Item.EditorMacro, (name, cmd))
 
     def hotkey(self, event):
         print(f"Hotkey: {event}")
