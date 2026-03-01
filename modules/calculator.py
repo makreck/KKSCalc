@@ -54,10 +54,10 @@ class Calculator:
     }
 
     __default_varlist = { 
-            "pi":   math.pi,
-            "e":    math.e,
             "date": "2026-01-01",
             "time": "00:00:00",
+            "pi":   math.pi,
+            "e":    math.e,
         }
 
     def __init__(self):
@@ -622,6 +622,31 @@ class Calculator:
     def handle_varlist_event(self, event):
         self.put_edit_string(event[1])
 
+    def update_default_variables(self):
+        varlist = self.get_VariableContent()
+        default_vars = self.cfg.get_default_variables()
+        for varname in default_vars.keys():
+            value = varlist[varname]
+            default_vars[varname] = value
+        self.cfg.store_default_variables(default_vars)
+
+    def run_macro(self, name="default", data=[]):
+        for command in data:
+            result = self.do_parse(command)
+            if result[1] == "OK":
+                self.gui.set_Result(result[0])
+
+    def handle_close_macro_editor(self, event):
+        if len(event) == 2:
+            self.cfg.set_Macro(name=event[0], macro=event[1])
+
+    def handle_hotkey(self, hotkey: str):
+        if hotkey.startswith("F"):
+            macro_names = self.cfg.get_Macro_List()
+            macro_index = int(hotkey[1:3]) - 1
+            if 0 <= macro_index < len(macro_names):
+                self.cmd(f".mrun {macro_names[macro_index]}")
+
     def guiCallback(self, id: Gui.Item, event = None):
         match id:
             case Gui.Item.Math_Function:
@@ -695,30 +720,3 @@ class Calculator:
             case _:
                 print(f"GUI callback error: {id}")
         return None
-
-    def update_default_variables(self):
-        varlist = self.get_VariableContent()
-        default_vars = self.cfg.get_default_variables()
-        for varname in default_vars.keys():
-            value = varlist[varname]
-            default_vars[varname] = value
-        self.cfg.store_default_variables(default_vars)
-
-    def run_macro(self, name="default", data=[]):
-        for command in data:
-            result = self.do_parse(command)
-            if result[1] == "OK":
-                self.gui.set_Result(result[0])
-
-    def handle_close_macro_editor(self, event):
-        if len(event) == 2:
-            self.cfg.set_Macro(name=event[0], macro=event[1])
-
-    def handle_hotkey(self, hotkey: str):
-        if hotkey.startswith("F"):
-            macro_names = self.cfg.get_Macro_List()
-            macro_index = int(hotkey[1:3]) - 1
-            if 0 <= macro_index < len(macro_names):
-                self.cmd(f".mrun {macro_names[macro_index]}")
-
-
