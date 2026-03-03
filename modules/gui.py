@@ -91,7 +91,7 @@ class Gui():
         { "cascade": "Macro", "text": "Edit macro",       "id": Item.Menu_MacroEdit, },
         { "cascade": "Macro", "text": "Run macro",        "id": Item.Menu_MacroRun,  },
 
-        { "cascade": "Help",  "text": "Help commands",    "id": Item.Menu_Help,      },
+        { "cascade": "Help",  "text": "Help usage",       "id": Item.Menu_Help,      },
         { "cascade": "Help",  "text": "Display license",  "id": Item.Menu_License,   },
     ]
 
