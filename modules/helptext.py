@@ -32,4 +32,12 @@ Example: <b>x[0]=1</b> enter <b>x[1]=2</b> enter <b>x[x[0]]</b> enter results in
 You can copy a line in LibreOffice Calc and paste all columns into a variable array.<br>
 <b>Note: Comma Separated Values (CSV-format) is not directly accepted because comma can be used a decimal digit separator or decimal point.</b></li>
 </ul></p>
+
+<p><h2>Macros:</h2>
+<ul style="list-style-type: square;">
+<li>A macro consists of a name and a list of commands and/or operations.</li>
+<li>Any macro is identified by its name. Any macro name must be unique.</li>
+<li>When a macro is called, the calculator executes each line of text exactly as if it had just been entered.</li>
+<li>You can access a macro by selecting it from the menu or, for the first 12 macros, by pressing the corresponding function key F1 to F12.</li>
+</ul></p>
 '''
