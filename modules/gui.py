@@ -318,15 +318,11 @@ class Gui():
             bg="#000000", fg="#00F0F0", relief="raised", font=self.displayFont, padx=8, pady=0)
         self.result.grid(row=0, column=col, padx=2, pady=0, sticky="NSEW")
         self.result.bind("<Double-1>", self.handle_ResultEvent)
-        
+
     def createInfoLine(self):
-        result = self.callback(Gui.Item.Cmd_getMacros, 0.0)
-        if result[1] == "OK":
-            macro_list = result[0]
-            if macro_list != None and len(macro_list) > 0:
-                text = "   ".join(f"F{i+1}: \"{macro_list[i]}\"" for i in range(len(macro_list)))
-                self.infoline = tk.Label(self.root, text=text, width=-1, height=1, padx=4, pady=2, anchor="w", bd=1, relief="raised")
-                self.infoline.pack(fill="x", padx=2, pady=2)
+        self.infoline = tk.Label(self.root, width=-1, height=1, padx=4, pady=2, anchor="w", bd=1, relief="raised")
+        self.infoline.pack(fill="x", padx=2, pady=2)
+        self.infoline.configure(text=self.get_MacroFunctionList())
 
     def createPaned(self):
         self.paned = ttk.PanedWindow(self.root, orient="horizontal")
@@ -449,7 +445,6 @@ class Gui():
             finally:
                 menu.grab_release()
 
-    
     def handle_VarListEvent(self, event):
         itemID = self.varlist.identify_row(event.y)
         if itemID:
@@ -549,7 +544,7 @@ class Gui():
                 result = str(value)
         colorAttrib = "positive" if value >= 0 else "negative"
         return (result, colorAttrib)
-    
+
     def set_Result(self, value: float):
         text, colorAttrib = self.get_ResultString(value)
         self.result.config(text=text)
@@ -599,7 +594,7 @@ class Gui():
         fraction = Fraction(frac).limit_denominator(max_denominator)
         full = f"{full}+" if full != 0 else ""
         return f"({full}{fraction})"
-    
+
     def float2fractional(self, value: float, base = 16, digits = 8):
         digits = int(digits)
         base = int(base)
@@ -757,24 +752,35 @@ class Gui():
         self.center_window(self.macro_editor, self.root)
 
     def on_macro_closing(self):
-        name = self.macro_name.get("1.0", tk.END).strip().lower()
-        if not name:
-            name = "default"
-        if name != self.original_macro_name and self.original_macro_name != "default":
-            self.callback(Gui.Item.EditorDelMacro, self.original_macro_name)
         content = self.macro_text.get("1.0", tk.END)
         cmd = content.strip().split("\n")
         cmd = list(map(lambda line: line.strip(), cmd))
+        name = self.macro_name.get("1.0", tk.END).strip().lower()
+        if not name:
+            cmd = ['']
+        if name != self.original_macro_name and self.original_macro_name != "default":
+            self.callback(Gui.Item.EditorDelMacro, self.original_macro_name)
         self.macro_editor.destroy()
         del self.original_macro_name
         del self.macro_name
         del self.macro_text
         del self.macro_editor
-        if cmd == ['']:
-            self.callback(Gui.Item.EditorDelMacro, name)
-            cmd = None
-        else:
-            self.callback(Gui.Item.EditorMacro, (name, cmd))
+        if name:
+            if cmd == ['']:
+                self.callback(Gui.Item.EditorDelMacro, name)
+                cmd = None
+            else:
+                self.callback(Gui.Item.EditorMacro, (name, cmd))
+        self.infoline.configure(text=self.get_MacroFunctionList())
 
     def hotkey(self, event):
         self.callback(Gui.Item.Cmd_hotkey, event.keysym)
+
+    def get_MacroFunctionList(self):
+        text = ""
+        result = self.callback(Gui.Item.Cmd_getMacros, 0.0)
+        if result[1] == "OK":
+            macro_list = result[0]
+            if macro_list != None and len(macro_list) > 0:
+                text = "   ".join(f"F{i+1}: \"{macro_list[i]}\"" for i in range(len(macro_list)))
+        return text
