@@ -575,24 +575,27 @@ class Calculator:
         self.put_edit_string(f"{math_function}(" if len(math_function) > 1 else math_function)
 
     def pasteFromClipboard(self, fu=".paste", varname=None, *index_list):
-        parameter_list = list(filter(lambda s: len(s) > 0, pyperclip.paste().strip().replace("\t", " ").split(" ")))
-        if index_list:
-            index_list = list(map(lambda x: int(float(x)), index_list))
-            parameter_list = [parameter_list[i] if 0 <= i < len(parameter_list) else None for i in index_list]
-        for n, element in enumerate(parameter_list):
-            if self.times.is_DateTimeString(element):
-                element = "#" + element
-            elif self.ro.is_roman_number_string(element):
-                element = "#" + element
-            else:
-                element = self.handle_number_grouping(element)
-            if varname:
-                s = (f"{varname}[{n}]={element}")
-            else:
-                s = element
-            self.gui.add_EditString(s)
-            self.do_parse(s)
-
+        try:
+            parameter_list = list(filter(lambda s: len(s) > 0, pyperclip.paste().strip().replace("\t", " ").split(" ")))
+            if index_list:
+                index_list = list(map(lambda x: int(float(x)), index_list))
+                parameter_list = [parameter_list[i] if 0 <= i < len(parameter_list) else None for i in index_list]
+            for n, element in enumerate(parameter_list):
+                if self.times.is_DateTimeString(element):
+                    element = "#" + element
+                elif self.ro.is_roman_number_string(element):
+                    element = "#" + element
+                else:
+                    element = self.handle_number_grouping(element)
+                if varname:
+                    s = (f"{varname}[{n}]={element}")
+                else:
+                    s = element
+                self.gui.add_EditString(s)
+                self.do_parse(s)
+        except Exception as e:
+            print(e)
+            
     def create_html_help_text(self) -> str:
         text = '<html><body>'
 

@@ -11,6 +11,9 @@ if __name__ == "__main__":
 #
 # Linux:
 #
+# Clipboard:
+# sudo apt-get install xclip
+# 
 # Overwrite system wide:
 # sudo apt remove python3-pil python3-pil.imagetk
 # sudo apt update

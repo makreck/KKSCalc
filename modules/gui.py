@@ -659,7 +659,7 @@ class Gui():
         self.center_window(dialog_window, self.root)
 
     def create_button(self, parent, text="", tooltip=None, size=(32, 32), **tk_button_kwargs):
-        folder = "modules/images/buttons"
+        folder = f"modules/images/buttons_{self.display_scaling_factor}"
         if tooltip:
             filename = self.get_filename_from_tooltip(tooltip)
             il = []
