@@ -758,19 +758,18 @@ class Gui():
 
     def on_macro_closing(self):
         name = self.macro_name.get("1.0", tk.END).strip().lower()
-        if name != self.original_macro_name:
+        if not name:
+            name = "default"
+        if name != self.original_macro_name and self.original_macro_name != "default":
             self.callback(Gui.Item.EditorDelMacro, self.original_macro_name)
-
         content = self.macro_text.get("1.0", tk.END)
         cmd = content.strip().split("\n")
         cmd = list(map(lambda line: line.strip(), cmd))
-
         self.macro_editor.destroy()
         del self.original_macro_name
         del self.macro_name
         del self.macro_text
         del self.macro_editor
-
         if cmd == ['']:
             self.callback(Gui.Item.EditorDelMacro, name)
             cmd = None
@@ -778,5 +777,4 @@ class Gui():
             self.callback(Gui.Item.EditorMacro, (name, cmd))
 
     def hotkey(self, event):
-        print(f"Hotkey: {event}")
         self.callback(Gui.Item.Cmd_hotkey, event.keysym)

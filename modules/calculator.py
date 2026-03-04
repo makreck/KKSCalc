@@ -381,6 +381,7 @@ class Calculator:
         return (s, "OK", 1)
 
     def func_madd(self, parameters = None):
+        self.gui.macro_editor()
         return (0.0, "OK", 2 )
 
     def func_medit(self, parameters = None):
