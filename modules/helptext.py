@@ -39,5 +39,6 @@ You can copy a line in LibreOffice Calc and paste all columns into a variable ar
 <li>Any macro is identified by its name. Any macro name must be unique.</li>
 <li>When a macro is called, the calculator executes each line of text exactly as if it had just been entered.</li>
 <li>You can access a macro by selecting it from the menu or, for the first 12 macros, by pressing the corresponding function key F1 to F12.</li>
+<li>To delete an existing macro, open the macro editor and remove the name. Then close the editor. The macro with the previous name will then be deleted.</li>
 </ul></p>
 '''
