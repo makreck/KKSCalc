@@ -2,6 +2,7 @@ import os, sys, math, platform, pyperclip, re
 import tkinter as tk
 from tkinterweb import HtmlFrame
 from pathlib import Path
+from itertools import groupby
 from fractions import Fraction
 from tkinter import ttk
 from tkinter.font import Font
@@ -13,7 +14,7 @@ from io import BytesIO
 from modules.math_wrapper import MathWrapper
 from modules.tooltip import ToolTip
 from modules.scollframe import ScrollableFrame
-from itertools import groupby
+from modules.app_tools import AppTools
 
 # For using cairosvg ...
 if platform.system() == "Windows":
@@ -247,9 +248,14 @@ class Gui():
     def createWindow(self, title="KKSCalc"):
         self.root.protocol("WM_DELETE_WINDOW", self.closeWindow)
         self.root.title(title)
-        self.app_icon = ImageTk.PhotoImage(file=self.get_ImagePath("app_icon.png"))
-        self.root.iconphoto(False, self.app_icon)
-
+        icon_file = AppTools().get_ImageResourcePath("app_icon.png")
+        if Path(icon_file).exists():
+            try:
+                self.app_icon = ImageTk.PhotoImage(file=icon_file)
+                self.root.iconphoto(False, self.app_icon)
+            except:
+                pass
+        
     def createMenu(self):
         self.menubar = tk.Menu(self.root)
         self.root.config(menu=self.menubar)
@@ -643,13 +649,6 @@ class Gui():
             frac -= digit
         return fu(int(whole)) + "." + frac_digits.rstrip("0")
 
-    def get_ImagePath(self, image_file = "") -> str:
-        if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-            base_path = Path(sys._MEIPASS)
-        else:
-            base_path = Path(__file__).parent
-        return str(base_path) + "/images/" + image_file
-
     def get_position_of(self, widget) -> tuple:
         geometry = widget.geometry() 
         parts = re.findall(r'(\d+)x(\d+)\+(\d+)\+(\d+)', geometry)
@@ -683,43 +682,6 @@ class Gui():
             scrolled_text.insert(tk.END, text)
             scrolled_text.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
         self.center_window(dialog_window, self.root)
-
-    def create_button(self, parent, text="", tooltip=None, size=(32, 32), **tk_button_kwargs):
-        folder = f"modules/images/buttons_{self.display_scaling_factor}"
-        if tooltip:
-            filename = self.get_filename_from_tooltip(tooltip)
-            il = []
-            for n in range(2):
-                path = self.get_button_image_path(folder, filename, n)
-                if path.exists():
-                    image_data = Image.open(path)
-                    il.append(ImageTk.PhotoImage(image_data))
-            if len(il) >= 2:
-                images = (il[0], il[1], )
-                btn = tk.Button(parent, image=images[0], **tk_button_kwargs)
-                btn.images = images
-                btn.tooltip = ToolTip(self.root, btn, tooltip)
-                return btn
-
-        if platform.system() == "Windows":
-            btn = None
-        else:
-            if type(text) != str:
-                svg_string_normal  = text(self)
-                svg_string_pressed = text(self, color_background="#3b6cac")
-            elif self.is_svg_string(text):
-                svg_string_normal  = text
-                svg_string_pressed = text
-            else:
-                svg_string_normal  = self.svg_from_text(text, size)
-                svg_string_pressed = self.svg_from_text(text, size, color_background="#3b6cac")
-            btn = self.create_svg_button(parent, svg_string_normal, svg_string_pressed, size, **tk_button_kwargs)
-            if tooltip:
-                btn.tooltip = ToolTip(self.root, btn, tooltip)
-                self.save_images(btn, folder, filename)
-            else:
-                btn.tooltip = None
-        return btn
 
     def get_filename_from_tooltip(self, tooltip):
         return ''.join(key for key, group in groupby(re.sub(r'[^a-z0-9._-]', '_', tooltip.strip().lower()).strip("_").replace("_-_", "_")))
@@ -807,3 +769,40 @@ class Gui():
         if result[1] != "OK":
             return []
         return result[0]
+
+    def create_button(self, parent, text="", tooltip=None, size=(32, 32), **tk_button_kwargs):
+        folder = f"modules/images/buttons_{self.display_scaling_factor}"
+        if tooltip:
+            filename = self.get_filename_from_tooltip(tooltip)
+            il = []
+            for n in range(2):
+                path = self.get_button_image_path(folder, filename, n)
+                if path.exists():
+                    image_data = Image.open(path)
+                    il.append(ImageTk.PhotoImage(image_data))
+            if len(il) >= 2:
+                images = (il[0], il[1], )
+                btn = tk.Button(parent, image=images[0], **tk_button_kwargs)
+                btn.images = images
+                btn.tooltip = ToolTip(self.root, btn, tooltip)
+                return btn
+
+        if platform.system() == "Windows":
+            btn = None
+        else:
+            if type(text) != str:
+                svg_string_normal  = text(self)
+                svg_string_pressed = text(self, color_background="#3b6cac")
+            elif self.is_svg_string(text):
+                svg_string_normal  = text
+                svg_string_pressed = text
+            else:
+                svg_string_normal  = self.svg_from_text(text, size)
+                svg_string_pressed = self.svg_from_text(text, size, color_background="#3b6cac")
+            btn = self.create_svg_button(parent, svg_string_normal, svg_string_pressed, size, **tk_button_kwargs)
+            if tooltip:
+                btn.tooltip = ToolTip(self.root, btn, tooltip)
+                self.save_images(btn, folder, filename)
+            else:
+                btn.tooltip = None
+        return btn
