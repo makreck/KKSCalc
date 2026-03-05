@@ -320,9 +320,37 @@ class Gui():
         self.result.bind("<Double-1>", self.handle_ResultEvent)
 
     def createInfoLine(self):
-        self.infoline = tk.Label(self.root, width=-1, height=1, padx=4, pady=2, anchor="w", bd=1, relief="raised")
-        self.infoline.pack(fill="x", padx=2, pady=2)
-        self.infoline.configure(text=self.get_MacroFunctionList())
+        self.frame_infoline = tk.Frame(self.root)
+        self.frame_infoline.pack(side="top", fill="x")
+        self.frame_infoline.macro_btn = []
+        self.update_infoline()
+
+    def update_infoline(self):
+        macro_list = self.get_MacroFunctionList()
+        btn_cx = 8
+        for item in macro_list:
+            btn_cx = max(len(item), btn_cx)
+        
+        for item in self.frame_infoline.macro_btn:
+            item.destroy()
+        self.frame_infoline.macro_btn = []
+
+        for i, item, in enumerate(macro_list):
+            f_key = f"F{i+1}"
+            
+            btn = tk.Button(self.frame_infoline, text=f"F{i+1}: {item}", width=btn_cx + 3,
+                        compound="left", anchor="w", padx=4, bg="#fa75a8", fg="white", font=self.varlistFont, relief="raised",
+                        command=partial(self.callback, Gui.Item.Cmd_hotkey, f_key))
+            btn.grid(row=0, column=i, padx=0, pady=0, sticky="nwse")
+
+            # menu_btn = tk.Menubutton(btn, text="▼", padx=4, bg="#fa75a8", fg="white", font=self.varlistFont, compound="right", anchor="e", relief="flat")
+            # menu = tk.Menu(btn, tearoff=0)
+            # menu_btn["menu"] = menu
+            # menu.add_command(label="Edit macro", command=partial(self.callback, Gui.Item.Cmd_hotkey, f_key))
+            # menu.add_command(label="Delete macro", command=partial(self.callback, Gui.Item.Cmd_hotkey, f_key))
+            # menu_btn.pack(padx=0, pady=0, anchor="e", fill="y")
+
+            self.frame_infoline.macro_btn.append(btn)
 
     def createPaned(self):
         self.paned = ttk.PanedWindow(self.root, orient="horizontal")
@@ -771,16 +799,13 @@ class Gui():
                 cmd = None
             else:
                 self.callback(Gui.Item.EditorMacro, (name, cmd))
-        self.infoline.configure(text=self.get_MacroFunctionList())
+        self.update_infoline()
 
     def hotkey(self, event):
         self.callback(Gui.Item.Cmd_hotkey, event.keysym)
 
     def get_MacroFunctionList(self):
-        text = ""
         result = self.callback(Gui.Item.Cmd_getMacros, 0.0)
-        if result[1] == "OK":
-            macro_list = result[0]
-            if macro_list != None and len(macro_list) > 0:
-                text = "   ".join(f"F{i+1}: \"{macro_list[i]}\"" for i in range(len(macro_list)))
-        return text
+        if result[1] != "OK":
+            return []
+        return result[0]
