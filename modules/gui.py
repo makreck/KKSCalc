@@ -298,7 +298,7 @@ class Gui():
 
     def createToolbar(self):
         self.toolbar = tk.Frame(self.root, bd=1, relief="sunken")
-        self.toolbar.pack(side="top", fill="x")
+        self.toolbar.pack(side="top", fill="x", padx=4)
         self.toolbarButtons = []
         col = 0        
         for element in Gui.tbdef:
@@ -322,13 +322,13 @@ class Gui():
 
     def createInfoLine(self):
         self.frame_infoline = tk.Frame(self.root)
-        self.frame_infoline.pack(side="top", fill="x")
+        self.frame_infoline.pack(side="top", fill="x", padx=4)
         self.frame_infoline.macro_btn = []
         self.update_infoline()
 
     def createPaned(self):
         self.paned = ttk.PanedWindow(self.root, orient="horizontal")
-        self.paned.pack(fill="both", expand=True)
+        self.paned.pack(fill="both", expand=True, padx=4)
         self.frame_left = tk.Frame(self.paned, bg="lightblue")
         self.frame_left.pack(fill="both", expand=True)
         self.paned.add(self.frame_left)
