@@ -55,6 +55,7 @@ class Gui():
         Menu_MacroAdd  = "menu.macro.add"
         Menu_MacroEdit = "menu.macro.edit"
         Menu_MacroRun  = "menu.macro.run"
+        Menu_MacroDel  = "menu.macro.delete"
         Popup_Varl_rmv = "popup.varlis.remove_var"
         TB_Sep         = "separator",
         TB_Trashcan    = "button.clear",
@@ -325,33 +326,6 @@ class Gui():
         self.frame_infoline.macro_btn = []
         self.update_infoline()
 
-    def update_infoline(self):
-        macro_list = self.get_MacroFunctionList()
-        btn_cx = 8
-        for item in macro_list:
-            btn_cx = max(len(item), btn_cx)
-        
-        for item in self.frame_infoline.macro_btn:
-            item.destroy()
-        self.frame_infoline.macro_btn = []
-
-        for i, item, in enumerate(macro_list):
-            f_key = f"F{i+1}"
-            
-            btn = tk.Button(self.frame_infoline, text=f"F{i+1}: {item}", width=btn_cx + 3,
-                        compound="left", anchor="w", padx=4, bg="#fa75a8", fg="white", font=self.varlistFont, relief="raised",
-                        command=partial(self.callback, Gui.Item.Cmd_hotkey, f_key))
-            btn.grid(row=0, column=i, padx=0, pady=0, sticky="nwse")
-
-            # menu_btn = tk.Menubutton(btn, text="▼", padx=4, bg="#fa75a8", fg="white", font=self.varlistFont, compound="right", anchor="e", relief="flat")
-            # menu = tk.Menu(btn, tearoff=0)
-            # menu_btn["menu"] = menu
-            # menu.add_command(label="Edit macro", command=partial(self.callback, Gui.Item.Cmd_hotkey, f_key))
-            # menu.add_command(label="Delete macro", command=partial(self.callback, Gui.Item.Cmd_hotkey, f_key))
-            # menu_btn.pack(padx=0, pady=0, anchor="e", fill="y")
-
-            self.frame_infoline.macro_btn.append(btn)
-
     def createPaned(self):
         self.paned = ttk.PanedWindow(self.root, orient="horizontal")
         self.paned.pack(fill="both", expand=True)
@@ -427,9 +401,6 @@ class Gui():
                 col = 0
                 row += 1
 
-    def get_keyboard_property(self, key):
-        return self.math_keyboard[key]
-
     def createVarList(self):
         style = ttk.Style()
         metrics = self.varlistFont.metrics()
@@ -454,6 +425,33 @@ class Gui():
         self.editor.tag_config("neutral",  foreground="gray")
         self.editor.pack(padx=4.0, pady=4.0, fill="both", expand=True)
         self.editor.bind("<Return>", self.handle_EditorEvent)
+
+    def get_keyboard_property(self, key):
+        return self.math_keyboard[key]
+
+    def update_infoline(self):
+        macro_list = self.get_MacroFunctionList()
+        btn_cx = 8
+        for item in macro_list:
+            btn_cx = max(len(item), btn_cx)
+        for item in self.frame_infoline.macro_btn:
+            item.destroy()
+        self.frame_infoline.macro_btn = []
+        for i, item, in enumerate(macro_list):
+            f_key = f"F{i+1}"
+            menu_btn = tk.Menubutton(self.frame_infoline, text="▼", border=1, padx=2, bg="#fa75a8", fg="white",
+                        font=self.varlistFont, compound="right", anchor="e", relief="groove")
+            menu = tk.Menu(menu_btn, tearoff=0)
+            menu_btn["menu"] = menu
+            menu.add_command(label="Edit macro", command=partial(self.callback, Gui.Item.Menu_MacroEdit, item))
+            menu.add_command(label="Delete macro", command=partial(self.callback, Gui.Item.Menu_MacroDel, item))
+            menu_btn.grid(row=0, column=i*2, padx=0, pady=3, sticky="nwse")
+            self.frame_infoline.macro_btn.append(menu_btn)
+            fu_btn = tk.Button(self.frame_infoline, text=f"{f_key}: {item}", width=btn_cx + 3, border=1,
+                        compound="left", anchor="w", padx=4, bg="#fa75a8", fg="white", font=self.varlistFont, relief="groove",
+                        command=partial(self.callback, Gui.Item.Cmd_hotkey, f_key))
+            fu_btn.grid(row=0, column=i*2+1, padx=0, pady=2, sticky="nwse")
+            self.frame_infoline.macro_btn.append(fu_btn)
 
     def handle_ResultEvent(self, event):
         self.callback(Gui.Item.Result, 0.0)

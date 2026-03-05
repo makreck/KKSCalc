@@ -32,6 +32,7 @@ class Calculator:
         ".madd":  ( "func_madd",  "Add a new macro." ),
         ".medit": ( "func_medit", "Edit a macro." ),
         ".mrun":  ( "func_mrun",  "Run a macro." ),
+        ".mdel":  ( "func_mdel",  "Delete a macro." ),
         ".rmv":   ( "func_rmv",   "<varname> Remove variable"),
         ".help":  ( "func_help",  "Show common or specific help" ),
         ".lic":   ( "func_lic",   "Display license file" ),
@@ -401,6 +402,15 @@ class Calculator:
         self.run_macro(name, self.cfg.get_Macro(name))
         return (0.0, "OK", 2 )
     
+    def func_mdel(self, parameters = None):
+        if parameters and len(parameters) > 1:
+            name = parameters[1]
+        else:
+            return (0.0, "Error", 2 )
+        self.del_macro(name)
+        self.gui.update_infoline()
+        return (0.0, "OK", 2 )
+        
     # Filter sub-expressions in variable names, parse and insert results
     def __filter_varname(self, name: str) -> str:
         if not name: return None
@@ -640,6 +650,10 @@ class Calculator:
             if result[1] == "OK":
                 self.gui.set_Result(result[0])
 
+    def del_macro(self, name=None):
+        if name:
+            self.cfg.delete_Macro(name)
+
     def handle_close_macro_editor(self, event):
         if len(event) == 2:
             self.cfg.set_Macro(name=event[0], macro=event[1])
@@ -702,6 +716,8 @@ class Calculator:
                 self.cmd(f".medit {event}")
             case Gui.Item.Menu_MacroRun:
                 self.cmd(f".mrun {event}")
+            case Gui.Item.Menu_MacroDel:
+                self.cmd(f".mdel {event}")
 
             case Gui.Item.Popup_Varl_rmv:
                 self.cmd(f".rmv {event}")
