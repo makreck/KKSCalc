@@ -26,3 +26,4 @@ if __name__ == "__main__":
 #
 # Python installer:
 #   pyinstaller --onefile --add-data="modules/images/*.png:modules/images" --hidden-import=PIL._tkinter_finder --hidden-import=tkinter main.py
+#   pyinstaller --onedir --noconsole --add-data="modules/images/*.png:modules/images" --hidden-import=PIL._tkinter_finder --hidden-import=tkinter main.py
