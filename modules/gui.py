@@ -175,7 +175,7 @@ class Gui():
         height_mm = self.root.winfo_screenmmheight()
         scaling_x = round((self.screen_width  / (width_mm  / 25.4)) / 96.0, 1)
         scaling_y = round((self.screen_height / (height_mm / 25.4)) / 96.0, 1)
-        self.display_scaling_factor = round(max(scaling_x, scaling_y), 1)
+        self.display_scaling_factor = round(max(scaling_x, scaling_y), 1) # 1.0, 1.5 or 2.0
         self.icon_size    = (36, 36)
         self.tbIconSize   = (int(self.icon_size[0] * self.display_scaling_factor), int(self.icon_size[1] * self.display_scaling_factor))
         self.font_scaling = self.tbIconSize[1] * (3.0 - self.display_scaling_factor)
@@ -248,7 +248,7 @@ class Gui():
     def createWindow(self, title="KKSCalc"):
         self.root.protocol("WM_DELETE_WINDOW", self.closeWindow)
         self.root.title(title)
-        icon_file = AppTools().get_ImageResourcePath("app_icon.png")
+        icon_file = AppTools().get_ImageResourcePath(image_file="app_icon.png")
         if Path(icon_file).exists():
             try:
                 self.app_icon = ImageTk.PhotoImage(file=icon_file)
@@ -685,9 +685,6 @@ class Gui():
 
     def get_filename_from_tooltip(self, tooltip):
         return ''.join(key for key, group in groupby(re.sub(r'[^a-z0-9._-]', '_', tooltip.strip().lower()).strip("_").replace("_-_", "_")))
-        
-    def get_button_image_path(self, folder, filename, n):
-        return Path(f"{folder}/btn_{filename}_{n}.png")
     
     def draw_svg(self, svg_string, size=(32, 32), background_color=(0, 0, 0, 0)):
         try:
@@ -712,14 +709,6 @@ class Gui():
 
     def is_svg_string(self, text: str) -> bool:
         return '<svg' in text and '</svg>' in text
-
-    def save_images(self, button, folder=None, filename="button"):
-        os.makedirs(folder, exist_ok=True)
-        n = 0
-        for image in button.images:
-            pil_image_out = ImageTk.getimage(image)
-            pil_image_out.save(self.get_button_image_path(folder, filename, n))
-            n += 1
 
     def macro_editor(self, name="default", cmd=[]):
         self.original_macro_name = name
@@ -770,13 +759,22 @@ class Gui():
             return []
         return result[0]
 
+    def save_images(self, button, folder=None, filename="button"):
+        n = 0
+        for image in button.images:
+            pil_image_out = ImageTk.getimage(image)
+            path = self.get_button_image_path(folder, filename, n)
+            print(f"Save image: \"{path}\"")
+            pil_image_out.save(path)
+            n += 1
+
     def create_button(self, parent, text="", tooltip=None, size=(32, 32), **tk_button_kwargs):
-        folder = f"modules/images/buttons_{self.display_scaling_factor}"
+        folder = f"/buttons_{self.display_scaling_factor}"
         if tooltip:
             filename = self.get_filename_from_tooltip(tooltip)
             il = []
             for n in range(2):
-                path = self.get_button_image_path(folder, filename, n)
+                path = Path(self.get_button_image_path(folder, filename, n))
                 if path.exists():
                     image_data = Image.open(path)
                     il.append(ImageTk.PhotoImage(image_data))
@@ -806,3 +804,7 @@ class Gui():
             else:
                 btn.tooltip = None
         return btn
+        
+    def get_button_image_path(self, folder=None, filename=None, level=0):
+        button_file = f"{filename}_{level}.png"
+        return AppTools().get_ImageResourcePath(image_file=button_file, sub_folder=folder)
