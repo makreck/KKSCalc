@@ -36,6 +36,7 @@ class Calculator:
         ".rmv":   ( "func_rmv",   "<varname> Remove variable"),
         ".help":  ( "func_help",  "Show common or specific help" ),
         ".lic":   ( "func_lic",   "Display license file" ),
+        ".test":  ( "func_test",  "Testing function." ),
         ".exit":  ( "func_exit",  "Terminate application" ),
     }
 
@@ -238,6 +239,10 @@ class Calculator:
 
     def func_lic(self, parameters = None):
         self.gui.display_popup("License", self.read_license_file())
+        return (0.0, "OK", 2 )
+
+    def func_test(self, parameters = None):
+        self.testing_function(parameters)
         return (0.0, "OK", 2 )
 
     def func_dvar(self, parameters = None):
@@ -745,3 +750,13 @@ class Calculator:
             case _:
                 print(f"GUI callback error: {id}")
         return None
+
+    def testing_function(self, parameters=None):
+        from modules.app_tools import AppTools
+        from pathlib import Path
+        self.__varlist["data"]      = AppTools().get_AppDataPath()
+        self.__varlist["resources"] = AppTools().get_ResourcePath()
+        self.__varlist["images"]    = AppTools().get_ImageResourcePath()
+        self.__varlist["config"]    = self.cfg.path
+        self.__varlist["home"]      = str(Path.home())
+        self.gui.update_Variables()
