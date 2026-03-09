@@ -8,7 +8,7 @@ class Config:
 
     def __init__(self):
         self.init()
-        self.path = AppTools().get_AppPath(filename="config.json")
+        self.path = AppTools().get_AppDataPath(filename="config.json")
 
     def init(self):
         self.configData = {
