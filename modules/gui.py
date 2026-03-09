@@ -193,7 +193,18 @@ class Gui():
         self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.20), weight="bold") 
         self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.14), weight="bold") 
 
+    def hide_widget(self, widget):
+        widget.withdraw()
+        widget.attributes('-alpha', 0.0)
+        widget.update_idletasks()
+
+    def unhide_widget(self, widget):
+        widget.deiconify()
+        widget.after_idle(lambda: widget.attributes('-alpha', 1.0))
+        widget.update_idletasks()
+
     def app_window(self, pos = {} ):
+        self.hide_widget(self.root)
         self.check_geometry(pos)
         self.createWindow()
         self.createMenu()
@@ -240,7 +251,7 @@ class Gui():
         pos = self.__pos
         self.root.geometry(f"{pos["width"]}x{pos["height"]}+{pos["x"]}+{pos["y"]}")
         self.paned.sashpos(0, pos["sashpos"])
-        self.root.update_idletasks()
+        self.unhide_widget(self.root)
 
     def dispatch(self):
         tk.mainloop()
@@ -667,10 +678,11 @@ class Gui():
         x = int(window_pos[0]) + (int(window_pos[2]) - w) // 2
         y = int(window_pos[1]) + (int(window_pos[3]) - h) // 2
         widget.geometry(f"{w}x{h}+{x}+{y}")
-        widget.update_idletasks()
+        self.unhide_widget(widget)
 
     def display_popup(self, title = "Message", text = "Text."):
         dialog_window = tk.Toplevel(self.root)
+        self.hide_widget(dialog_window)
         dialog_window.title(title)
         dialog_window.grab_set()
         if "<html>" in text:
@@ -714,18 +726,16 @@ class Gui():
         self.original_macro_name = name
         text = "\n".join(cmd)
         self.macro_editor = tk.Toplevel(self.root)
+        self.hide_widget(self.macro_editor)
         self.macro_editor.title("Macro editor")
         self.macro_editor.grab_set()
         self.macro_editor.protocol("WM_DELETE_WINDOW", self.on_macro_closing)
-
         self.macro_name = tk.Text(self.macro_editor, width=-1, height=1, relief="raised", font=self.editorFont)
         self.macro_name.grid(row=0, column=0, padx=2, pady=2, sticky="NSEW")
         self.macro_name.insert(self.macro_name.index("insert lineend"), name)
-
         self.macro_text = tk.Text(self.macro_editor, borderwidth=0, font=self.editorFont, relief="groove")
         self.macro_text.grid(row=1, column=0, padx=2, pady=2, sticky="NSEW")
         self.macro_text.insert(self.macro_text.index("insert lineend"), text + "\n")
-
         self.center_window(self.macro_editor, self.root)
 
     def on_macro_closing(self):
