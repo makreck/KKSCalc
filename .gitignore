@@ -5,3 +5,6 @@ __pycache__
 build
 dist
 *.spec
+# modules/images/buttons_1.0
+# modules/images/buttons_1.5
+# modules/images/buttons_2.0
