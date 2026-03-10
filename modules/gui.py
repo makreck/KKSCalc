@@ -381,6 +381,8 @@ class Gui():
         self.statusline.pack(fill="x", side="bottom", padx=2, pady=2)
 
     def createFunctionWindow(self):
+        style = ttk.Style(self.root)
+        style.configure("TNotebook.Tab", font=(self.platform_font, int(14 * self.display_scaling_factor), "bold"))
         self.notebook = ttk.Notebook(self.frame_left)
         self.varlist_frame = ttk.Frame(self.notebook)
         self.notebook.add(self.varlist_frame, text="Variables")
