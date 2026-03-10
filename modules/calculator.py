@@ -34,6 +34,7 @@ class Calculator:
         ".mrun":  ( "func_mrun",  "Run a macro." ),
         ".mdel":  ( "func_mdel",  "Delete a macro." ),
         ".rmv":   ( "func_rmv",   "<varname> Remove variable"),
+        ".iter":  ( "func_iter",  "Iterate from, until, step, formula" ),
         ".help":  ( "func_help",  "Show common or specific help" ),
         ".lic":   ( "func_lic",   "Display license file" ),
         ".test":  ( "func_test",  "Testing function." ),
@@ -117,7 +118,11 @@ class Calculator:
 
     def do_parse(self, string: str) -> float:
         result = (0.0, "OK", False)
-        elements = string.strip().lower().split("=")
+        string = string.strip().lower()
+        if string.startswith("."):
+            elements = [ string ]
+        else:
+            elements = string.split("=")
         try:
             result = self.parse(elements[-1])
             if (len(elements) > 1) and result[2]:
@@ -252,7 +257,7 @@ class Calculator:
     def func_udv(self, parameters = None):
         self.update_default_variables()
         return (0.0, "OK", 2 )
-        
+
     def func_rmv(self, parameters = None):
         if parameters != None and len(parameters) >= 2:
             self.remove_variable(parameters[1])
@@ -260,7 +265,10 @@ class Calculator:
             return (0.0, "OK", 2 )
         else:
             return (0.0, "Error, invalid variable name", 2 )
-    
+
+    def func_iter(self, parameters = None):
+        return self.do_iteration(parameters)
+
     def func_cls(self, parameters = None):
         self.gui.clear()
         return (0.0, "OK", 0 )
@@ -434,7 +442,7 @@ class Calculator:
             begin   = name.rfind("[", 0, end)
             prev    = name.rfind("[", 0, begin)
             formula = name[begin+1:end]
-            if not formula.isnumeric():
+            if not formula.isnumeric() and not formula.startswith(("-", "+", ".")):
                 result = self.__parse(formula)
                 if result[1] != "OK":
                     raise ValueError(f"Error, unable to parse \"{formula}\"")
@@ -537,6 +545,11 @@ class Calculator:
         while True:
             if self.is_VariableExisting(formula):
                 return self.get_InitializedVariable(formula)
+            if formula.startswith(".") and not formula[1].isnumeric():
+                result = self.cmd(formula)
+                formula = str(result[0])
+                if result[1] != "OK" or result[2] != 1 or self.ro.is_roman_number_string(formula):
+                    return result
             if "[" in formula:
                 end = formula.find("]")
                 begin = formula.rfind("[", 0, end) - 1
@@ -546,11 +559,6 @@ class Calculator:
                 value = self.get_InitializedVariable(name)
                 formula = formula[:begin+1] + str(value[0]) + formula[end+1:]
                 continue
-            if formula.startswith(".") and not formula[1].isnumeric():
-                result = self.cmd(formula)
-                formula = str(result[0])
-                if result[1] != "OK" or result[2] != 1 or self.ro.is_roman_number_string(formula):
-                    return result
             try:
                 return ( eval(formula, self.get_updated_varlist(), self.get_Cmd()), "OK", True )
             except NameError as ne:
@@ -760,3 +768,44 @@ class Calculator:
         self.__varlist["config"]    = self.cfg.path
         self.__varlist["home"]      = str(Path.home())
         self.gui.update_Variables()
+
+    def iter_parse(self, parameters, i):
+        par = self.do_parse(parameters[i])
+        if par[1] == "OK":
+            return float(par[0])
+        else:
+            raise SyntaxError(par[1])
+        
+    def do_iteration(self, parameters):
+        if len(parameters) != 6:
+            raise SyntaxError("Syntax error, 5 parameters need (var,from,until,step,formula).")
+
+        iter_var     = self.__filter_varname(str(parameters[1]))
+        if iter_var == None:
+            raise SyntaxError("Valid iteration variable need.")
+        iter_from    = self.iter_parse(parameters, 2)
+        iter_until   = self.iter_parse(parameters, 3)
+        iter_step    = self.iter_parse(parameters, 4)
+        iter_formula = str(parameters[5])
+
+        if iter_step > 0:
+            while iter_from <= iter_until:
+                self.set_Variable(iter_var, iter_from)
+                result = self.do_parse(iter_formula)
+                print(f"Iterate var=\"{iter_var}\", currently={iter_from}, until={iter_until}, step={iter_step}, formula=\"{iter_formula}\" result={result}")
+                if result[1] != "OK":
+                    break
+                iter_from += iter_step
+        elif iter_step < 0:
+            while iter_from >= iter_until:
+                self.set_Variable(iter_var, iter_from)
+                result = self.do_parse(iter_formula)
+                print(f"Iterate var=\"{iter_var}\", currently={iter_from}, until={iter_until}, step={iter_step}, formula=\"{iter_formula}\" result={result}")
+                if result[1] != "OK":
+                    break
+                iter_from += iter_step
+        else:
+            raise ValueError("Iteration step cannot be zero.")
+        
+
+        return (0.0, "OK", 1 )
