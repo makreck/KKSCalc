@@ -1,4 +1,4 @@
-import os, sys, math, platform, pyperclip, re
+import math, platform, pyperclip, re, subprocess
 import tkinter as tk
 from tkinterweb import HtmlFrame
 from pathlib import Path
@@ -168,17 +168,12 @@ class Gui():
         self.callback(Gui.Item.Timer)
         self.timer_id = self.root.after(1000, self.interval_timer)
         
-    def get_display_scaling(self):
-        self.screen_width = self.root.winfo_screenwidth()
-        self.screen_height = self.root.winfo_screenheight()
-        width_mm = self.root.winfo_screenmmwidth()
-        height_mm = self.root.winfo_screenmmheight()
-        scaling_x = round((self.screen_width  / (width_mm  / 25.4)) / 96.0, 1)
-        scaling_y = round((self.screen_height / (height_mm / 25.4)) / 96.0, 1)
-        self.display_scaling_factor = round(max(scaling_x, scaling_y), 1) # 1.0, 1.5 or 2.0
+    def manage_icon_size(self):
         self.icon_size    = (36, 36)
         self.tbIconSize   = (int(self.icon_size[0] * self.display_scaling_factor), int(self.icon_size[1] * self.display_scaling_factor))
         self.font_scaling = self.tbIconSize[1] * (3.0 - self.display_scaling_factor)
+
+    def manage_fonts(self):
         if platform.system() == "Windows":
             self.platform_font = "Arial Unicode MS"
             self.font_scaling *= 1.5
@@ -192,6 +187,37 @@ class Gui():
         self.displayFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.32), weight="bold") 
         self.editorFont   = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.20), weight="bold") 
         self.varlistFont  = Font(family=self.platform_fixed_font, size=int(self.font_scaling * 0.14), weight="bold") 
+
+    def query_display_scaling_factor(self) -> float:
+        self.dpi = round(self.root.winfo_fpixels('1i'), 0)
+        tk_scaling = self.root.tk.call('tk', 'scaling')
+        if platform.system() == "Windows":
+            self.dpi = round(72.0 * tk_scaling, 0)
+        elif platform.system() == "Linux":
+            try:
+                out = subprocess.check_output(["xrdb", "-query"], text=True)
+                out = out.strip().replace("\t", " ").split("\n")
+                for entry in out:
+                    if "Xft.dpi: " in entry:
+                        self.dpi = float(entry[9:])
+                        break
+            except:
+                pass
+        else:
+            pass
+        
+        self.screen_width = self.root.winfo_screenwidth()
+        self.screen_height = self.root.winfo_screenheight()
+        width_mm = self.root.winfo_screenmmwidth()
+        height_mm = self.root.winfo_screenmmheight()
+        scaling_x = round((self.screen_width  / (width_mm  / 25.4)) / self.dpi, 1)
+        scaling_y = round((self.screen_height / (height_mm / 25.4)) / self.dpi, 1)
+        self.display_scaling_factor = round(max(scaling_x, scaling_y), 1) # 1.0, 1.5 or 2.0
+
+    def get_display_scaling(self):
+        self.query_display_scaling_factor()
+        self.manage_icon_size()
+        self.manage_fonts()
 
     def hide_widget(self, widget):
         widget.withdraw()
