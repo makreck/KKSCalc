@@ -724,7 +724,7 @@ class Calculator:
             case Gui.Item.Menu_MacroDel:
                 self.cmd(f".mdel {event}")
 
-            case Gui.Item.Popup_Varl_rmv:
+            case Gui.Item.Popup_VarRem:
                 self.cmd(f".rmv {event}")
 
             case Gui.Item.TB_Trashcan:

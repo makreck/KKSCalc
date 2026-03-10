@@ -57,7 +57,7 @@ class Gui():
         Menu_MacroEdit = "menu.macro.edit"
         Menu_MacroRun  = "menu.macro.run"
         Menu_MacroDel  = "menu.macro.delete"
-        Popup_Varl_rmv = "popup.varlis.remove_var"
+        Popup_VarRem = "popup.varlist.remove_var"
         TB_Sep         = "separator",
         TB_Trashcan    = "button.clear",
         TB_Delete      = "button.delete"
@@ -505,7 +505,7 @@ class Gui():
             self.varlist.selection_set(itemID)
             self.varlist.focus(itemID)
             menu = tk.Menu(self.root, tearoff=0)
-            menu.add_command(label="Delete variable", command=partial(self.callback, Gui.Item.Popup_Varl_rmv, value[0]))
+            menu.add_command(label="Delete variable", command=partial(self.callback, Gui.Item.Popup_VarRem, value[0]))
             try:
                 menu.tk_popup(event.x_root, event.y_root)
             finally:
