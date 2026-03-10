@@ -7,7 +7,7 @@ if __name__ == "__main__":
 
 # Python dependencies:
 #
-#   pip3 install pyperclip Pillow cairosvg tkinterweb
+#   pip3 install pyperclip Pillow cairosvg tkinterweb pyinstaller
 #
 # Linux:
 #
@@ -25,5 +25,4 @@ if __name__ == "__main__":
 #    python3 -m pip install --user --upgrade pyperclip --break-system-packages
 #
 # Python installer:
-#   pyinstaller --onefile --add-data="modules/images/*.png:modules/images" --hidden-import=PIL._tkinter_finder --hidden-import=tkinter main.py
 #   pyinstaller --onedir --noconsole --add-data="modules/images/*.png:modules/images" --hidden-import=PIL._tkinter_finder --hidden-import=tkinter main.py
