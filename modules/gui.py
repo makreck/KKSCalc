@@ -205,14 +205,9 @@ class Gui():
                 pass
         else:
             pass
-        
         self.screen_width = self.root.winfo_screenwidth()
         self.screen_height = self.root.winfo_screenheight()
-        width_mm = self.root.winfo_screenmmwidth()
-        height_mm = self.root.winfo_screenmmheight()
-        scaling_x = round((self.screen_width  / (width_mm  / 25.4)) / self.dpi, 1)
-        scaling_y = round((self.screen_height / (height_mm / 25.4)) / self.dpi, 1)
-        self.display_scaling_factor = round(max(scaling_x, scaling_y), 1) # 1.0, 1.5 or 2.0
+        self.display_scaling_factor = round(self.dpi / 96.0, 0)
 
     def get_display_scaling(self):
         self.query_display_scaling_factor()
