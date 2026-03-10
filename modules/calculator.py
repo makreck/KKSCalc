@@ -779,7 +779,6 @@ class Calculator:
     def do_iteration(self, parameters):
         if len(parameters) != 6:
             raise SyntaxError("Syntax error, 5 parameters need (var,from,until,step,formula).")
-
         iter_var     = self.__filter_varname(str(parameters[1]))
         if iter_var == None:
             raise SyntaxError("Valid iteration variable need.")
@@ -787,25 +786,25 @@ class Calculator:
         iter_until   = self.iter_parse(parameters, 3)
         iter_step    = self.iter_parse(parameters, 4)
         iter_formula = str(parameters[5])
-
+        iter_sum     = 0.0
         if iter_step > 0:
             while iter_from <= iter_until:
+                iter_step = abs(iter_step)
                 self.set_Variable(iter_var, iter_from)
                 result = self.do_parse(iter_formula)
-                print(f"Iterate var=\"{iter_var}\", currently={iter_from}, until={iter_until}, step={iter_step}, formula=\"{iter_formula}\" result={result}")
                 if result[1] != "OK":
                     break
+                iter_sum += float(result[0])
                 iter_from += iter_step
         elif iter_step < 0:
             while iter_from >= iter_until:
+                iter_step = -abs(iter_step)
                 self.set_Variable(iter_var, iter_from)
                 result = self.do_parse(iter_formula)
-                print(f"Iterate var=\"{iter_var}\", currently={iter_from}, until={iter_until}, step={iter_step}, formula=\"{iter_formula}\" result={result}")
                 if result[1] != "OK":
                     break
+                iter_sum += float(result[0])
                 iter_from += iter_step
         else:
             raise ValueError("Iteration step cannot be zero.")
-        
-
-        return (0.0, "OK", 1 )
+        return (iter_sum, "OK", 1 )
