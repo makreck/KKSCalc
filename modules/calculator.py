@@ -34,7 +34,7 @@ class Calculator:
         ".mrun":  ( "func_mrun",  "Run a macro." ),
         ".mdel":  ( "func_mdel",  "Delete a macro." ),
         ".rmv":   ( "func_rmv",   "<varname> Remove variable"),
-        ".iter":  ( "func_iter",  "Iterate from, until, step, formula" ),
+        ".iter":  ( "func_iter",  "Iterate variable, from, until, step, formula" ),
         ".help":  ( "func_help",  "Show common or specific help" ),
         ".lic":   ( "func_lic",   "Display license file" ),
         ".test":  ( "func_test",  "Testing function." ),
