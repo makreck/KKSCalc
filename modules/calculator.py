@@ -232,7 +232,12 @@ class Calculator:
             func = getattr(self, cmdFunction[0])
             return func(command)
         else:
-            raise SyntaxError(f"Invalid command \"{command}\"")
+            name = command[0][1:]
+            cmd = self.cfg.get_Macro(name)
+            if cmd:
+                return self.run_macro(name, cmd)
+            else:
+                raise SyntaxError(f"Invalid command \"{command}\"")
 
     def func_exit(self, parameters = None):
         self.gui.closeWindow()
@@ -412,8 +417,7 @@ class Calculator:
             name = parameters[1]
         else:
             name = "default"
-        self.run_macro(name, self.cfg.get_Macro(name))
-        return (0.0, "OK", 2 )
+        return self.run_macro(name, self.cfg.get_Macro(name))
     
     def func_mdel(self, parameters = None):
         if parameters and len(parameters) > 1:
@@ -659,10 +663,14 @@ class Calculator:
 
     def run_macro(self, name="default", data=[]):
         for command in data:
+            self.gui.add_EditString(command)
             result = self.do_parse(command)
             if result[1] == "OK":
                 self.gui.set_Result(result[0])
-
+            else:
+                break
+        return result
+    
     def del_macro(self, name=None):
         if name:
             self.cfg.delete_Macro(name)

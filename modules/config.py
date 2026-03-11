@@ -106,7 +106,7 @@ class Config:
         return "Macro." + name
 
     def get_Macro(self, name="default"):
-        return self.configData.get(self.parse_macro_name(name), [ "a=a+1", "b=a+2", "c=a+3", "d=a+b+c", ]) # Test-Macro
+        return self.configData.get(self.parse_macro_name(name), [ '' ])
 
     def set_Macro(self, name="default", macro=[ ".res" ]):
         key = self.parse_macro_name(name)
