@@ -79,23 +79,23 @@ class Gui():
         FRC = "FRC"
 
     menudef = [
-        { "cascade": "File",  "text": "Exit",             "icon": SVG_Source.svg_exit,  "id": Item.Menu_Exit,      },
+        { "cascade": "File",  "text": "Exit",             "icon": SVG_Source.svg_exit,     "id": Item.Menu_Exit,      },
 
         { "cascade": "Edit",  "text": "Clear",            "icon": SVG_Source.svg_trashcan, "id": Item.Menu_Clear,     },
         { "cascade": "Edit",  "text": "Delete",           "icon": SVG_Source.svg_delete,   "id": Item.Menu_Delete,    },
         { "cascade": "Edit",  "text": "Reset",            "icon": SVG_Source.svg_reset,    "id": Item.Menu_Reset,     },
-        { "cascade": "Edit",  "text": "_sep_",            "icon": None,  "id": None                 },
-        { "cascade": "Edit",  "text": "Set default vars", "icon": None,  "id": Item.Menu_DefVars,   },
-        { "cascade": "Edit",  "text": "Update def. vars", "icon": None,  "id": Item.Menu_DefUpdate, },
-        { "cascade": "Edit",  "text": "_sep_",            "icon": None,  "id": None                 },
-        { "cascade": "Edit",  "text": "Copy",             "icon": SVG_Source.svg_copy,  "id": Item.Menu_Copy,      },
+        { "cascade": "Edit",  "text": "_sep_",            "icon": None,                    "id": None                 },
+        { "cascade": "Edit",  "text": "Set default vars", "icon": None,                    "id": Item.Menu_DefVars,   },
+        { "cascade": "Edit",  "text": "Update def. vars", "icon": None,                    "id": Item.Menu_DefUpdate, },
+        { "cascade": "Edit",  "text": "_sep_",            "icon": None,                    "id": None                 },
+        { "cascade": "Edit",  "text": "Copy",             "icon": SVG_Source.svg_copy,     "id": Item.Menu_Copy,      },
 
-        { "cascade": "Macro", "text": "Add macro",        "icon": None,  "id": Item.Menu_MacroAdd,  },
-        { "cascade": "Macro", "text": "Edit macro",       "icon": None,  "id": Item.Menu_MacroEdit, },
-        { "cascade": "Macro", "text": "Run macro",        "icon": None,  "id": Item.Menu_MacroRun,  },
+        { "cascade": "Macro", "text": "Add macro",        "icon": None,                    "id": Item.Menu_MacroAdd,  },
+        { "cascade": "Macro", "text": "Edit macro",       "icon": None,                    "id": Item.Menu_MacroEdit, },
+        { "cascade": "Macro", "text": "Run macro",        "icon": None,                    "id": Item.Menu_MacroRun,  },
 
-        { "cascade": "Help",  "text": "Help usage",       "icon": None,  "id": Item.Menu_Help,      },
-        { "cascade": "Help",  "text": "Display license",  "icon": None,  "id": Item.Menu_License,   },
+        { "cascade": "Help",  "text": "Help usage",       "icon": None,                    "id": Item.Menu_Help,      },
+        { "cascade": "Help",  "text": "Display license",  "icon": None,                    "id": Item.Menu_License,   },
     ]
 
     tbdef = [
@@ -104,17 +104,17 @@ class Gui():
 
         { "id": Item.TB_Delete,     "text": SVG_Source.svg_delete,   "tooltip": "Delete user defined variables and restore predefined variables", },
         { "id": Item.TB_ReUse,      "text": SVG_Source.svg_reuse,    "tooltip": "Re-use last output as new input", },
-        { "id": Item.TB_Round,      "text": "R.2",        "tooltip": "Round results by 2 digits", },
+        { "id": Item.TB_Round,      "text": "R.2",                   "tooltip": "Round results by 2 digits", },
 
         { "id": Item.TB_Sep },
-        { "id": Item.TB_Dec,        "text": "DEC",        "tooltip": "Display output as decimal formatted number", },
-        { "id": Item.TB_Hex,        "text": "HEX",        "tooltip": "Display output as hexadecimal formatted number", },
-        { "id": Item.TB_Bin,        "text": "BIN",        "tooltip": "Display output as binary formatted number", },
-        { "id": Item.TB_Frc,        "text": "X/Y",        "tooltip": "Display output as decimal fraction", },
+        { "id": Item.TB_Dec,        "text": "DEC",                   "tooltip": "Display output as decimal formatted number", },
+        { "id": Item.TB_Hex,        "text": "HEX",                   "tooltip": "Display output as hexadecimal formatted number", },
+        { "id": Item.TB_Bin,        "text": "BIN",                   "tooltip": "Display output as binary formatted number", },
+        { "id": Item.TB_Frc,        "text": "X/Y",                   "tooltip": "Display output as decimal fraction", },
 
         { "id": Item.TB_Sep },
-        { "id": Item.TB_Deg,        "text": "DEG",        "tooltip": "Represent angles in degree", },
-        { "id": Item.TB_Rad,        "text": "RAD",        "tooltip": "Represent angles in radian", },
+        { "id": Item.TB_Deg,        "text": "DEG",                   "tooltip": "Represent angles in degree", },
+        { "id": Item.TB_Rad,        "text": "RAD",                   "tooltip": "Represent angles in radian", },
     ]
 
     def __init__(self, callback = None):

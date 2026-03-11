@@ -663,7 +663,6 @@ class Calculator:
 
     def run_macro(self, name="default", data=[]):
         for command in data:
-            self.gui.add_EditString(command)
             result = self.do_parse(command)
             if result[1] == "OK":
                 self.gui.set_Result(result[0])
@@ -687,7 +686,7 @@ class Calculator:
             macro_names = self.cfg.get_Macro_List()
             macro_index = int(hotkey[1:3]) - 1
             if 0 <= macro_index < len(macro_names):
-                self.cmd(f".mrun {macro_names[macro_index]}")
+                self.cmd(f".{macro_names[macro_index]}")
 
     def guiCallback(self, id: Gui.Item, event = None):
         match id:
