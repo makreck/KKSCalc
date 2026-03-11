@@ -15,6 +15,7 @@ from modules.math_wrapper import MathWrapper
 from modules.tooltip import ToolTip
 from modules.scollframe import ScrollableFrame
 from modules.app_tools import AppTools
+from modules.svg_source import SVG_Source
 
 # For using cairosvg ...
 if platform.system() == "Windows":
@@ -78,16 +79,16 @@ class Gui():
         FRC = "FRC"
 
     menudef = [
-        { "cascade": "File",  "text": "Exit",             "icon": None,  "id": Item.Menu_Exit,      },
+        { "cascade": "File",  "text": "Exit",             "icon": SVG_Source.svg_exit,  "id": Item.Menu_Exit,      },
 
-        { "cascade": "Edit",  "text": "Clear",            "icon": None,  "id": Item.Menu_Clear,     },
-        { "cascade": "Edit",  "text": "Delete",           "icon": None,  "id": Item.Menu_Delete,    },
-        { "cascade": "Edit",  "text": "Reset",            "icon": None,  "id": Item.Menu_Reset,     },
+        { "cascade": "Edit",  "text": "Clear",            "icon": SVG_Source.svg_trashcan, "id": Item.Menu_Clear,     },
+        { "cascade": "Edit",  "text": "Delete",           "icon": SVG_Source.svg_delete,   "id": Item.Menu_Delete,    },
+        { "cascade": "Edit",  "text": "Reset",            "icon": SVG_Source.svg_reset,    "id": Item.Menu_Reset,     },
         { "cascade": "Edit",  "text": "_sep_",            "icon": None,  "id": None                 },
         { "cascade": "Edit",  "text": "Set default vars", "icon": None,  "id": Item.Menu_DefVars,   },
         { "cascade": "Edit",  "text": "Update def. vars", "icon": None,  "id": Item.Menu_DefUpdate, },
         { "cascade": "Edit",  "text": "_sep_",            "icon": None,  "id": None                 },
-        { "cascade": "Edit",  "text": "Copy",             "icon": None,  "id": Item.Menu_Copy,      },
+        { "cascade": "Edit",  "text": "Copy",             "icon": SVG_Source.svg_copy,  "id": Item.Menu_Copy,      },
 
         { "cascade": "Macro", "text": "Add macro",        "icon": None,  "id": Item.Menu_MacroAdd,  },
         { "cascade": "Macro", "text": "Edit macro",       "icon": None,  "id": Item.Menu_MacroEdit, },
@@ -97,46 +98,12 @@ class Gui():
         { "cascade": "Help",  "text": "Display license",  "icon": None,  "id": Item.Menu_License,   },
     ]
 
-    def svg_trashcan(self, color_background="#4a90e2", color_text="#ffffff"):
-        return  f'''
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">
-                    <rect width="32" height="32" rx="4" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
-                    <path transform="translate(3 3)" fill-rule="evenodd" fill="{color_text}" d="M12,13.5857864 L14.2928932,11.2928932 L15.7071068,12.7071068 L13.4142136,15 L15.7071068,17.2928932 L14.2928932,18.7071068 L12,16.4142136 L9.70710678,18.7071068 L8.29289322,17.2928932 L10.5857864,15 L8.29289322,12.7071068 L9.70710678,11.2928932 L12,13.5857864 Z M7,4 L7,3 C7,1.8954305 7.8954305,1 9,1 L15,1 C16.1045695,1 17,1.8954305 17,3 L17,4 L20,4 C21.1045695,4 22,4.8954305 22,6 L22,8 C22,9.1045695 21.1045695,10 20,10 L19.9198662,10 L19,21 C19,22.1045695 18.1045695,23 17,23 L7,23 C5.8954305,23 5,22.1045695 5.00345424,21.0830455 L4.07986712,10 L4,10 C2.8954305,10 2,9.1045695 2,8 L2,6 C2,4.8954305 2.8954305,4 4,4 L7,4 Z M7,6 L4,6 L4,8 L20,8 L20,6 L17,6 L7,6 Z M6.08648886,10 L7,21 L17,21 L17.0034542,20.9169545 L17.9132005,10 L6.08648886,10 Z M15,4 L15,3 L9,3 L9,4 L15,4 Z"/>
-                </svg>
-                '''
-
-    def svg_reuse(self, color_background="#4a90e2", color_text="#ffffff"):
-        return f'''
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">
-                    <rect width="32" height="32" rx="4" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
-                    <path transform="translate(4 4)" fill-rule="evenodd" fill="{color_text}" d="M7.41421356,19 L9.70710678,21.2928932 L8.29289322,22.7071068 L3.58578644,18 L8.29289322,13.2928932 L9.70710678,14.7071068 L7.41421356,17 L16,17 C17.6568542,17 19,15.6568542 19,14 L19,11 L21,11 L21,14 C21,16.7614237 18.7614237,19 16,19 L7.41421356,19 Z M16.5867862,5.00099979 L14.2928932,2.70710678 L15.7071068,1.29289322 L20.4142136,6 L15.7071068,10.7071068 L14.2928932,9.29289322 L16.5847866,7.00099979 L8,7.00099979 C6.34314575,7.00099979 5,8.34414554 5,10.0009998 L5,13.0009998 L3,13.0009998 L3,10.0009998 C3,7.23957604 5.23857625,5.00099979 8,5.00099979 L16.5867862,5.00099979 Z"/>
-                </svg>
-                '''
-
-    def svg_delete(self, color_background="#4a90e2", color_text="#ffffff"):
-        return f'''
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">
-                    <rect width="32" height="32" rx="4" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
-                    <path transform="translate(4 4)" fill-rule="evenodd" fill="{color_text}" d="M12,12.5857864 L14.2928932,10.2928932 L15.7071068,11.7071068 L13.4142136,14 L15.7071068,16.2928932 L14.2928932,17.7071068 L12,15.4142136 L9.70710678,17.7071068 L8.29289322,16.2928932 L10.5857864,14 L8.29289322,11.7071068 L9.70710678,10.2928932 L12,12.5857864 Z M15,3.41421356 L15,7 L18.5857864,7 L15,3.41421356 Z M19,9 L15,9 C13.8954305,9 13,8.1045695 13,7 L13,3 L5,3 L5,21 L19,21 L19,9 Z M5,1 L15.4142136,1 L21,6.58578644 L21,21 C21,22.1045695 20.1045695,23 19,23 L5,23 C3.8954305,23 3,22.1045695 3,21 L3,3 C3,1.8954305 3.8954305,1 5,1 Z"/>
-                </svg>
-                '''
-
-    def svg_from_text(self, symbol, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
-        text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) * (0.2 if len(symbol) > 4 else 0.2))
-        return f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
-            <rect width="{size[0]}" height="{size[1]}" rx="{text_size//2}" ry="{text_size//2}" fill="{color_background}" stroke-width="0"/>
-            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="{self.platform_font}" font-size="{text_size}" fill="{color_text}" stroke="none" text-anchor="middle" dominant-baseline="middle">
-                {symbol}
-            </text>
-        </svg>'''
-                
     tbdef = [
-        { "id": Item.TB_Trashcan,   "text": svg_trashcan, "tooltip": "Clear screen (input editor)", },
+        { "id": Item.TB_Trashcan,   "text": SVG_Source.svg_trashcan, "tooltip": "Clear screen (input editor)", },
         { "id": Item.TB_Sep },
 
-        { "id": Item.TB_Delete,     "text": svg_delete,   "tooltip": "Delete user defined variables and restore predefined variables", },
-        { "id": Item.TB_ReUse,      "text": svg_reuse,    "tooltip": "Re-use last output as new input", },
+        { "id": Item.TB_Delete,     "text": SVG_Source.svg_delete,   "tooltip": "Delete user defined variables and restore predefined variables", },
+        { "id": Item.TB_ReUse,      "text": SVG_Source.svg_reuse,    "tooltip": "Re-use last output as new input", },
         { "id": Item.TB_Round,      "text": "R.2",        "tooltip": "Round results by 2 digits", },
 
         { "id": Item.TB_Sep },
@@ -159,6 +126,7 @@ class Gui():
         self.reuse       = True
         self.resultValue = 0.0
         self.var         = {}
+        self.icons       = {}
         
     def closeWindow(self):
         self.callback(Gui.Item.Cmd_onClose, "WM_DELETE_WINDOW")
@@ -297,26 +265,27 @@ class Gui():
             cascade = element.get("cascade", None)
             text    = element.get("text", "")
             id      = element.get("id", -1)
-            icon    = element.get("icon", None)
             if cascade != last_cascade:
                 index = 0
                 last_cascade = cascade
                 menu_cascade = tk.Menu(self.menubar, tearoff=False)
-                self.menubar.add_cascade(label=last_cascade, menu=menu_cascade, image=icon)        
+                self.menubar.add_cascade(label=last_cascade, menu=menu_cascade)        
             else:
                 index += 1
-                
             if text == "_sep_":
                 menu_cascade.add_separator()
             else:
+                icon = self.create_menu_icon(element.get("icon", None))
+                self.icons[text] = icon
+                text = " " + text
                 if id == Gui.Item.Menu_MacroEdit:
                     self.branch_macro_edit = tk.Menu(self.menubar, tearoff=False, postcommand=partial(self.populate_dynamic, text, id))
-                    menu_cascade.add_cascade(label=text, menu=self.branch_macro_edit)
+                    menu_cascade.add_cascade(label=text, image=icon, compound="left", menu=self.branch_macro_edit)
                 elif id == Gui.Item.Menu_MacroRun:
                     self.branch_macro_run = tk.Menu(self.menubar, tearoff=False, postcommand=partial(self.populate_dynamic, text, id))
-                    menu_cascade.add_cascade(label=text, menu=self.branch_macro_run)
+                    menu_cascade.add_cascade(label=text, image=icon, compound="left", menu=self.branch_macro_run)
                 else:
-                    menu_cascade.add_command(label=text, command=partial(self.callback, id))
+                    menu_cascade.add_command(label=text, image=icon, compound="left", command=partial(self.callback, id))
 
     def populate_dynamic(self, text: str, id):
         if id == Gui.Item.Menu_MacroEdit:
@@ -703,48 +672,6 @@ class Gui():
         widget.geometry(f"{w}x{h}+{x}+{y}")
         self.unhide_widget(widget)
 
-    def display_popup(self, title = "Message", text = "Text."):
-        dialog_window = tk.Toplevel(self.root)
-        self.hide_widget(dialog_window)
-        dialog_window.title(title)
-        dialog_window.grab_set()
-        if "<html>" in text:
-            html_widget = HtmlFrame(dialog_window, messages_enabled=False)
-            html_widget.load_html(text)
-            html_widget.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
-        else:        
-            scrolled_text = scrolledtext.ScrolledText(dialog_window, wrap=tk.WORD, width=80, height=20, bg="lightgrey")
-            scrolled_text.insert(tk.END, text)
-            scrolled_text.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
-        self.center_window(dialog_window, self.root)
-
-    def get_filename_from_tooltip(self, tooltip):
-        return ''.join(key for key, group in groupby(re.sub(r'[^a-z0-9._-]', '_', tooltip.strip().lower()).strip("_").replace("_-_", "_")))
-    
-    def draw_svg(self, svg_string, size=(32, 32), background_color=(0, 0, 0, 0)):
-        try:
-            png_data = cairosvg.svg2png(bytestring=svg_string.encode('UTF-8'), output_width=size[0], output_height=size[1])
-            image_src = Image.open(BytesIO(png_data))
-            image = Image.new('RGBA', size, background_color)
-            image.paste(image_src)
-        except Exception as e:
-            image = Image.new('RGBA', size, background_color)
-            draw = ImageDraw.Draw(image)
-            draw.text((10, 10), f"{e}", fill=(0, 0, 0, 255))
-        return ImageTk.PhotoImage(image)
-
-    def create_svg_button(self, parent, svg_string_normal, svg_string_pressed, size=(32, 32), **tk_button_kwargs):
-        images = (
-            self.draw_svg(svg_string_normal,  size),
-            self.draw_svg(svg_string_pressed, size),
-        )
-        button = tk.Button(parent, image=images[0], **tk_button_kwargs)
-        button.images = images
-        return button
-
-    def is_svg_string(self, text: str) -> bool:
-        return '<svg' in text and '</svg>' in text
-
     def macro_editor(self, name="default", cmd=[]):
         self.original_macro_name = name
         text = "\n".join(cmd)
@@ -791,6 +718,48 @@ class Gui():
         if result[1] != "OK":
             return []
         return result[0]
+
+    def display_popup(self, title = "Message", text = "Text."):
+        dialog_window = tk.Toplevel(self.root)
+        self.hide_widget(dialog_window)
+        dialog_window.title(title)
+        dialog_window.grab_set()
+        if "<html>" in text:
+            html_widget = HtmlFrame(dialog_window, messages_enabled=False)
+            html_widget.load_html(text)
+            html_widget.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
+        else:        
+            scrolled_text = scrolledtext.ScrolledText(dialog_window, wrap=tk.WORD, width=80, height=20, bg="lightgrey")
+            scrolled_text.insert(tk.END, text)
+            scrolled_text.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
+        self.center_window(dialog_window, self.root)
+
+    def get_filename_from_tooltip(self, tooltip):
+        return ''.join(key for key, group in groupby(re.sub(r'[^a-z0-9._-]', '_', tooltip.strip().lower()).strip("_").replace("_-_", "_")))
+    
+    def draw_svg(self, svg_string, size=(32, 32), color_background=(0, 0, 0, 0), color_text=(0, 0, 0, 255)):
+        try:
+            png_data = cairosvg.svg2png(bytestring=svg_string.encode('UTF-8'), output_width=size[0], output_height=size[1])
+            image_src = Image.open(BytesIO(png_data))
+            image = Image.new('RGBA', size, color_background)
+            image.paste(image_src)
+        except Exception as e:
+            image = Image.new('RGBA', size, color_background)
+            draw = ImageDraw.Draw(image)
+            draw.text((10, 10), f"{e}", fill=color_text)
+        return ImageTk.PhotoImage(image)
+
+    def create_svg_button(self, parent, svg_string_normal, svg_string_pressed, size=(32, 32), **tk_button_kwargs):
+        images = (
+            self.draw_svg(svg_string_normal,  size),
+            self.draw_svg(svg_string_pressed, size),
+        )
+        button = tk.Button(parent, image=images[0], **tk_button_kwargs)
+        button.images = images
+        return button
+
+    def is_svg_string(self, text: str) -> bool:
+        return '<svg' in text and '</svg>' in text
 
     def save_images(self, button, folder=None, filename="button"):
         n = 0
@@ -841,3 +810,18 @@ class Gui():
     def get_button_image_path(self, folder=None, filename=None, level=0):
         button_file = f"{filename}_{level}.png"
         return AppTools().get_ImageResourcePath(image_file=button_file, sub_folder=folder)
+
+    def create_menu_icon(self, icon):
+        size = int(self.font_scaling * 0.24 + 0.5)
+        icon_size = (size, size)
+        if icon == None:
+            return ImageTk.PhotoImage(Image.new('RGBA', icon_size, "#00000000"))
+        elif type(icon) == str:
+            svg = self.svg_from_text(icon, icon_size, color_background="#e0e0e0", color_text="#000000")
+            svg_image = self.draw_svg(svg_string=svg, color_background="#e0e0e0", color_text="#000000")
+        else:
+            svg = icon(self, color_background="#e0e0e0", color_text="#000000")
+            svg_image = self.draw_svg(svg_string=svg)
+        image = ImageTk.getimage(svg_image)
+        image = image.resize(icon_size, Image.LANCZOS)
+        return ImageTk.PhotoImage(image)
