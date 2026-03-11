@@ -78,23 +78,23 @@ class Gui():
         FRC = "FRC"
 
     menudef = [
-        { "cascade": "File",  "text": "Exit",             "id": Item.Menu_Exit,      },
+        { "cascade": "File",  "text": "Exit",             "icon": None,  "id": Item.Menu_Exit,      },
 
-        { "cascade": "Edit",  "text": "Clear",            "id": Item.Menu_Clear,     },
-        { "cascade": "Edit",  "text": "Delete",           "id": Item.Menu_Delete,    },
-        { "cascade": "Edit",  "text": "Reset",            "id": Item.Menu_Reset,     },
-        { "cascade": "Edit",  "text": "_sep_",            "id": None                 },
-        { "cascade": "Edit",  "text": "Set default vars", "id": Item.Menu_DefVars,   },
-        { "cascade": "Edit",  "text": "Update def. vars", "id": Item.Menu_DefUpdate, },
-        { "cascade": "Edit",  "text": "_sep_",            "id": None                 },
-        { "cascade": "Edit",  "text": "Copy",             "id": Item.Menu_Copy,      },
+        { "cascade": "Edit",  "text": "Clear",            "icon": None,  "id": Item.Menu_Clear,     },
+        { "cascade": "Edit",  "text": "Delete",           "icon": None,  "id": Item.Menu_Delete,    },
+        { "cascade": "Edit",  "text": "Reset",            "icon": None,  "id": Item.Menu_Reset,     },
+        { "cascade": "Edit",  "text": "_sep_",            "icon": None,  "id": None                 },
+        { "cascade": "Edit",  "text": "Set default vars", "icon": None,  "id": Item.Menu_DefVars,   },
+        { "cascade": "Edit",  "text": "Update def. vars", "icon": None,  "id": Item.Menu_DefUpdate, },
+        { "cascade": "Edit",  "text": "_sep_",            "icon": None,  "id": None                 },
+        { "cascade": "Edit",  "text": "Copy",             "icon": None,  "id": Item.Menu_Copy,      },
 
-        { "cascade": "Macro", "text": "Add macro",        "id": Item.Menu_MacroAdd,  },
-        { "cascade": "Macro", "text": "Edit macro",       "id": Item.Menu_MacroEdit, },
-        { "cascade": "Macro", "text": "Run macro",        "id": Item.Menu_MacroRun,  },
+        { "cascade": "Macro", "text": "Add macro",        "icon": None,  "id": Item.Menu_MacroAdd,  },
+        { "cascade": "Macro", "text": "Edit macro",       "icon": None,  "id": Item.Menu_MacroEdit, },
+        { "cascade": "Macro", "text": "Run macro",        "icon": None,  "id": Item.Menu_MacroRun,  },
 
-        { "cascade": "Help",  "text": "Help usage",       "id": Item.Menu_Help,      },
-        { "cascade": "Help",  "text": "Display license",  "id": Item.Menu_License,   },
+        { "cascade": "Help",  "text": "Help usage",       "icon": None,  "id": Item.Menu_Help,      },
+        { "cascade": "Help",  "text": "Display license",  "icon": None,  "id": Item.Menu_License,   },
     ]
 
     def svg_trashcan(self, color_background="#4a90e2", color_text="#ffffff"):
@@ -294,15 +294,15 @@ class Gui():
         last_cascade = ""
         index = 0
         for element in Gui.menudef:
-            cascade = element["cascade"]
-            text    = element["text"]
-            id      = element["id"]
-            
+            cascade = element.get("cascade", None)
+            text    = element.get("text", "")
+            id      = element.get("id", -1)
+            icon    = element.get("icon", None)
             if cascade != last_cascade:
                 index = 0
                 last_cascade = cascade
                 menu_cascade = tk.Menu(self.menubar, tearoff=False)
-                self.menubar.add_cascade(label=last_cascade, menu=menu_cascade)        
+                self.menubar.add_cascade(label=last_cascade, menu=menu_cascade, image=icon)        
             else:
                 index += 1
                 
