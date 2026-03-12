@@ -845,6 +845,7 @@ class Gui():
                 image_src = Image.open(BytesIO(png_data))
                 image = Image.new('RGBA', size, color_background)
                 image.paste(image_src)
+                return ImageTk.PhotoImage(image)
             except Exception as e:
                 error_text = str(e)
         else:
