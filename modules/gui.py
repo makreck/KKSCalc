@@ -1,4 +1,4 @@
-import math, platform, pyperclip, re, subprocess
+import io, platform, pyperclip, re, subprocess
 import tkinter as tk
 from tkinterweb import HtmlFrame
 from pathlib import Path
@@ -17,11 +17,12 @@ from modules.scollframe import ScrollableFrame
 from modules.app_tools import AppTools
 from modules.svg_source import SVG_Source
 
-# For using cairosvg ...
+# OS relating ...
 if platform.system() == "Windows":
     # On Windows, cairosvg is not working properly. So, we always need
     # ready for use PNG images for the buttons!
-    pass
+    from svglib.svglib import svg2rlg
+    from reportlab.graphics import renderPM
 elif platform.system() == "Linux":
     # On Linux, cairosvg is available and working properly. So, we can
     # use the internal SVG resources to build the PNG images we need
@@ -743,18 +744,6 @@ class Gui():
 
     def get_filename_from_tooltip(self, tooltip):
         return ''.join(key for key, group in groupby(re.sub(r'[^a-z0-9._-]', '_', tooltip.strip().lower()).strip("_").replace("_-_", "_")))
-    
-    def draw_svg(self, svg_string, size=(32, 32), color_background=(0, 0, 0, 0), color_text=(0, 0, 0, 255)):
-        try:
-            png_data = cairosvg.svg2png(bytestring=svg_string.encode('UTF-8'), output_width=size[0], output_height=size[1])
-            image_src = Image.open(BytesIO(png_data))
-            image = Image.new('RGBA', size, color_background)
-            image.paste(image_src)
-        except Exception as e:
-            image = Image.new('RGBA', size, color_background)
-            draw = ImageDraw.Draw(image)
-            draw.text((10, 10), f"{e}", fill=color_text)
-        return ImageTk.PhotoImage(image)
 
     def create_svg_button(self, parent, svg_string_normal, svg_string_pressed, size=(32, 32), **tk_button_kwargs):
         images = (
@@ -793,7 +782,6 @@ class Gui():
                 btn.images = images
                 btn.tooltip = ToolTip(self.root, btn, tooltip)
                 return btn
-
         if platform.system() == "Windows":
             btn = None
         else:
@@ -832,3 +820,30 @@ class Gui():
         image = ImageTk.getimage(svg_image)
         image = image.resize(icon_size, Image.LANCZOS)
         return ImageTk.PhotoImage(image)
+
+    def draw_svg(self, svg_string, size=(32, 32), color_background=(0, 0, 0, 0), color_text=(0, 0, 0, 255)):
+        if platform.system() == "Windows":
+            
+            svg_io = io.StringIO(svg_string)
+            drawing = svg2rlg(svg_io)
+            renderPM.drawToFile(drawing, "temp.png", fmt="PNG")
+            img = Image.open("temp.png")
+
+            return ImageTk.PhotoImage(img)
+
+        elif platform.system() == "Linux":
+            try:
+                png_data = cairosvg.svg2png(bytestring=svg_string.encode('UTF-8'), output_width=size[0], output_height=size[1])
+                image_src = Image.open(BytesIO(png_data))
+                image = Image.new('RGBA', size, color_background)
+                image.paste(image_src)
+            except Exception as e:
+                image = Image.new('RGBA', size, color_background)
+                draw = ImageDraw.Draw(image)
+                draw.text((10, 10), f"{e}", fill=color_text)
+            return ImageTk.PhotoImage(image)
+
+        else:
+            pass
+
+        return ImageTk.PhotoImage(Image.new('RGBA', size, "#00000000"))
