@@ -80,23 +80,25 @@ class Gui():
         FRC = "FRC"
 
     menudef = [
-        { "cascade": "File",  "text": "Exit",             "icon": SVG_Source.svg_exit,     "id": Item.Menu_Exit,      },
+        { "cascade": "File",  "text": "Exit",             "icon": SVG_Source.svg_exit,      "id": Item.Menu_Exit,      },
 
-        { "cascade": "Edit",  "text": "Clear",            "icon": SVG_Source.svg_trashcan, "id": Item.Menu_Clear,     },
-        { "cascade": "Edit",  "text": "Delete",           "icon": SVG_Source.svg_delete,   "id": Item.Menu_Delete,    },
-        { "cascade": "Edit",  "text": "Reset",            "icon": SVG_Source.svg_reset,    "id": Item.Menu_Reset,     },
-        { "cascade": "Edit",  "text": "_sep_",            "icon": None,                    "id": None                 },
-        { "cascade": "Edit",  "text": "Set default vars", "icon": None,                    "id": Item.Menu_DefVars,   },
-        { "cascade": "Edit",  "text": "Update def. vars", "icon": None,                    "id": Item.Menu_DefUpdate, },
-        { "cascade": "Edit",  "text": "_sep_",            "icon": None,                    "id": None                 },
-        { "cascade": "Edit",  "text": "Copy",             "icon": SVG_Source.svg_copy,     "id": Item.Menu_Copy,      },
+        { "cascade": "Edit",  "text": "Clear",            "icon": SVG_Source.svg_trashcan,  "id": Item.Menu_Clear,     },
+        { "cascade": "Edit",  "text": "Delete",           "icon": SVG_Source.svg_delete,    "id": Item.Menu_Delete,    },
+        { "cascade": "Edit",  "text": "Reset",            "icon": SVG_Source.svg_reset,     "id": Item.Menu_Reset,     },
+        { "cascade": "Edit",  "text": "_sep_",            "icon": None,                     "id": None                 },
+        { "cascade": "Edit",  "text": "Set default vars", "icon": SVG_Source.svg_def_var,   "id": Item.Menu_DefVars,   },
+        { "cascade": "Edit",  "text": "Update def. vars", "icon": SVG_Source.svg_upd_var,   "id": Item.Menu_DefUpdate, },
+        { "cascade": "Edit",  "text": "_sep_",            "icon": None,                     "id": None                 },
+        { "cascade": "Edit",  "text": "Copy",             "icon": SVG_Source.svg_copy,      "id": Item.Menu_Copy,      },
 
-        { "cascade": "Macro", "text": "Add macro",        "icon": None,                    "id": Item.Menu_MacroAdd,  },
-        { "cascade": "Macro", "text": "Edit macro",       "icon": None,                    "id": Item.Menu_MacroEdit, },
-        { "cascade": "Macro", "text": "Run macro",        "icon": None,                    "id": Item.Menu_MacroRun,  },
+        { "cascade": "Macro", "text": "Add macro",        "icon": SVG_Source.svg_add_macro, "id": Item.Menu_MacroAdd,  },
+        { "cascade": "Macro", "text": "Edit macro",       "icon": SVG_Source.svg_edt_macro, "id": Item.Menu_MacroEdit, },
+        { "cascade": "Macro", "text": "Delete macro",     "icon": SVG_Source.svg_del_macro, "id": Item.Menu_MacroDel,  },
+        { "cascade": "Macro", "text": "_sep_",            "icon": None,                     "id": None                 },
+        { "cascade": "Macro", "text": "Run macro",        "icon": SVG_Source.svg_run_macro, "id": Item.Menu_MacroRun,  },
 
-        { "cascade": "Help",  "text": "Help usage",       "icon": None,                    "id": Item.Menu_Help,      },
-        { "cascade": "Help",  "text": "Display license",  "icon": None,                    "id": Item.Menu_License,   },
+        { "cascade": "Help",  "text": "Help usage",       "icon": SVG_Source.svg_info,      "id": Item.Menu_Help,      },
+        { "cascade": "Help",  "text": "Display license",  "icon": SVG_Source.svg_license,   "id": Item.Menu_License,   },
     ]
 
     tbdef = [
@@ -282,6 +284,9 @@ class Gui():
                 if id == Gui.Item.Menu_MacroEdit:
                     self.branch_macro_edit = tk.Menu(self.menubar, tearoff=False, postcommand=partial(self.populate_dynamic, text, id))
                     menu_cascade.add_cascade(label=text, image=icon, compound="left", menu=self.branch_macro_edit)
+                elif id == Gui.Item.Menu_MacroDel:
+                    self.branch_macro_del = tk.Menu(self.menubar, tearoff=False, postcommand=partial(self.populate_dynamic, text, id))
+                    menu_cascade.add_cascade(label=text, image=icon, compound="left", menu=self.branch_macro_del)
                 elif id == Gui.Item.Menu_MacroRun:
                     self.branch_macro_run = tk.Menu(self.menubar, tearoff=False, postcommand=partial(self.populate_dynamic, text, id))
                     menu_cascade.add_cascade(label=text, image=icon, compound="left", menu=self.branch_macro_run)
@@ -291,6 +296,8 @@ class Gui():
     def populate_dynamic(self, text: str, id):
         if id == Gui.Item.Menu_MacroEdit:
             menu = self.branch_macro_edit
+        elif id == Gui.Item.Menu_MacroDel:
+            menu = self.branch_macro_del
         elif id == Gui.Item.Menu_MacroRun:
             menu = self.branch_macro_run
         else:
