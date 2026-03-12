@@ -1,3 +1,4 @@
+import math
 
 class SVG_Source:
 
@@ -57,12 +58,12 @@ class SVG_Source:
             </svg>
             '''
         
-    def svg_from_text(self, symbol, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
+    def svg_from_text(self, symbol, size=(32, 32), color_background="#4a90e2", color_text="#ffffff", platform_font="Arial Bold"):
         text_size = int(math.sqrt(size[0] * size[0] + size[1] * size[1]) * (0.2 if len(symbol) > 4 else 0.2))
         return f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
             <rect width="{size[0]}" height="{size[1]}" rx="{text_size//2}" ry="{text_size//2}" fill="{color_background}" stroke-width="0"/>
-            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="{self.platform_font}" font-size="{text_size}" fill="{color_text}" stroke="none" text-anchor="middle" dominant-baseline="middle">
+            <text x="{size[0] // 2}" y="{size[1] // 2}" font-family="{platform_font}" font-size="{text_size}" fill="{color_text}" stroke="none" text-anchor="middle" dominant-baseline="middle">
                 {symbol}
             </text>
         </svg>'''
