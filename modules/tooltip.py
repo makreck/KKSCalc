@@ -1,7 +1,7 @@
 import tkinter as tk
 
 class ToolTip:
-    def __init__(self, root, widget, text, wait_time=500, showtime=2500):
+    def __init__(self, root, widget, text, wait_time=500, showtime=5000):
         self.root      = root
         self.widget    = widget
         self.text      = text
