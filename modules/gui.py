@@ -438,6 +438,26 @@ class Gui():
     def get_keyboard_property(self, key):
         return self.math_keyboard[key]
 
+    def make_macro_button(self, i, item, btn_cx):
+        f_key = f"F{i+1}"
+        fu_btn = tk.Button(self.frame_infoline, text=f"{f_key}: {item}", width=btn_cx + 3, border=1,
+            compound="left", anchor="w", padx=4, bg="#fa75a8", fg="white", font=self.varlistFont, relief="groove",
+            command=partial(self.callback, Gui.Item.Cmd_hotkey, f_key))
+        macro_tooltip = f"Call macro \"{item}\" by pressing this button or {f_key} or type \".{item}\"<Enter> in the editor window."
+        fu_btn.tooltip = ToolTip(self.root, fu_btn, macro_tooltip)
+        fu_btn.grid(row=0, column=i*2+1, padx=0, pady=2, sticky="nwse")
+        return fu_btn
+    
+    def make_macro_menu_button(self, i, item):
+        menu_btn = tk.Menubutton(self.frame_infoline, text="▼", border=1, padx=2,
+            bg="#fa75a8", fg="white", font=self.varlistFont, compound="right", anchor="e", relief="groove")
+        menu = tk.Menu(menu_btn, tearoff=0)
+        menu_btn["menu"] = menu
+        menu.add_command(label="Edit macro", command=partial(self.callback, Gui.Item.Menu_MacroEdit, item))
+        menu.add_command(label="Delete macro", command=partial(self.callback, Gui.Item.Menu_MacroDel, item))
+        menu_btn.grid(row=0, column=i*2, padx=0, pady=3, sticky="nwse")
+        return menu_btn
+
     def update_infoline(self):
         macro_list = self.get_MacroFunctionList()
         btn_cx = 8
@@ -447,26 +467,13 @@ class Gui():
             item.destroy()
         self.frame_infoline.macro_btn = []
         for i, item, in enumerate(macro_list):
-            f_key = f"F{i+1}"
-            menu_btn = tk.Menubutton(self.frame_infoline, text="▼", border=1, padx=2, bg="#fa75a8", fg="white",
-                        font=self.varlistFont, compound="right", anchor="e", relief="groove")
-            menu = tk.Menu(menu_btn, tearoff=0)
-            menu_btn["menu"] = menu
-            menu.add_command(label="Edit macro", command=partial(self.callback, Gui.Item.Menu_MacroEdit, item))
-            menu.add_command(label="Delete macro", command=partial(self.callback, Gui.Item.Menu_MacroDel, item))
-            menu_btn.grid(row=0, column=i*2, padx=0, pady=3, sticky="nwse")
-            self.frame_infoline.macro_btn.append(menu_btn)
-            fu_btn = tk.Button(self.frame_infoline, text=f"{f_key}: {item}", width=btn_cx + 3, border=1,
-                        compound="left", anchor="w", padx=4, bg="#fa75a8", fg="white", font=self.varlistFont, relief="groove",
-                        command=partial(self.callback, Gui.Item.Cmd_hotkey, f_key))
-            fu_btn.grid(row=0, column=i*2+1, padx=0, pady=2, sticky="nwse")
-            self.frame_infoline.macro_btn.append(fu_btn)
+            self.frame_infoline.macro_btn.append(self.make_macro_menu_button(i, item))
+            self.frame_infoline.macro_btn.append(self.make_macro_button(i, item, btn_cx))
 
     def handle_ResultEvent(self, event):
         self.callback(Gui.Item.Result, 0.0)
         
     def handle_VarListPopup(self, event):
-        # sel = self.varlist.selection()
         itemID = self.varlist.identify_row(event.y)
         if itemID:
             value = self.varlist.item(itemID, 'values')
