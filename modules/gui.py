@@ -768,38 +768,44 @@ class Gui():
 
     def create_button(self, parent, text="", tooltip=None, size=(32, 32), **tk_button_kwargs):
         folder = f"/buttons_{self.display_scaling_factor}"
-        if tooltip:
-            filename = self.get_filename_from_tooltip(tooltip)
-            il = []
-            for n in range(2):
-                path = Path(self.get_button_image_path(folder, filename, n))
-                if path.exists():
-                    image_data = Image.open(path)
-                    il.append(ImageTk.PhotoImage(image_data))
-            if len(il) >= 2:
-                images = (il[0], il[1], )
-                btn = tk.Button(parent, image=images[0], **tk_button_kwargs)
-                btn.images = images
-                btn.tooltip = ToolTip(self.root, btn, tooltip)
-                return btn
-        if platform.system() == "Windows":
-            btn = None
+        # Button and menu images are generated from SVG sources now also in Windows.
+        # It is no needed to read them from the files. Optionally, the following section
+        # can be re-enabled, and the save section below also, to re-enable using images
+        # once generated and stored in a file.
+        #
+        # if tooltip:
+            # filename = self.get_filename_from_tooltip(tooltip)
+            # il = []
+            # for n in range(2):
+            #     path = Path(self.get_button_image_path(folder, filename, n))
+            #     if path.exists():
+            #         image_data = Image.open(path)
+            #         il.append(ImageTk.PhotoImage(image_data))
+            # if len(il) >= 2:
+            #     images = (il[0], il[1], )
+            #     btn = tk.Button(parent, image=images[0], **tk_button_kwargs)
+            #     btn.images = images
+            #     btn.tooltip = ToolTip(self.root, btn, tooltip)
+            #     return btn
+            #
+        if type(text) != str:
+            svg_string_normal  = text(self, size=size)
+            svg_string_pressed = text(self, size=size, color_background="#3b6cac")
+        elif self.is_svg_string(text):
+            svg_string_normal  = text
+            svg_string_pressed = text
         else:
-            if type(text) != str:
-                svg_string_normal  = text(self)
-                svg_string_pressed = text(self, color_background="#3b6cac")
-            elif self.is_svg_string(text):
-                svg_string_normal  = text
-                svg_string_pressed = text
-            else:
-                svg_string_normal  = SVG_Source.svg_from_text(self, symbol=text, size=size, platform_font=self.platform_font)
-                svg_string_pressed = SVG_Source.svg_from_text(self, symbol=text, size=size, color_background="#3b6cac", platform_font=self.platform_font)
-            btn = self.create_svg_button(parent, svg_string_normal, svg_string_pressed, size, **tk_button_kwargs)
-            if tooltip:
-                btn.tooltip = ToolTip(self.root, btn, tooltip)
-                self.save_images(btn, folder, filename)
-            else:
-                btn.tooltip = None
+            svg_string_normal  = SVG_Source.svg_from_text(self, symbol=text, size=size, platform_font=self.platform_font)
+            svg_string_pressed = SVG_Source.svg_from_text(self, symbol=text, size=size, color_background="#3b6cac", platform_font=self.platform_font)
+        btn = self.create_svg_button(parent, svg_string_normal, svg_string_pressed, size, **tk_button_kwargs)
+        if tooltip:
+            btn.tooltip = ToolTip(self.root, btn, tooltip)
+            # Enable this to store the images in PNG files.
+            #
+            # self.save_images(btn, folder, filename)
+            #
+        else:
+            btn.tooltip = None
         return btn
         
     def get_button_image_path(self, folder=None, filename=None, level=0):
@@ -824,12 +830,14 @@ class Gui():
     def draw_svg(self, svg_string, size=(32, 32), color_background=(0, 0, 0, 0), color_text=(0, 0, 0, 255)):
         if platform.system() == "Windows":
             
-            svg_io = io.StringIO(svg_string)
-            drawing = svg2rlg(svg_io)
-            renderPM.drawToFile(drawing, "temp.png", fmt="PNG")
-            img = Image.open("temp.png")
-
-            return ImageTk.PhotoImage(img)
+            try:
+                svg_io = io.StringIO(svg_string)
+                drawing = svg2rlg(svg_io)
+                renderPM.drawToFile(drawing, "temp.png", fmt="PNG")
+                img = Image.open("temp.png")
+                return ImageTk.PhotoImage(img)
+            except Exception as e:
+                error_text = str(e)
 
         elif platform.system() == "Linux":
             try:
@@ -838,12 +846,11 @@ class Gui():
                 image = Image.new('RGBA', size, color_background)
                 image.paste(image_src)
             except Exception as e:
-                image = Image.new('RGBA', size, color_background)
-                draw = ImageDraw.Draw(image)
-                draw.text((10, 10), f"{e}", fill=color_text)
-            return ImageTk.PhotoImage(image)
-
+                error_text = str(e)
         else:
-            pass
+            error_text = "Not supported OS"
 
-        return ImageTk.PhotoImage(Image.new('RGBA', size, "#00000000"))
+        image = Image.new('RGBA', size, color_background)
+        draw = ImageDraw.Draw(image)
+        draw.text((10, 10), f"{error_text}", fill=color_text)
+        return ImageTk.PhotoImage(image)
