@@ -804,8 +804,8 @@ class Gui():
                 svg_string_normal  = text
                 svg_string_pressed = text
             else:
-                svg_string_normal  = SVG_Source.svg_from_text(text, size)
-                svg_string_pressed = SVG_Source.svg_from_text(text, size, color_background="#3b6cac")
+                svg_string_normal  = SVG_Source.svg_from_text(self, symbol=text, size=size, platform_font=self.platform_font)
+                svg_string_pressed = SVG_Source.svg_from_text(self, symbol=text, size=size, color_background="#3b6cac", platform_font=self.platform_font)
             btn = self.create_svg_button(parent, svg_string_normal, svg_string_pressed, size, **tk_button_kwargs)
             if tooltip:
                 btn.tooltip = ToolTip(self.root, btn, tooltip)
@@ -824,7 +824,7 @@ class Gui():
         if icon == None:
             return ImageTk.PhotoImage(Image.new('RGBA', icon_size, "#00000000"))
         elif type(icon) == str:
-            svg = SVG_Source.svg_from_text(icon, icon_size, color_background="#e0e0e0", color_text="#000000")
+            svg = SVG_Source.svg_from_text(self, symbol=icon, size=icon_size, color_background="#e0e0e0", color_text="#000000", platform_font=self.platform_font)
             svg_image = self.draw_svg(svg_string=svg, color_background="#e0e0e0", color_text="#000000")
         else:
             svg = icon(self, color_background="#e0e0e0", color_text="#000000")
