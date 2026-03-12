@@ -829,16 +829,16 @@ class Gui():
 
     def draw_svg(self, svg_string, size=(32, 32), color_background=(0, 0, 0, 0), color_text=(0, 0, 0, 255)):
         if platform.system() == "Windows":
-            
             try:
                 svg_io = io.StringIO(svg_string)
                 drawing = svg2rlg(svg_io)
-                renderPM.drawToFile(drawing, "temp.png", fmt="PNG")
-                img = Image.open("temp.png")
+                png_io = BytesIO()
+                renderPM.drawToFile(drawing, png_io, fmt="PNG")
+                png_io.seek(0)
+                img = Image.open(png_io)
                 return ImageTk.PhotoImage(img)
             except Exception as e:
                 error_text = str(e)
-
         elif platform.system() == "Linux":
             try:
                 png_data = cairosvg.svg2png(bytestring=svg_string.encode('UTF-8'), output_width=size[0], output_height=size[1])
@@ -849,7 +849,6 @@ class Gui():
                 error_text = str(e)
         else:
             error_text = "Not supported OS"
-
         image = Image.new('RGBA', size, color_background)
         draw = ImageDraw.Draw(image)
         draw.text((10, 10), f"{error_text}", fill=color_text)
