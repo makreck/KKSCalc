@@ -1,6 +1,6 @@
 # Dependencies (all):
 
-import sys, os, math, platform, re, pyperclip, random, json, time, subprocess
+import sys, io, os, math, platform, re, pyperclip, random, json, time, subprocess
 import tkinter as tk
 
 from datetime import datetime as dt
@@ -29,11 +29,12 @@ from modules.calculator import Calculator
 from modules.helptext import general_usage
 
 
-# For using cairosvg ...
+# OS relating ...
 if platform.system() == "Windows":
     # On Windows, cairosvg is not working properly. So, we always need
     # ready for use PNG images for the buttons!
-    pass
+    from svglib.svglib import svg2rlg
+    from reportlab.graphics import renderPM
 elif platform.system() == "Linux":
     # On Linux, cairosvg is available and working properly. So, we can
     # use the internal SVG resources to build the PNG images we need
