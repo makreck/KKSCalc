@@ -820,7 +820,7 @@ class Gui():
         return AppTools().get_ImageResourcePath(image_file=button_file, sub_folder=folder)
 
     def create_menu_icon(self, icon):
-        size = int(self.font_scaling * 0.24 + 0.5)
+        size = int(self.tbIconSize[0] * 0.5)
         icon_size = (size, size)
         if icon == None:
             return ImageTk.PhotoImage(Image.new('RGBA', icon_size, "#00000000"))
