@@ -1,10 +1,29 @@
+# ==============================================================================
+#
+#  PROJECT:     "KKSCalc" KKS Desktop Calculator Tool
+#  COPYRIGHT:   (C)2025-2026 KKS-Elektronik,  M. Kreck, <makreck@googlemail.com>
+#
+#  This program is free software: you can redistribute it and/or modify it under
+#  the terms of the GNU General Public License as published by the Free Software
+#  Foundation, either version 3 of the License, or (at your option) any later
+#  version.
+#
+#  This program is distributed in the hope that it will be useful,   but WITHOUT
+#  ANY WARRANTY, without even the implied warranty of MERCHANTABILITY or FITNESS
+#  FOR A PARTICULAR PURPOSE, see the GNU General Public License for details.
+#
+#  You should have received a copy of the  GNU General Public License along with
+#  this program. If not, see <https://www.gnu.org/licenses/>.
+#  
+#  ==============================================================================
+
 import math, platform
 
 class SVG_Source:
 
     def svg_trashcan(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return  f'''
-                <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+                <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                     <rect width="{size[0]}" height="{size[1]}" rx="4" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                     <path transform="translate(3 3)" fill-rule="evenodd" fill="{color_text}" d="M12,13.5857864 L14.2928932,11.2928932
                     L15.7071068,12.7071068 L13.4142136,15 L15.7071068,17.2928932 L14.2928932,18.7071068 L12,16.4142136 L9.70710678,18.7071068
@@ -19,7 +38,7 @@ class SVG_Source:
 
     def svg_reuse(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-                <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+                <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                     <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                     <path transform="translate(4 4)" fill-rule="evenodd" fill="{color_text}" d="M7.41421356,19 L9.70710678,21.2928932
                     L8.29289322,22.7071068 L3.58578644,18 L8.29289322,13.2928932 L9.70710678,14.7071068 L7.41421356,17 L16,17
@@ -32,7 +51,7 @@ class SVG_Source:
 
     def svg_exit(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-                <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+                <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                     <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                     <path transform="translate(4 4)" fill-rule="evenodd" fill="{color_text}" d="M12,23 C5.92486775,23 1,18.0751322 1,12
                     C1,5.92486775 5.92486775,1 12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 Z M12,21
@@ -45,7 +64,7 @@ class SVG_Source:
 
     def svg_delete(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-                <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+                <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                     <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                     <path transform="translate(4 4)" fill-rule="evenodd" fill="{color_text}" d="M12,12.5857864 L14.2928932,10.2928932
                     L15.7071068,11.7071068 L13.4142136,14 L15.7071068,16.2928932 L14.2928932,17.7071068 L12,15.4142136 L9.70710678,17.7071068
@@ -58,7 +77,7 @@ class SVG_Source:
 
     def svg_test(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-                <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+                <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                     <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                     <path transform="translate(4 4)" fill-rule="evenodd" fill="{color_text}" d="M12,12.5857864 L14.2928932,10.2928932
                     L15.7071068,11.7071068 L13.4142136,14 L15.7071068,16.2928932 L14.2928932,17.7071068 L12,15.4142136 L9.70710678,17.7071068
@@ -71,7 +90,7 @@ class SVG_Source:
 
     def svg_copy(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-                <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+                <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                     <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                     <path transform="translate(4 4)" fill-rule="evenodd" fill="{color_text}" d="M16,16 L16,20 C16,21.1522847 15.1522847,22 14,22
                     L4,22 C2.84771525,22 2,21.1522847 2,20 L2,10 C2,8.84771525 2.84771525,8 4,8 L8,8 L8,4 C8,2.84771525 8.84771525,2 10,2 L20,2
@@ -82,7 +101,7 @@ class SVG_Source:
 
     def svg_reset(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                 <path transform="translate(4 4)" fill-rule="evenodd" fill="{color_text}" d="M17.8069373,7 C16.4464601,5.07869636 14.3936238,4 12,4
                 C7.581722,4 4,7.581722 4,12 L2,12 C2,6.4771525 6.4771525,2 12,2 C14.8042336,2 17.274893,3.18251178 19,5.27034886
@@ -94,7 +113,7 @@ class SVG_Source:
 
     def svg_def_var(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                 <path transform="translate(4 4)" fill-rule="evenodd" d="M12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1
                 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 Z M12,21 C16.9705627,21 21,16.9705627 21,12
@@ -104,7 +123,7 @@ class SVG_Source:
 
     def svg_upd_var(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                 <path transform="translate(4 4)" fill-rule="evenodd" d="M17.8069373,7 C16.4464601,5.07869636 14.3936238,4 12,4
                 C7.581722,4 4,7.581722 4,12 L2,12 C2,6.4771525 6.4771525,2 12,2 C14.8042336,2 17.274893,3.18251178 19,5.27034886
@@ -116,7 +135,7 @@ class SVG_Source:
 
     def svg_add_macro(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                 <path transform="translate(4 4)" fill-rule="evenodd" d="M13,3 L5,3 L5,21 L15,21 L15,23 L5,23 C3.8954305,23 3,22.1045695 3,21
                 L3,3 C3,1.8954305 3.8954305,1 5,1 L15.4142136,1 L21,6.58578644 L21,14 L19,14 L19,9 L15,9 C13.8954305,9 13,8.1045695 13,7
@@ -127,7 +146,7 @@ class SVG_Source:
 
     def svg_edt_macro(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                 <path transform="translate(4 4)" fill-rule="evenodd" d="M15,3.41421356 L15,7 L18.5857864,7 L15,3.41421356
                 Z M19,9 L15,9 C13.8954305,9 13,8.1045695 13,7 L13,3 L5,3 L5,21 L19,21 L19,9 Z M5,1 L15.4142136,1 L21,6.58578644
@@ -137,7 +156,7 @@ class SVG_Source:
 
     def svg_run_macro(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                 <path transform="translate(4 4)" fill-rule="evenodd" d="M15,3.41421356 L15,7 L18.5857864,7 L15,3.41421356
                 Z M19,9 L15,9 C13.8954305,9 13,8.1045695 13,7 L13,3 L5,3 L5,21 L19,21 L19,9 Z M5,1 L15.4142136,1 L21,6.58578644
@@ -149,7 +168,7 @@ class SVG_Source:
 
     def svg_del_macro(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                 <path transform="translate(4 4)" fill-rule="evenodd" d="M12,12.5857864 L14.2928932,10.2928932 L15.7071068,11.7071068
                 L13.4142136,14 L15.7071068,16.2928932 L14.2928932,17.7071068 L12,15.4142136 L9.70710678,17.7071068 L8.29289322,16.2928932
@@ -161,7 +180,7 @@ class SVG_Source:
 
     def svg_info(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                 <path transform="translate(4 4)" fill-rule="evenodd" d="M12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1
                 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 Z M12,21 C16.9705627,21 21,16.9705627 21,12 C21,7.02943725 16.9705627,3 12,3
@@ -175,7 +194,7 @@ class SVG_Source:
 
     def svg_license(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
                 <path transform="translate(4 4)" fill-rule="evenodd" d="M12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 Z M12,21 C16.9705627,21 21,16.9705627 21,12 C21,7.02943725 16.9705627,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 Z M12.0003283,17.9983464 C11.4478622,17.9983464 11,17.5506311 11,16.9983464 C11,16.4460616 11.4478622,15.9983464 12.0003283,15.9983464 C12.5527943,15.9983464 13.0006565,16.4460616 13.0006565,16.9983464 C13.0006565,17.5506311 12.5527943,17.9983464 12.0003283,17.9983464 Z M11.0029544,5.99834639 L13.0036109,5.99834639 L13.0036109,13.9983464 L11.0029544,13.9983464 L11.0029544,5.99834639 Z"/>
             </svg>
@@ -183,7 +202,7 @@ class SVG_Source:
 
     def svg_template(self, size=(32, 32), color_background="#4a90e2", color_text="#ffffff"):
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 32 32">
                 <rect width="{size[0]}" height="{size[1]}" ry="4" fill="{color_background}" stroke="#357abd" stroke-width="0"/>
 
             </svg>
@@ -197,7 +216,7 @@ class SVG_Source:
         else:
             text_y = size[1] // 2
         return f'''
-            <svg xmlns="http://www.w3.org/2000/svg" width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
+            <svg width="{size[0]}" height="{size[1]}" viewBox="0 0 {size[0]} {size[1]}">
             <rect width="{size[0]}" height="{size[1]}" rx="{text_size//2}" ry="{text_size//2}" fill="{color_background}" stroke-width="0"/>
             <text x="{text_x}" y="{text_y}" font-family="{platform_font}" font-size="{text_size}" fill="{color_text}" stroke="none" text-anchor="middle" dominant-baseline="middle">
                 {symbol}
